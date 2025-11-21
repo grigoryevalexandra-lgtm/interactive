@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Интерактивный тренажёр</title>
+</head>
+<body>
+  <div>
+    <p>Заполните пропуск: После листа согласования в документе размещается <input type="text" id="answer" style="width: 100px;"</p>
+    <button onclick="checkAnswer()">Проверить</button>
+    <p id="feedback"></p>
+  </div>
+
+
+  <script>
+    function checkAnswer() {
+      const answer = document.getElementById('answer').value.trim().toLowerCase();
+      const correctAnswer = 'оглавление';
+      const feedback = document.getElementById('feedback');
+
+
+      if (answer === correctAnswer) {
+        feedback.textContent = 'Верно!';
+        feedback.style.color = 'green';
+      } else {
+        feedback.textContent = 'Неверно, попробуйте ещё раз.';
+        feedback.style.color = 'red';
+      }
+    }
+  </script>
+</body>
+</html>

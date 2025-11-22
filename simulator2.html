@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Симулятор с персонажем в каске</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 {
+    color: #2d3e50;
+    margin-bottom: 25px;
+  }
+  #character-container {
+    position: relative;
+    width: 120px;
+    height: 130px;
+    margin-bottom: 20px;
+  }
+  /* Анимация движения персонажа */
+  #character {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 110px;
+    transition: left 0.3s ease;
+    pointer-events: none;
+  }
+  #hand {
+    position: absolute;
+    bottom: 50px;
+    left: 85px;
+    width: 40px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  #instructions {
+    font-size: 1.15em;
+    color: #444;
+    margin-bottom: 12px;
+  }
+  #card-container {
+    width: 600px;
+  }
+  .card-list {
+    border: 2px solid #337ab7;
+    border-radius: 12px;
+    background: white;
+    padding: 12px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+  .card {
+    background-color: #add8e6;
+    margin: 7px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: grab;
+    font-size: 1.05em;
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+    user-select: none;
+  }
+  .card:active {
+    cursor: grabbing;
+  }
+  #buttons {
+    margin-top: 18px;
+  }
+  button {
+    background-color: #337ab7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1.05em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #285e8e;
+  }
+  #feedback {
+    margin-top: 18px;
+    font-size: 1.2em;
+    font-weight: 700;
+  }
+  #feedback.correct { color: #28a745; }
+  #feedback.incorrect { color: #dc3545; }
+</style>
+</head>
+<body>
+
+<h1>Симулятор: подпись исполнительной документации</h1>
+
+<div id="character-container">
+  <!-- SVG изображение человечка в каске -->
+  <img id="character" src="https://cdn-icons-png.flaticon.com/512/1995/1995531.png" alt="Маленький человечек в каске" />
+  <!-- Рука, которая появляется при перемещении -->
+  <img id="hand" src="https://cdn-icons-png.flaticon.com/512/535/535188.png" alt="Рука персонажа" />
+</div>
+
+<p id="instructions">Перетащите карточки в правильном порядке действий (используйте мышь или тачпад)</p>
+
+<div id="card-container">
+  <div id="card-list" class="card-list" draggable="false">
+    <!-- Карточки будут размещены здесь -->
+  </div>
+</div>
+
+<div id="buttons">
+  <button onclick="checkOrder()">Проверить порядок</button>
+  <button onclick="shuffleCards()">Перемешать карточки</button>
+</div>
+
+<div id="feedback"></div>
+
+<script>
+const correctSequence = [
+  "Подготовить реестр и сопроводительное письмо",
+  "Уточнить у ответственного представителя Заказчика, когда можно привети ИД на подпись",
+  "Приехать к назначенному времени",
+  "Передать ответственному представителю Заказчика комплект документов",
+  "Подписать сопроводительное письмо и реестр у указанием даты",
+  "Уточнить, в течение какого времени можно будет забрать ИД"
+];
+
+const cardList = document.getElementById("card-list");
+const feedback = document.getElementById("feedback");
+const character = document.getElementById("character");
+const hand = document.getElementById("hand");
+
+function createCards(items) {
+  cardList.innerHTML = "";
+  items.forEach((text, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.draggable = true;
+    card.textContent = text;
+    card.dataset.index = index;
+    addDragHandlers(card);
+    cardList.appendChild(card);
+  });
+}
+
+function addDragHandlers(card) {
+  card.addEventListener("dragstart", dragStart);
+  card.addEventListener("dragend", dragEnd);
+  card.addEventListener("dragover", dragOver);
+  card.addEventListener("drop", dragDrop);
+  card.addEventListener("dragenter", dragEnter);
+  card.addEventListener("dragleave", dragLeave);
+}
+
+let draggedItem = null;
+
+function dragStart(e) {
+  draggedItem = this;
+  hand.style.opacity = "1"; // показать руку
+  moveCharacterToCard(this);
+  setTimeout(() => { this.style.display = "none"; }, 0);
+}
+
+function dragEnd(e) {
+  hand.style.opacity = "0"; // скрыть руку
+  character.style.left = "0px"; // вернуть персонажа
+  if (draggedItem) {
+    draggedItem.style.display = "block";
+  }
+  draggedItem = null;
+}
+
+function moveCharacterToCard(card) {
+  const rect = card.getBoundingClientRect();
+  const containerRect = cardList.getBoundingClientRect();
+  const leftPos = rect.left - containerRect.left - 40; // смещение персонажа
+  character.style.left = leftPos + "px";
+  hand.style.left = (leftPos + 85) + "px"; // рука чуть правее
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function dragDrop(e) {
+  e.preventDefault();
+  if (this !== draggedItem) {
+    const nodes = Array.from(cardList.children);
+    const draggedIndex = nodes.indexOf(draggedItem);
+    const droppedIndex = nodes.indexOf(this);
+    if (draggedIndex < droppedIndex) {
+      cardList.insertBefore(draggedItem, this.nextSibling);
+    } else {
+      cardList.insertBefore(draggedItem, this);
+    }
+  }
+  draggedItem.style.display = "block";
+  hand.style.opacity = "0";
+  character.style.left = "0px";
+  draggedItem = null;
+}
+
+function dragEnter(e) {
+  e.preventDefault();
+  if (this !== draggedItem) {
+    this.style.backgroundColor = "#9dccff";
+  }
+}
+
+function dragLeave(e) {
+  this.style.backgroundColor = "#add8e6";
+}
+
+function checkOrder() {
+  const cards = Array.from(cardList.children);
+  let correctCount = 0;
+  cards.forEach((card, i) => {
+    if (card.textContent === correctSequence[i]) {
+      card.style.backgroundColor = "#c8f7c5"; // зеленый фон
+      correctCount++;
+    } else {
+      card.style.backgroundColor = "#f9b5b3"; // красный фон
+    }
+  });
+  if (correctCount === correctSequence.length) {
+    feedback.textContent = "Поздравляем! Последовательность правильная.";
+    feedback.className = "correct";
+  } else {
+    feedback.textContent = `Неправильно. Правильно ${correctCount} из ${correctSequence.length}. Попробуйте снова.`;
+    feedback.className = "incorrect";
+  }
+}
+
+function shuffleCards() {
+  const shuffled = [...correctSequence].sort(() => 0.5 - Math.random());
+  createCards(shuffled);
+  feedback.textContent = "";
+}
+
+shuffleCards();
+</script>
+
+</body>
+</html>

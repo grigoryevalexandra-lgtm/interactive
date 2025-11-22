@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Лабиринт: строитель в каске</title>
+<style>
+  body {
+    background: #f0f3f7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px;
+  }
+  h1 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+  }
+  #maze {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 2px;
+    background: #95a5a6;
+    padding: 4px;
+    border-radius: 12px;
+  }
+  .cell {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+  }
+  .wall {
+    background: #34495e;
+  }
+  .start {
+    background: #27ae60;
+  }
+  .exit {
+    background: #e67e22;
+  }
+  #player {
+    width: 36px;
+    height: 36px;
+    position: relative;
+    top: 2px;
+    left: 2px;
+  }
+  #message {
+    margin-top: 20px;
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #27ae60;
+  }
+</style>
+</head>
+<body>
+
+<h1>Лабиринт: строитель в каске</h1>
+
+<div id="maze"></div>
+<div id="message"></div>
+
+<script>
+const mazeData = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,1,0,0,0,0,1],
+  [1,0,1,0,1,0,1,1,0,1],
+  [1,0,1,0,0,0,0,1,0,1],
+  [1,0,1,1,1,1,0,1,0,1],
+  [1,0,0,0,0,1,0,1,0,1],
+  [1,1,1,1,0,1,0,1,0,1],
+  [1,0,0,1,0,0,0,1,0,1],
+  [1,0,0,0,0,1,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1]
+];
+
+// 0 - путь, 1 - стена
+
+const maze = document.getElementById('maze');
+const message = document.getElementById('message');
+const rows = mazeData.length;
+const cols = mazeData[0].length;
+
+// Игрок (строитель) стартует здесь:
+let playerPos = {x: 1, y: 1};
+const exitPos = {x: 8, y: 8};
+
+function createMaze() {
+  maze.innerHTML = '';
+  for(let y = 0; y < rows; y++) {
+    for(let x = 0; x < cols; x++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      if(mazeData[y][x] === 1) cell.classList.add('wall');
+      if(x === playerPos.x && y === playerPos.y) {
+        const player = document.createElement('img');
+        player.src = 'https://cdn-icons-png.flaticon.com/512/1995/1995531.png'; // Строитель в каске
+        player.id = 'player';
+        cell.appendChild(player);
+      }
+      if(x === exitPos.x && y === exitPos.y) {
+        cell.classList.add('exit');
+      }
+      if(x === 1 && y === 1) {
+        cell.classList.add('start');
+      }
+      maze.appendChild(cell);
+    }
+  }
+}
+
+function movePlayer(dx, dy) {
+  const newX = playerPos.x + dx;
+  const newY = playerPos.y + dy;
+  if(newX < 0 || newY < 0 || newX >= cols || newY >= rows) return;
+  if(mazeData[newY][newX] === 1) return; // стена - не пройти
+  playerPos.x = newX;
+  playerPos.y = newY;
+  createMaze();
+  checkExit();
+}
+
+function checkExit() {
+  if(playerPos.x === exitPos.x && playerPos.y === exitPos.y) {
+    message.textContent = "Поздравляем! Вы вышли из лабиринта.";
+    document.removeEventListener('keydown', keyHandler);
+  }
+}
+
+function keyHandler(e) {
+  switch(e.key) {
+    case 'ArrowUp': movePlayer(0,-1); break;
+    case 'ArrowDown': movePlayer(0,1); break;
+    case 'ArrowLeft': movePlayer(-1,0); break;
+    case 'ArrowRight': movePlayer(1,0); break;
+  }
+}
+
+document.addEventListener('keydown', keyHandler);
+createMaze();
+
+</script>
+
+</body>
+</html>

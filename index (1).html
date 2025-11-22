@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квиз: Коммуникативные навыки</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-block {
+            display: none;
+        }
+
+        .question-block.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-number {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            margin-top: 3px;
+            cursor: pointer;
+            accent-color: #667eea;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option-text {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #f1f8f5;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #fff3f1;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct-feedback {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect-feedback {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #c62828;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 28px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-prev {
+            background: #e0e0e0;
+            color: #333;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .btn-prev:hover {
+            background: #d0d0d0;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .results h2 {
+            color: #333;
+            font-size: 26px;
+            margin-bottom: 15px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .score-circle span {
+            font-size: 16px;
+            font-weight: 400;
+            margin-top: 5px;
+        }
+
+        .results-text {
+            color: #666;
+            font-size: 16px;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 20px;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Квиз: Коммуникативные навыки инженера ПТО</h1>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div id="quizContent">
+            <!-- Вопрос 1 -->
+            <div class="question-block active">
+                <div class="question-number">Вопрос 1 из 6</div>
+                <div class="question-text">Какие 7 навыков развивает курс для успешной работы инженера ПТО?</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q1" value="0">
+                        <span class="option-text">Только коммуникация и креативность</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="1">
+                        <span class="option-text">Коммуникация, критическое мышление, креативность, эмоциональный интеллект, принятие решений, командная работа, многозадачность</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="0">
+                        <span class="option-text">Технические расчеты и проектирование</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="0">
+                        <span class="option-text">Управление бюджетом и контроль затрат</span>
+                    </label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Вопрос 2 -->
+            <div class="question-block">
+                <div class="question-number">Вопрос 2 из 6</div>
+                <div class="question-text">Для точного выполнения задач инженер должен:</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q2" value="0">
+                        <span class="option-text">Понимать задачу своим способом</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="1">
+                        <span class="option-text">Следовать точному алгоритму при постановке задачи и уточнять детали</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="0">
+                        <span class="option-text">Выполнять работу как обычно</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="0">
+                        <span class="option-text">Принимать все на словах без уточнений</span>
+                    </label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Вопрос 3 -->
+            <div class="question-block">
+                <div class="question-number">Вопрос 3 из 6</div>
+                <div class="question-text">Сколько переговоров часто требуется для решения сложных вопросов?</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q3" value="0">
+                        <span class="option-text">1–2 переговора</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="0">
+                        <span class="option-text">3–4 переговора</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="1">
+                        <span class="option-text">Примерно 7 переговоров</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="0">
+                        <span class="option-text">10 и более переговоров</span>
+                    </label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Вопрос 4 -->
+            <div class="question-block">
+                <div class="question-number">Вопрос 4 из 6</div>
+                <div class="question-text">Какое упражнение для развития креативности предложено в курсе?</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q4" value="1">
+                        <span class="option-text">&quot;10 глупых идей&quot; - за 5 минут придумать 10 абсурдных решений</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="0">
+                        <span class="option-text">Метод мозгового штурма только с серьезными идеями</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="0">
+                        <span class="option-text">Чтение технической литературы</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="0">
+                        <span class="option-text">Посещение семинаров по дизайну</span>
+                    </label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Вопрос 5 -->
+            <div class="question-block">
+                <div class="question-number">Вопрос 5 из 6</div>
+                <div class="question-text">Что означает ИКР в методе ТРИЗ для сложных задач?</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q5" value="0">
+                        <span class="option-text">Исходное контрольное решение</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="1">
+                        <span class="option-text">Идеальный конечный результат, отвечающий принципам &quot;само-&quot; и &quot;не-&quot;</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="0">
+                        <span class="option-text">Информационный контроль результата</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="0">
+                        <span class="option-text">Инженерный критический расчет</span>
+                    </label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Вопрос 6 -->
+            <div class="question-block">
+                <div class="question-number">Вопрос 6 из 6</div>
+                <div class="question-text">Из каких компонентов состоит эмоциональный интеллект инженера?</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q6" value="1">
+                        <span class="option-text">Эмпатия, стрессоустойчивость, контроль фактов, оптимизм, объективность</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="0">
+                        <span class="option-text">Только мотивация и амбициозность</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="0">
+                        <span class="option-text">Технические знания и опыт</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="0">
+                        <span class="option-text">Умение критиковать других</span>
+                    </label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+        </div>
+
+        <!-- Результаты -->
+        <div id="results" class="results">
+            <h2>Результаты квиза</h2>
+            <div class="score-circle">
+                <div id="scorePercentage">0%</div>
+                <span>правильных ответов</span>
+            </div>
+            <div class="results-text" id="resultMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Пройти квиз заново</button>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button class="btn-prev" onclick="previousQuestion()" id="prevBtn" style="display: none;">← Назад</button>
+            <button class="btn-next" onclick="nextQuestion()" id="nextBtn">Далее →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 6;
+        const answers = [null, null, null, null, null, null];
+        const correctAnswers = [1, 1, 1, 0, 1, 0];
+
+        function showQuestion(n) {
+            const blocks = document.querySelectorAll('.question-block');
+            blocks.forEach(block => block.classList.remove('active'));
+            blocks[n].classList.add('active');
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const quizContent = document.getElementById('quizContent');
+            const results = document.getElementById('results');
+
+            if (n === totalQuestions) {
+                quizContent.style.display = 'none';
+                results.classList.add('show');
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                calculateResults();
+            } else {
+                quizContent.style.display = 'block';
+                results.classList.remove('show');
+                prevBtn.style.display = n > 0 ? 'block' : 'none';
+                nextBtn.style.display = 'block';
+                nextBtn.textContent = n === totalQuestions - 1 ? 'Завершить →' : 'Далее →';
+            }
+
+            updateProgress();
+            updateOptions();
+        }
+
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        function updateOptions() {
+            const options = document.querySelectorAll('.question-block.active .option');
+            options.forEach((option, index) => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (answers[currentQuestion] !== null) {
+                    radio.checked = (index === answers[currentQuestion]);
+                    option.classList.toggle('selected', index === answers[currentQuestion]);
+                }
+                radio.addEventListener('change', function() {
+                    answers[currentQuestion] = index;
+                    document.querySelectorAll('.question-block.active .option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    option.classList.add('selected');
+                });
+            });
+        }
+
+        function nextQuestion() {
+            if (answers[currentQuestion] === null) {
+                alert('Пожалуйста, выберите ответ');
+                return;
+            }
+            currentQuestion++;
+            showQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function calculateResults() {
+            let score = 0;
+            for (let i = 0; i < totalQuestions; i++) {
+                if (answers[i] === correctAnswers[i]) {
+                    score++;
+                }
+            }
+
+            const percentage = Math.round((score / totalQuestions) * 100);
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+
+            let message = '';
+            if (percentage === 100) {
+                message = '🎉 Отлично! Вы полностью освоили материал микрокурса!';
+            } else if (percentage >= 80) {
+                message = '✅ Хороший результат! Вы хорошо разобрались в теме.';
+            } else if (percentage >= 60) {
+                message = '👍 Неплохо! Рекомендуем пересмотреть некоторые части курса.';
+            } else {
+                message = '📚 Стоит еще раз внимательно изучить материал.';
+            }
+
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers.fill(null);
+            document.getElementById('results').classList.remove('show');
+            showQuestion(0);
+        }
+
+        // Инициализация
+        showQuestion(0);
+    </script>
+</body>
+</html>

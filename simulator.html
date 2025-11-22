@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Симулятор: подпись исполнительной документации</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    margin: 0; padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  h1 {
+    color: #24476d;
+    margin-bottom: 20px;
+  }
+  #character {
+    width: 120px;
+    margin-bottom: 20px;
+  }
+  #instructions {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #555;
+  }
+  #card-container {
+    width: 600px;
+  }
+  .card-list {
+    border: 2px solid #2a7de1;
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 250px;
+    background: white;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .card {
+    background-color: #d9eaff;
+    margin: 8px 0;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: grab;
+    font-size: 1em;
+    box-shadow: 2px 2px 5px rgba(42, 125, 225, 0.3);
+  }
+  .card:active {
+    cursor: grabbing;
+  }
+  #buttons {
+    margin-top: 15px;
+  }
+  button {
+    background-color: #2a7de1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 0 8px;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #1a54b8;
+  }
+  #feedback {
+    margin-top: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+  }
+  #feedback.correct {
+    color: green;
+  }
+  #feedback.incorrect {
+    color: red;
+  }
+</style>
+</head>
+<body>
+
+<h1>Игровой симулятор: подпись исполнительной документации</h1>
+
+<img id="character" src="https://cdn-icons-png.flaticon.com/512/3046/3046128.png" alt="Инженер в каске" />
+
+<p id="instructions">Перетащите карточки в правильном порядке действий</p>
+
+<div id="card-container">
+  <div id="card-list" class="card-list" draggable="false">
+    <!-- Карточки будут динамически размещены здесь -->
+  </div>
+</div>
+
+<div id="buttons">
+  <button onclick="checkOrder()">Проверить порядок</button>
+  <button onclick="shuffleCards()">Перемешать</button>
+</div>
+
+<div id="feedback"></div>
+
+<script>
+const correctSequence = [
+  "Подготовить реестр и сопроводительное письмо",
+  "Уточнить у ответственного представителя Заказчика, когда можно привети ИД на подпись",
+  "Приехать к назначенному времени",
+  "Передать ответственному представителю Заказчика комплект документов",
+  "Подписать сопроводительное письмо и реестр у указанием даты",
+  "Уточнить, в течение какого времени можно будет забрать ИД"
+];
+
+const cardList = document.getElementById("card-list");
+const feedback = document.getElementById("feedback");
+
+function createCards(items) {
+  cardList.innerHTML = "";
+  items.forEach((text, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.draggable = true;
+    card.textContent = text;
+    card.dataset.index = index;
+    addDragHandlers(card);
+    cardList.appendChild(card);
+  });
+}
+
+function addDragHandlers(card) {
+  card.addEventListener("dragstart", dragStart);
+  card.addEventListener("dragover", dragOver);
+  card.addEventListener("drop", dragDrop);
+  card.addEventListener("dragenter", dragEnter);
+  card.addEventListener("dragleave", dragLeave);
+}
+
+let draggedItem = null;
+
+function dragStart(e) {
+  draggedItem = this;
+  setTimeout(() => { this.style.display = "none"; }, 0);
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function dragDrop(e) {
+  e.preventDefault();
+  if (this !== draggedItem) {
+    const nodes = Array.from(cardList.children);
+    const draggedIndex = nodes.indexOf(draggedItem);
+    const droppedIndex = nodes.indexOf(this);
+    if (draggedIndex < droppedIndex) {
+      cardList.insertBefore(draggedItem, this.nextSibling);
+    } else {
+      cardList.insertBefore(draggedItem, this);
+    }
+  }
+  draggedItem.style.display = "block";
+}
+
+function dragEnter(e) {
+  e.preventDefault();
+  if (this !== draggedItem) {
+    this.style.backgroundColor = "#a6c8ff";
+  }
+}
+
+function dragLeave(e) {
+  this.style.backgroundColor = "#d9eaff";
+}
+
+function checkOrder() {
+  const cards = Array.from(cardList.children);
+  let correctCount = 0;
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i].textContent === correctSequence[i]) {
+      cards[i].style.backgroundColor = "#a8e6a1"; // зеленый
+      correctCount++;
+    } else {
+      cards[i].style.backgroundColor = "#f2b8b5"; // красный
+    }
+  }
+  if (correctCount === correctSequence.length) {
+    feedback.textContent = "Поздравляем! Последовательность правильная.";
+    feedback.className = "correct";
+  } else {
+    feedback.textContent = `Неправильно. Правильно ${correctCount} из ${correctSequence.length}. Попробуйте снова.`;
+    feedback.className = "incorrect";
+  }
+}
+
+function shuffleCards() {
+  const shuffled = [...correctSequence].sort(() => Math.random() - 0.5);
+  createCards(shuffled);
+  feedback.textContent = "";
+}
+
+shuffleCards();
+</script>
+
+</body>
+</html>

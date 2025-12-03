@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Змейка с картинками</title>
+    <style>
+        body {display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);font-family:Arial;flex-direction:column;}
+        canvas {border:3px solid #fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);background:#000;}
+        .score {font-size:24px;color:white;font-weight:bold;}
+    </style>
+</head>
+<body>
+    <div class="score">Счёт: <span id="score">0</span></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    
+    <!-- ✅ ВАШИ ИЗОБРАЖЕНИЯ -->
+    <img id="snakeHead" src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/main/snake_head.png" style="display:none;">
+    <img id="snakeBody" src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/main/snake_body.png" style="display:none;">
+    <img id="foodImg" src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/main/apple.png" style="display:none;">
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 20;
+        const tileCount = canvas.width / gridSize;
+
+        let snake = [{x: 10, y: 10}];
+        let dx = 1;
+        let dy = 0;
+        let foodX, foodY;
+        let score = 0;
+        let gameRunning = true;
+        let paused = false;
+
+        // ✅ БЕСКОНЕЧНАЯ ЕДА - НЕ на змейке!
+        function randomFood() {
+            do {
+                foodX = Math.floor(Math.random() * tileCount) * gridSize;
+                foodY = Math.floor(Math.random() * tileCount) * gridSize;
+            } while (snake.some(part => part.x * gridSize === foodX && part.y * gridSize === foodY));
+        }
+        randomFood();
+
+        function drawGame() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // ✅ ВАШИ КАРТИНКИ
+            const foodImg = document.getElementById('foodImg');
+            ctx.drawImage(foodImg, foodX, foodY, gridSize-2, gridSize-2);
+
+            snake.forEach((part, index) => {
+                const img = index === 0 ? 
+                    document.getElementById('snakeHead') : 
+                    document.getElementById('snakeBody');
+                ctx.drawImage(img, part.x * gridSize, part.y * gridSize, gridSize-2, gridSize-2);
+            });
+        }
+
+        function updateGame() {
+            if (!gameRunning || paused) return;
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                gameOver(); return;
+            }
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    gameOver(); return;
+                }
+            }
+
+            snake.unshift(head);
+            if (head.x === foodX / gridSize && head.y === foodY / gridSize) {
+                score += 10;
+                document.getElementById('score').textContent = score;
+                randomFood(); // ✅ Новая еда!
+            } else {
+                snake.pop();
+            }
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 30px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('ИГРА ОКОНЧЕНА!', canvas.width/2, canvas.height/2);
+            ctx.font = '20px Arial';
+            ctx.fillText(`Счёт: ${score}`, canvas.width/2, canvas.height/2 + 40);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (!gameRunning) return;
+            if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; }
+            if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; }
+            if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; }
+            if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; }
+            if (e.keyCode === 80) paused = !paused; // P - пауза
+        });
+
+        function gameLoop() {
+            updateGame();
+            drawGame();
+            setTimeout(gameLoop, 120);
+        }
+        gameLoop();
+    </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подготовительный период строительства: Последовательность работ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .description {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .sequence-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 400px;
+        }
+        .step {
+            background: #ecf0f1;
+            border: 3px dashed #bdc3c7;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: move;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            font-weight: 500;
+            user-select: none;
+            position: relative;
+        }
+        .step:hover {
+            background: #d5dbdb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .step.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        .step.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            animation: pulse 0.6s ease-in-out;
+        }
+        .step.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 50px;
+        }
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+        .numbers {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: #34495e;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Подготовительный период строительства</h1>
+    <div class="description">
+        Расставьте в правильной последовательности подготовительные работы при прокладке подземных коммуникаций в условиях городской застройки [web:6][web:7][web:10].
+    </div>
+
+    <div class="sequence-container">
+        <div class="steps" id="steps">
+            <!-- Шаги будут добавлены JS -->
+        </div>
+        <div class="controls">
+            <button id="shuffleBtn">Перемешать</button>
+            <button id="checkBtn">Проверить</button>
+            <button id="resetBtn">Сбросить</button>
+        </div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const correctOrder = [
+            "Инженерно-геологические изыскания и создание геодезической основы [web:6]",
+            "Шурфование и локализация существующих подземных коммуникаций [web:10]",
+            "Получение разрешений и согласований с эксплуатирующими организациями [web:2][web:3]",
+            "Разбивка трассы и подготовка площадки для оборудования [web:7]",
+            "Подготовка проекта производства работ (ППР) [web:11]"
+        ];
+
+        let draggedItem = null;
+        let steps = [...correctOrder];
+
+        function init() {
+            renderSteps();
+            addDragListeners();
+        }
+
+        function renderSteps() {
+            const container = document.getElementById('steps');
+            container.innerHTML = '';
+            steps.forEach((step, index) => {
+                const div = document.createElement('div');
+                div.className = 'step';
+                div.draggable = true;
+                div.innerHTML = `
+                    <div class="numbers">${index + 1}</div>
+                    ${step}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addDragListeners() {
+            const stepElements = document.querySelectorAll('.step');
+            stepElements.forEach(step => {
+                step.addEventListener('dragstart', handleDragStart);
+                step.addEventListener('dragover', handleDragOver);
+                step.addEventListener('drop', handleDrop);
+                step.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            setTimeout(() => this.style.display = 'none', 0);
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedItem !== this) {
+                const stepsContainer = document.getElementById('steps');
+                const draggedIndex = Array.from(stepsContainer.children).indexOf(draggedItem);
+                const targetIndex = Array.from(stepsContainer.children).indexOf(this);
+                
+                steps.splice(draggedIndex, 1);
+                steps.splice(targetIndex, 0, draggedItem.textContent.trim().replace(/\s\d+$/, ''));
+                
+                renderSteps();
+                addDragListeners();
+            }
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            draggedItem.style.display = 'block';
+            draggedItem = null;
+        }
+
+        function shuffle() {
+            for (let i = steps.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [steps[i], steps[j]] = [steps[j], steps[i]];
+            }
+            renderSteps();
+            addDragListeners();
+            clearResult();
+        }
+
+        function check() {
+            const result = document.getElementById('result');
+            const stepElements = document.querySelectorAll('.step');
+            
+            let correct = true;
+            stepElements.forEach((step, index) => {
+                const text = step.textContent.trim().replace(/\s\d+$/, '');
+                if (text !== correctOrder[index]) {
+                    step.classList.add('incorrect');
+                    correct = false;
+                } else {
+                    step.classList.add('correct');
+                }
+            });
+
+            if (correct) {
+                result.textContent = '✅ Отлично! Последовательность верна!';
+                result.className = 'result success';
+            } else {
+                result.textContent = '❌ Проверьте последовательность и попробуйте снова!';
+                result.className = 'result error';
+            }
+        }
+
+        function reset() {
+            steps = [...correctOrder];
+            renderSteps();
+            addDragListeners();
+            clearResult();
+        }
+
+        function clearResult() {
+            document.getElementById('result').textContent = '';
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('correct', 'incorrect');
+            });
+        }
+
+        // Event listeners
+        document.getElementById('shuffleBtn').addEventListener('click', shuffle);
+        document.getElementById('checkBtn').addEventListener('click', check);
+        document.getElementById('resetBtn').addEventListener('click', reset);
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

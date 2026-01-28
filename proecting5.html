@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Инженерный расчет освещения v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Roboto+Condensed:wght@400;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c5a059;
+            --blueprint: #334155;
+            --bg-light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.98);
+            --border: rgba(197, 160, 89, 0.4);
+            --success: #16a34a;
+            --lamp-glow: rgba(255, 245, 200, 0.7);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--blueprint);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+            background-image: radial-gradient(circle at 2px 2px, rgba(197, 160, 89, 0.1) 1px, transparent 0);
+            background-size: 30px 30px;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            width: 100%;
+            max-width: 1100px;
+            background: var(--glass);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.05);
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+        }
+
+        /* ЛЕВАЯ ПАНЕЛЬ: АККУРАТНЫЕ БУЛЛИТЫ */
+        .sidebar-task {
+            background: #fff;
+            padding: 45px;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 { 
+            font-family: 'Roboto Condensed', sans-serif; 
+            font-size: 0.9rem; color: var(--gold); 
+            text-transform: uppercase; margin: 0 0 25px 0;
+            border-bottom: 2px solid var(--gold); 
+            padding-bottom: 12px; letter-spacing: 1.5px;
+        }
+
+        .task-intro { font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px; font-weight: 400; }
+
+        .data-list { list-style: none; padding: 0; margin: 0 0 30px 0; }
+        .data-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        .data-list li::before {
+            content: '—';
+            position: absolute; left: 0; color: var(--gold); font-weight: 700;
+        }
+
+        .formula-box {
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px dashed var(--gold);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .formula-box span {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        /* ПРАВАЯ ПАНЕЛЬ: ВЕРТИКАЛЬНЫЙ СТЕК БЕЗ НАЛОЖЕНИЙ */
+        .main-terminal {
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Контейнер для 3D, который держит место */
+        .scene-container {
+            width: 100%;
+            height: 220px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .room-3d {
+            width: 240px; height: 120px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(55deg) rotateZ(-25deg);
+            transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .wall { position: absolute; background: rgba(255, 255, 255, 0.5); border: 1px solid var(--border); }
+        .floor { width: 240px; height: 180px; transform: translateZ(-30px); background: #fff; }
+        
+        .ceiling {
+            position: absolute; width: 240px; height: 180px;
+            top: 0; left: 0; transform: translateZ(30px);
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            padding: 15px; box-sizing: border-box;
+        }
+
+        .lamp { width: 30px; height: 8px; background: #cbd5e1; margin: auto; border-radius: 2px; opacity: 0.2; }
+        .lamp.active { opacity: 1; background: #fff; box-shadow: 0 0 20px var(--lamp-glow), 0 0 40px var(--lamp-glow); }
+
+        /* ИНТЕРФЕЙС ВВОДА */
+        .input-section {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .input-group {
+            display: flex; gap: 12px; width: 100%;
+        }
+
+        input {
+            flex: 1; padding: 15px; border: 2px solid #cbd5e1; border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.6rem;
+            text-align: center; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 0 5px rgba(197, 160, 89, 0.1); }
+
+        .btn-check {
+            padding: 0 30px; background: #334155; color: #fff;
+            border: none; border-radius: 10px; font-family: 'Roboto Condensed', sans-serif;
+            text-transform: uppercase; font-weight: 700; cursor: pointer; transition: 0.3s;
+            letter-spacing: 1px;
+        }
+        .btn-check:hover { background: var(--gold); }
+
+        /* ОБОСНОВАНИЕ */
+        .justification {
+            display: none;
+            text-align: left;
+            background: #fff;
+            border: 1px solid var(--gold);
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out forwards;
+            box-shadow: 0 10px 25px rgba(197, 160, 89, 0.1);
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .justification h3 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 0.9rem; margin: 0 0 15px 0; color: var(--gold);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .justification p { font-size: 0.88rem; line-height: 1.7; color: var(--blueprint); margin: 0; }
+
+        #toast { position: fixed; bottom: 20px; right: 20px; padding: 15px 30px; border-radius: 10px; font-weight: 700; display: none; z-index: 1000; color: #fff; }
+
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+            .sidebar-task { border-right: none; border-bottom: 1px solid #e2e8f0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="workspace">
+        <div class="sidebar-task">
+            <h2>Расчет освещения</h2>
+            <div class="task-intro">Определите необходимое количество светильников для учебного класса площадью 45 м².</div>
+
+            <ul class="data-list">
+                <li><strong>Норма освещённости:</strong> 300 лк</li>
+                <li><strong>Выбран светильник:</strong> LED, 30 Вт</li>
+                <li><strong>Световой поток:</strong> 3000 лм</li>
+                <li><strong>Коэффициент запаса:</strong> 1,3</li>
+                <li><strong>Коэффициент отражения:</strong> 0,65</li>
+            </ul>
+
+            <div class="formula-box">
+                <small style="text-transform: uppercase; font-size: 0.6rem; color: #94a3b8; letter-spacing: 1px;">Расчетная формула</small>
+                <span>N = (300 · 45) / (3000 · 1.3 · 0.65)</span>
+            </div>
+        </div>
+
+        <div class="main-terminal">
+            <div class="scene-container">
+                <div class="room-3d">
+                    <div class="wall floor"></div>
+                    <div class="ceiling">
+                        <div class="lamp"></div><div class="lamp"></div><div class="lamp"></div>
+                        <div class="lamp"></div><div class="lamp"></div><div class="lamp"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group" id="input-group">
+                    <input type="number" id="ans" placeholder="0">
+                    <button class="btn-check" onclick="check()">Проверить</button>
+                </div>
+
+                <div class="justification" id="justification-box">
+                    <h3>Обоснование:</h3>
+                    <p>Для класса 45 м² потребуется 6 светильников. Округляем в большую сторону, потому что:<br><br>
+                    • Нельзя установить часть светильника.<br>
+                    • Округление в большую сторону гарантирует, что фактическая освещённость будет не ниже нормируемой (300 лк).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+<script>
+    const CORRECT_ANS = 6;
+
+    function check() {
+        const val = parseInt(document.getElementById('ans').value);
+        const toast = document.getElementById('toast');
+        const justBox = document.getElementById('justification-box');
+        const inputGrp = document.getElementById('input-group');
+        
+        if (val === CORRECT_ANS) {
+            toast.innerText = "ВЕРНО! Расчет утвержден.";
+            toast.style.background = "#16a34a";
+            
+            document.querySelectorAll('.lamp').forEach(l => l.classList.add('active'));
+            inputGrp.style.display = 'none';
+            justBox.style.display = 'block';
+            document.querySelector('.room-3d').style.transform = "rotateX(45deg) rotateZ(-15deg) scale(1.1)";
+            
+        } else if (val === 5) {
+            toast.innerText = "БЛИЗКО. Помните об округлении вверх!";
+            toast.style.background = "#f59e0b";
+        } else {
+            toast.innerText = "ОШИБКА. Проверьте вычисления.";
+            toast.style.background = "#ef4444";
+        }
+        
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+        setTimeout(sendHeight, 100);
+    }
+
+    function sendHeight() {
+        const h = document.documentElement.scrollHeight;
+        window.top.postMessage({ frameHeight: h + 20 }, '*');
+    }
+
+    window.onload = sendHeight;
+    window.onresize = sendHeight;
+    const observer = new MutationObserver(sendHeight);
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+</script>
+</body>
+</html>

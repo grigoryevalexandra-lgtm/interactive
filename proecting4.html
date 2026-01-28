@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Гидравлический расчет: Проектирование систем ВК</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Roboto+Condensed:wght@700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c5a059;
+            --blueprint: #334155;
+            --bg-light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.95);
+            --border: rgba(197, 160, 89, 0.4);
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--blueprint);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            background-image: 
+                linear-gradient(rgba(197, 160, 89, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(197, 160, 89, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* 3D МОДЕЛЬ ЗДАНИЯ */
+        .scene {
+            perspective: 1200px;
+            width: 100%; height: 260px;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .building-3d {
+            width: 80px; height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate { from { transform: rotateY(0deg) rotateX(10deg); } to { transform: rotateY(360deg) rotateX(10deg); } }
+
+        .wall {
+            position: absolute; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(2px);
+            display: grid; grid-template-rows: repeat(10, 1fr);
+        }
+
+        .front { transform: translateZ(40px); }
+        .back  { transform: rotateY(180deg) translateZ(40px); }
+        .right { transform: rotateY(90deg) translateZ(40px); width: 80px; }
+        .left  { transform: rotateY(-90deg) translateZ(40px); width: 80px; }
+
+        .floor { border-bottom: 1px solid rgba(197, 160, 89, 0.1); transition: 0.6s; }
+        .floor.active { background: rgba(16, 185, 129, 0.15); box-shadow: inset 0 0 15px var(--success); }
+
+        /* ОСНОВНАЯ ПАНЕЛЬ */
+        .main-panel {
+            width: 100%; max-width: 950px;
+            background: var(--glass);
+            border-radius: 12px; border: 1px solid var(--border);
+            padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            display: grid; grid-template-columns: 1.2fr 1.5fr; gap: 30px;
+        }
+
+        .task-sidebar { border-right: 1px solid #e2e8f0; padding-right: 25px; }
+        h2 { font-family: 'Roboto Condensed', sans-serif; font-size: 1rem; color: var(--gold); text-transform: uppercase; margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 15px;}
+        .task-text { font-size: 0.75rem; line-height: 1.5; color: #475569; }
+        .task-text strong { color: var(--blueprint); }
+        .formula { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px dashed var(--gold); margin: 10px 0; }
+
+        .step { display: none; }
+        .step.active { display: flex; flex-direction: column; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+        
+        input {
+            width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--blueprint);
+            background: #fff; box-sizing: border-box;
+        }
+
+        .btn-engineer {
+            padding: 18px; background: var(--blueprint); color: #fff;
+            border: none; border-radius: 6px; cursor: pointer;
+            font-family: 'Roboto Condensed', sans-serif; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+        }
+        .btn-engineer:hover { background: var(--gold); transform: translateY(-2px); }
+
+        .dashboard {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;
+        }
+        .stat { text-align: center; }
+        .stat-val { display: block; font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--gold); font-weight: 700; }
+        .stat-lab { font-size: 0.55rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; }
+
+        #toast { position: fixed; bottom: 20px; left: 20px; right: 20px; padding: 12px; background: #ef4444; color: #fff; border-radius: 6px; display: none; font-size: 0.75rem; text-align: center; z-index: 100; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="scene">
+        <div class="building-3d">
+            <div class="wall front"></div><div class="wall back"></div>
+            <div class="wall right"></div><div class="wall left"></div>
+        </div>
+    </div>
+
+    <div class="main-panel">
+        <div class="task-sidebar">
+            <h2>Техническое задание</h2>
+            <div class="task-text">
+                <strong>Объект:</strong> 10-эт. 2-секционный дом (420 кв.).<br>
+                <strong>Нагрузка:</strong> 869 жителей.<br>
+                <strong>Оборудование ЖК:</strong> ХВС — 1680 шт., ГВС — 1260 шт.<br><br>
+                <strong>Данные по квартире (3 чел.):</strong>
+                <ul>
+                    <li>Смеситель мойки</li>
+                    <li>Душ с мелким поддоном</li>
+                    <li>Смеситель умывальника</li>
+                    <li>Унитаз со смывным краном</li>
+                </ul>
+                <strong>Формула вероятности Ptot:</strong>
+                <div class="formula">P = (q_hr * U) / (q0 * N * 3600)</div>
+            </div>
+        </div>
+
+        <div class="calculator">
+            <div class="step active" id="s1">
+                <div class="input-group"><label>Количество жителей (U), чел.</label><input type="number" id="u" placeholder="Введите U"></div>
+                <div class="input-group"><label>Приборы ХВС (N), шт.</label><input type="number" id="n" placeholder="Введите N"></div>
+                <button class="btn-engineer" onclick="check1()">Принять исходные данные</button>
+            </div>
+
+            <div class="step" id="s2">
+                <div class="input-group"><label>Общая вероятность Ptot (формула 3)</label><input type="number" step="0.0001" id="p" placeholder="0.0000"></div>
+                <div class="input-group"><label>Коэффициент α (alpha)</label><input type="number" step="0.001" id="a" placeholder="0.000"></div>
+                <button class="btn-engineer" onclick="check2()">Рассчитать секундный расход</button>
+            </div>
+
+            <div class="step" id="s3">
+                <div class="input-group"><label>Расход теплоты QTh (кВт)</label><input type="number" step="0.1" id="q" placeholder="000.0"></div>
+                <button class="btn-engineer" onclick="check3()">Завершить расчет</button>
+            </div>
+
+            <div class="dashboard">
+                <div class="stat"><span class="stat-val" id="d-q">0.000</span><span class="stat-lab">л/сек (q tot)</span></div>
+                <div class="stat"><span class="stat-val" id="d-h">0.00</span><span class="stat-lab">м³/час (q hr)</span></div>
+                <div class="stat"><span class="stat-val" id="d-p">0%</span><span class="stat-lab">Анализ</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+<script>
+    // ПРАВИЛЬНЫЕ ОТВЕТЫ СОГЛАСНО ВАШЕМУ ДОКУМЕНТУ
+    const SOL = { U: 869, N: 1680, P: 0.0059, A: 4.126, Q: 176.4 };
+
+    document.querySelectorAll('.wall').forEach(w => {
+        for(let i=0; i<10; i++) w.appendChild(document.createElement('div')).className='floor';
+    });
+
+    function showT(m, ok=false) {
+        const t = document.getElementById('toast');
+        t.innerText = m; t.style.background = ok ? "var(--success)" : "#ef4444";
+        t.style.display = 'block'; setTimeout(() => t.style.display='none', 3000);
+    }
+
+    function light(c) {
+        document.querySelectorAll('.floor').forEach((f,i) => { if(i%10 < c) f.classList.add('active'); });
+    }
+
+    function check1() {
+        if(parseInt(document.getElementById('u').value)===SOL.U && parseInt(document.getElementById('n').value)===SOL.N) {
+            document.getElementById('s1').classList.remove('active');
+            document.getElementById('s2').classList.add('active');
+            document.getElementById('d-p').innerText='30%';
+            light(3); sendHeight();
+        } else showT("Ошибка! Проверьте данные жителей и приборов в ТЗ.");
+    }
+
+    function check2() {
+        const p = parseFloat(document.getElementById('p').value);
+        const a = parseFloat(document.getElementById('a').value);
+        if(p === SOL.P && a === SOL.A) {
+            document.getElementById('s2').classList.remove('active');
+            document.getElementById('s3').classList.add('active');
+            document.getElementById('d-q').innerText='4.126';
+            document.getElementById('d-h').innerText='9.74';
+            document.getElementById('d-p').innerText='70%';
+            light(7); sendHeight();
+        } else showT("Ошибка в расчете вероятности (Ptot) или коэффициента α.");
+    }
+
+    function check3() {
+        if(Math.abs(parseFloat(document.getElementById('q').value)-SOL.Q) < 0.2) {
+            document.getElementById('d-p').innerText='100%';
+            light(10); showT("Расчет утвержден! Система сбалансирована.", true);
+        } else showT("Ошибка в расчете тепловой мощности (QTh).");
+    }
+
+    function sendHeight() {
+        const h = document.documentElement.scrollHeight;
+        window.top.postMessage({ frameHeight: h + 30 }, '*');
+    }
+    window.onload = sendHeight;
+    const observer = new MutationObserver(sendHeight);
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+</script>
+</body>
+</html>

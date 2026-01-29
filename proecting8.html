@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Упражнение: Заполнение пропусков</title>
+    <style>
+        :root {
+            --bg-color: #fdfbf7;
+            --card-bg: #ffffff;
+            --gold-main: #b8860b;
+            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f1d37e 50%, #b8860b 100%);
+            --text-dark: #2c2c2c;
+            --text-gray: #5e5e5e;
+            --border-color: rgba(212, 175, 55, 0.3);
+            --correct: #3a7a5e;
+            --incorrect: #a73a3a;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Georgia', serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .exercise-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--gold-gradient);
+            margin: 10px auto;
+        }
+
+        .question-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .question-item {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-size: 16px;
+            color: var(--text-gray);
+            font-family: 'Verdana', sans-serif;
+        }
+
+        input[type="text"] {
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            background: transparent;
+            padding: 2px 10px;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            color: var(--gold-main);
+            width: 220px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-bottom-color: var(--gold-main);
+            background: #fffdf5;
+        }
+
+        input.correct {
+            border-bottom-color: var(--correct);
+            color: var(--correct);
+            background: #f0fff4;
+        }
+
+        input.incorrect {
+            border-bottom-color: var(--incorrect);
+            color: var(--incorrect);
+            background: #fff5f5;
+        }
+
+        .controls {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-check {
+            background: var(--gold-gradient);
+            color: white;
+        }
+
+        .btn-check:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-reset {
+            background: #f1f1f1;
+            color: #777;
+        }
+
+        .btn-reset:hover {
+            background: #e5e5e5;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .exercise-container { padding: 20px; }
+            input[type="text"] { width: 100%; margin-top: 5px; }
+            .question-item { margin-bottom: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="exercise-container">
+    <h2>Заполните пропущенные в тексте слова</h2>
+    
+    <div class="question-list">
+        <div class="question-item">
+            1. Технические условия (ТУ) выдаются <input type="text" id="q1" placeholder="...">.
+        </div>
+        <div class="question-item">
+            2. Для проведения испытаний и измерений привлекается <input type="text" id="q2" placeholder="..."> электролаборатория.
+        </div>
+        <div class="question-item">
+            3. Акт <input type="text" id="q3" placeholder="..." style="width: 250px;"> является финальным разрешительным документом, выдаваемым Ростехнадзором.
+        </div>
+        <div class="question-item">
+            4. Проектная документация должна строго соответствовать требованиям <input type="text" id="q4" placeholder="...">.
+        </div>
+        <div class="question-item">
+            5. Для объектов мощностью свыше <input type="text" id="q5" placeholder="..." style="width: 120px;"> требуется получение допуска Ростехнадзора.
+        </div>
+    </div>
+
+    <div id="feedback"></div>
+
+    <div class="controls">
+        <button class="btn btn-check" onclick="checkAnswers()">Проверить</button>
+        <button class="btn btn-reset" onclick="resetExercise()">Сброс</button>
+    </div>
+</div>
+
+<script>
+    const answers = {
+        q1: ["сетевой организацией", "сетевой", "со"],
+        q2: ["аккредитованная", "аккредитованная"],
+        q3: ["допуска в эксплуатацию", "допуска"],
+        q4: ["технических условий", "ту", "технических условий (ту)"],
+        q5: ["150 ква", "150", "150 кВА", "150 кВ·А"]
+    };
+
+    function checkAnswers() {
+        let correctCount = 0;
+        const total = 5;
+
+        for (let i = 1; i <= total; i++) {
+            const input = document.getElementById('q' + i);
+            const val = input.value.trim().toLowerCase().replace(/·/g, '');
+
+            if (answers['q' + i].some(a => a.toLowerCase().replace(/·/g, '') === val)) {
+                input.className = 'correct';
+                correctCount++;
+            } else {
+                input.className = 'incorrect';
+            }
+        }
+
+        const feedback = document.getElementById('feedback');
+        if (correctCount === total) {
+            feedback.style.color = 'var(--correct)';
+            feedback.innerText = 'Отлично! Все ответы верны.';
+        } else {
+            feedback.style.color = 'var(--incorrect)';
+            feedback.innerText = `Верно: ${correctCount} из ${total}. Попробуйте еще раз.`;
+        }
+    }
+
+    function resetExercise() {
+        for (let i = 1; i <= 5; i++) {
+            const input = document.getElementById('q' + i);
+            input.value = '';
+            input.className = '';
+        }
+        document.getElementById('feedback').innerText = '';
+    }
+</script>
+
+</body>
+</html>

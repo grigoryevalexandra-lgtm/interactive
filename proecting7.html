@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактив: Ошибки ЭОМ</title>
+    <style>
+        /* Цветовая палитра "Luxury Beige & Gold" */
+        :root {
+            --bg-color: #fdfbf7;
+            --card-bg: #ffffff;
+            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f1d37e 50%, #b8860b 100%);
+            --text-main: #2c2c2c;
+            --text-light: #5e5e5e;
+            --red-accent: #a73a3a;
+            --green-accent: #3a7a5e;
+            --shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif; /* Более классический и дорогой шрифт */
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Контейнер карусели */
+        .carousel-wrapper {
+            width: 95%;
+            max-width: 800px;
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            overflow: hidden;
+        }
+
+        .slides-container {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            padding: 40px 60px;
+        }
+
+        /* Заголовок ошибки */
+        .error-num {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b8860b;
+            margin-bottom: 10px;
+            display: block;
+            text-align: center;
+        }
+
+        .error-title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        /* Сетка Проблема / Решение */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .box {
+            padding: 25px;
+            border-radius: 15px;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        /* Левая сторона - Проблема */
+        .box-problem {
+            background: #fffafa;
+            border: 1px solid #f5e1e1;
+        }
+
+        .box-problem .icon {
+            color: var(--red-accent);
+            border: 2px solid var(--red-accent);
+        }
+
+        /* Правая сторона - Решение */
+        .box-solution {
+            background: #fafffa;
+            border: 1px solid #e1f5e1;
+        }
+
+        .box-solution .icon {
+            color: var(--green-accent);
+            border: 2px solid var(--green-accent);
+        }
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-family: sans-serif;
+        }
+
+        .box h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .box p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-light);
+            font-family: 'Verdana', sans-serif;
+        }
+
+        /* Навигация */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            background: var(--gold-gradient);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-size: 20px;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(184, 134, 11, 0.3);
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+            filter: brightness(1.1);
+        }
+
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        .dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding-bottom: 25px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #dcdcdc;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #b8860b;
+            transform: scale(1.3);
+            width: 20px;
+            border-radius: 4px;
+        }
+
+        /* Адаптивность для мобильных внутри фрейма */
+        @media (max-width: 650px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .slide { padding: 30px 45px; }
+            .carousel-wrapper { border-radius: 0; width: 100%; height: 100vh; }
+            .error-title { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="carousel-wrapper">
+    <button class="nav-btn prev" onclick="moveSlide(-1)">❮</button>
+    <button class="nav-btn next" onclick="moveSlide(1)">❯</button>
+
+    <div class="slides-container" id="track">
+        <div class="slide">
+            <span class="error-num">Ошибка 1</span>
+            <div class="error-title">Запас мощности</div>
+            <div class="content-grid">
+                <div class="box box-problem">
+                    <div class="icon">✕</div>
+                    <h4>Проблема</h4>
+                    <p>Расчёт "впритык". При добавлении любого оборудования мощности не хватает.</p>
+                </div>
+                <div class="box box-solution">
+                    <div class="icon">✓</div>
+                    <h4>Решение</h4>
+                    <p>Всегда добавляйте 20-30% запаса к расчётной мощности.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <span class="error-num">Ошибка 2</span>
+            <div class="error-title">Сечение кабеля</div>
+            <div class="content-grid">
+                <div class="box box-problem">
+                    <div class="icon">✕</div>
+                    <h4>Проблема</h4>
+                    <p>Учёт только нагрева. Потери напряжения на длине делают работу техники нестабильной.</p>
+                </div>
+                <div class="box box-solution">
+                    <div class="icon">✓</div>
+                    <h4>Решение</h4>
+                    <p>Проверяйте три критерия: нагрев, потери и механическую прочность.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <span class="error-num">Ошибка 3</span>
+            <div class="error-title">Защита розеток</div>
+            <div class="content-grid">
+                <div class="box box-problem">
+                    <div class="icon">✕</div>
+                    <h4>Проблема</h4>
+                    <p>Отсутствие УЗО. Первый же пробой изоляции создает риск удара током.</p>
+                </div>
+                <div class="box box-solution">
+                    <div class="icon">✓</div>
+                    <h4>Решение</h4>
+                    <p>Предусматривайте УЗО на всех розеточных группах и освещении.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <span class="error-num">Ошибка 4</span>
+            <div class="error-title">Распределение линий</div>
+            <div class="content-grid">
+                <div class="box box-problem">
+                    <div class="icon">✕</div>
+                    <h4>Проблема</h4>
+                    <p>Все розетки на одном АВ 25А. Перегрузка при одновременном включении приборов.</p>
+                </div>
+                <div class="box box-solution">
+                    <div class="icon">✓</div>
+                    <h4>Решение</h4>
+                    <p>Распределяйте розетки на несколько независимых линий.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <span class="error-num">Ошибка 5</span>
+            <div class="error-title">Марка кабеля</div>
+            <div class="content-grid">
+                <div class="box box-problem">
+                    <div class="icon">✕</div>
+                    <h4>Проблема</h4>
+                    <p>Старый кабель или неверная марка. Потеря свойств изоляции и риск пожара.</p>
+                </div>
+                <div class="box box-solution">
+                    <div class="icon">✓</div>
+                    <h4>Решение</h4>
+                    <p>Используйте только современные кабели с действующими сертификатами (нг-LS).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dots" id="dots">
+        <div class="dot active" onclick="currentSlide(0)"></div>
+        <div class="dot" onclick="currentSlide(1)"></div>
+        <div class="dot" onclick="currentSlide(2)"></div>
+        <div class="dot" onclick="currentSlide(3)"></div>
+        <div class="dot" onclick="currentSlide(4)"></div>
+    </div>
+</div>
+
+<script>
+    let currentIndex = 0;
+    const track = document.getElementById('track');
+    const dots = document.querySelectorAll('.dot');
+    const totalSlides = 5;
+
+    function moveSlide(direction) {
+        currentIndex += direction;
+        if (currentIndex >= totalSlides) currentIndex = 0;
+        if (currentIndex < 0) currentIndex = totalSlides - 1;
+        updateCarousel();
+    }
+
+    function currentSlide(index) {
+        currentIndex = index;
+        updateCarousel();
+    }
+
+    function updateCarousel() {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // Автопрокрутка раз в 10 секунд (можно убрать)
+    // setInterval(() => moveSlide(1), 10000);
+</script>
+
+</body>
+</html>

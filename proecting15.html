@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Упражнение: Сечения проводников</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --beige-bg: #f5f2eb;
+            --gold-accent: #b8965a;
+            --deep-gray: #333333;
+            --border-color: #d1c7b7;
+        }
+
+        body {
+            background-color: var(--beige-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--deep-gray);
+            line-height: 1.4;
+        }
+
+        .header-font { font-family: 'Playfair Display', serif; }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .option-btn {
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .option-btn:hover {
+            border-color: var(--gold-accent);
+            background: rgba(184, 150, 90, 0.05);
+        }
+
+        .option-btn.selected {
+            background: var(--gold-accent);
+            color: white;
+            border-color: var(--gold-accent);
+        }
+
+        .option-btn.correct { background: #4a7c59; color: white; border-color: #4a7c59; }
+        .option-btn.incorrect { background: #a64d4d; color: white; border-color: #a64d4d; }
+
+        .btn-check {
+            background-color: var(--deep-gray);
+            color: var(--beige-bg);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-check:hover { background-color: var(--gold-accent); }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="header-font text-2xl text-gray-800 mb-2">Укажите минимально допустимое сечение медного проводника для каждого из случаев: </h1>
+            <p class="text-[10px] uppercase tracking-[3px] text-gold-accent"></p>
+            <div class="h-0.5 w-16 bg-gold-accent mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="card p-5 flex flex-col justify-between" data-correct="6">
+                <p class="text-xs mb-4 leading-relaxed">Проводник для подключения трубы отопления к <strong>ГЗШ</strong> (в рамках ОСУП).</p>
+                <div class="grid grid-cols-3 gap-2 mt-auto">
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 2.5)">2.5</button>
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 4)">4</button>
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 6)">6</button>
+                </div>
+            </div>
+
+            <div class="card p-5 flex flex-col justify-between" data-correct="4">
+                <p class="text-xs mb-4 leading-relaxed">Соединение раковины с <strong>КУП</strong> (открытая прокладка без защиты).</p>
+                <div class="grid grid-cols-3 gap-2 mt-auto">
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 2.5)">2.5</button>
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 4)">4</button>
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 6)">6</button>
+                </div>
+            </div>
+
+            <div class="card p-5 flex flex-col justify-between" data-correct="6">
+                <p class="text-xs mb-4 leading-relaxed">Проводник от <strong>шины КУП</strong> в ванной до <strong>шины PE</strong> в щитке.</p>
+                <div class="grid grid-cols-3 gap-2 mt-auto">
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 2.5)">2.5</button>
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 4)">4</button>
+                    <button class="option-btn py-2 rounded-sm" onclick="select(this, 6)">6</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button onclick="validate()" class="btn-check px-12 py-3 shadow-md">Проверить ответы</button>
+            <div class="mt-4">
+                <button onclick="location.reload()" class="text-[9px] uppercase tracking-widest text-gray-400 hover:text-gold-accent transition">Сбросить</button>
+            </div>
+        </div>
+
+        <div id="rationale" class="mt-8 hidden max-w-4xl mx-auto p-6 bg-white border border-gold-accent shadow-sm mb-8">
+            <h4 class="header-font text-xl mb-4 text-gray-800">Нормативное обоснование:</h4>
+            <ul class="text-xs space-y-3 text-gray-700 leading-relaxed">
+                <li>• <strong>ОСУП (6 мм²):</strong> Согласно ПУЭ п. 1.7.137, сечение медного проводника основной системы должно быть не менее 6 мм².</li>
+                <li>• <strong>ДСУП открыто (4 мм²):</strong> При отсутствии механической защиты для ДСУП минимальное сечение составляет 4 мм² (медный провод).</li>
+                <li>• <strong>Линия КУП-Щиток (6 мм²):</strong> Проводник, связывающий дополнительную систему с основной, должен соответствовать требованиям ОСУП.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function select(btn, val) {
+            const container = btn.closest('.grid');
+            container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            btn.parentElement.parentElement.dataset.userAns = val;
+        }
+
+        function validate() {
+            const cards = document.querySelectorAll('.card');
+            let allCorrect = true;
+
+            cards.forEach(card => {
+                const correctVal = card.dataset.correct;
+                const userVal = card.dataset.userAns;
+                const buttons = card.querySelectorAll('.option-btn');
+
+                buttons.forEach(btn => {
+                    btn.classList.remove('correct', 'incorrect');
+                    const btnVal = btn.innerText;
+                    
+                    if (btn.classList.contains('selected')) {
+                        if (btnVal === correctVal) {
+                            btn.classList.add('correct');
+                        } else {
+                            btn.classList.add('incorrect');
+                            allCorrect = false;
+                        }
+                    }
+                });
+                if (!userVal) allCorrect = false;
+            });
+
+            document.getElementById('rationale').classList.remove('hidden');
+            document.getElementById('rationale').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

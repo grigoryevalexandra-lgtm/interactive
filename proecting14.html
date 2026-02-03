@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Упражнение: ОСУП и ДСУП</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --beige-bg: #f5f2eb;
+            --gold-accent: #b8965a;
+            --deep-gray: #333333;
+            --border-color: #d1c7b7;
+        }
+
+        body {
+            background-color: var(--beige-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--deep-gray);
+            line-height: 1.4;
+        }
+
+        .header-font { font-family: 'Playfair Display', serif; font-style: normal; }
+
+        .drag-item {
+            cursor: grab;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            user-select: none;
+            display: inline-block;
+            width: calc(33.33% - 0.75rem); /* Три элемента в ряд в пуле */
+            min-width: 200px;
+        }
+
+        .drag-item:hover {
+            border-color: var(--gold-accent);
+            box-shadow: 0 2px 8px rgba(184, 150, 90, 0.2);
+        }
+
+        /* Зоны сброса: элементы в них становятся на всю ширину */
+        .drop-zone .drag-item {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone, .pool-area {
+            min-height: 120px;
+            background-color: rgba(209, 199, 183, 0.15);
+            border: 1px dashed var(--gold-accent);
+            padding: 0.75rem;
+        }
+
+        .pool-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            border-style: solid;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--gold-accent); }
+
+        .correct { border: 2px solid #4a7c59 !important; background-color: #f0f4f0 !important; }
+        .incorrect { border: 2px solid #a64d4d !important; background-color: #f4f0f0 !important; }
+
+        .btn-check {
+            background-color: var(--deep-gray);
+            color: var(--beige-bg);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-check:hover { background-color: var(--gold-accent); }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-6">
+            <h1 class="header-font text-2xl text-gray-800 mb-2">Разделите элементы на две колонки:</h1>
+            <div class="h-0.5 w-16 bg-gold-accent mx-auto"></div>
+        </div>
+
+        <div class="mb-8">
+            <h3 class="font-semibold mb-3 text-[10px] uppercase tracking-widest text-gold-accent text-center">Доступные элементы:</h3>
+            <div id="pool" class="pool-area rounded-sm">
+                <div draggable="true" id="e1" data-ans="osup" class="drag-item p-3 text-xs shadow-sm">Стальная труба холодного водоснабжения, входящая в здание.</div>
+                <div draggable="true" id="e2" data-ans="dsup" class="drag-item p-3 text-xs shadow-sm">Заземляющий контакт (PE) розетки стиральной машины в ванной.</div>
+                <div draggable="true" id="e3" data-ans="dsup" class="drag-item p-3 text-xs shadow-sm">Металлический корпус встроенной душевой кабины.</div>
+                <div draggable="true" id="e4" data-ans="osup" class="drag-item p-3 text-xs shadow-sm">Главный защитный (PE) проводник питающей линии.</div>
+                <div draggable="true" id="e5" data-ans="osup" class="drag-item p-3 text-xs shadow-sm">Арматура железобетонного фундамента здания.</div>
+                <div draggable="true" id="e6" data-ans="dsup" class="drag-item p-3 text-xs shadow-sm">Металлическая труба отопления (полотенцесушитель) в ванной.</div>
+                <div draggable="true" id="e7" data-ans="osup" class="drag-item p-3 text-xs shadow-sm">Стальной каркас подвесного потолка в коридоре.</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col">
+                <h3 class="font-semibold mb-2 text-xs uppercase tracking-wider text-center">Относится к ОСУП</h3>
+                <div id="osup" class="drop-zone flex flex-col rounded-sm"></div>
+            </div>
+            <div class="flex flex-col">
+                <h3 class="font-semibold mb-2 text-xs uppercase tracking-wider text-center">Относится к ДСУП в ванной</h3>
+                <div id="dsup" class="drop-zone flex flex-col rounded-sm"></div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center pb-4">
+            <button onclick="validate()" class="btn-check px-10 py-3 shadow-md">Проверить решение</button>
+            <div class="mt-3">
+                <button onclick="location.reload()" class="text-[9px] uppercase tracking-widest text-gray-400 hover:text-gold-accent transition">Сбросить всё</button>
+            </div>
+        </div>
+
+        <div id="rationale" class="mt-6 hidden max-w-4xl mx-auto p-6 bg-white border border-gold-accent shadow-sm mb-8">
+            <h4 class="header-font text-xl mb-3 text-gray-800">Обоснование:</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed text-gray-700">
+                <p><strong>Элементы 1, 4, 5, 7</strong> — общестроительные и вводные узлы, объединяемые в <strong>Основной системе (ОСУП)</strong>.</p>
+                <p><strong>Элементы 2, 3, 6</strong> — локальные части внутри ванной, подключаемые в <strong>Дополнительной системе (ДСУП)</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const items = document.querySelectorAll('.drag-item');
+        const zones = document.querySelectorAll('.drop-zone, #pool');
+
+        items.forEach(item => {
+            item.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text', e.target.id);
+                e.target.style.opacity = "0.5";
+            });
+            item.addEventListener('dragend', e => e.target.style.opacity = "1");
+        });
+
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData('text');
+                const element = document.getElementById(id);
+                if (element) zone.appendChild(element);
+            });
+        });
+
+        function validate() {
+            const placedItems = document.querySelectorAll('.drop-zone .drag-item');
+            placedItems.forEach(item => {
+                const parentId = item.parentElement.id;
+                if (item.dataset.ans === parentId) {
+                    item.classList.add('correct');
+                    item.classList.remove('incorrect');
+                } else {
+                    item.classList.add('incorrect');
+                    item.classList.remove('correct');
+                }
+            });
+            document.getElementById('rationale').classList.remove('hidden');
+            document.getElementById('rationale').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

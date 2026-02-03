@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: Проектирование (Карусель)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --beige-bg: #f5f2eb;
+            --gold-accent: #b8965a;
+            --deep-gray: #333333;
+            --border-color: #d1c7b7;
+        }
+
+        body {
+            background-color: var(--beige-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--deep-gray);
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        .header-font { font-family: 'Playfair Display', serif; }
+
+        .step-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option {
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            background: #fff;
+        }
+
+        .option:hover { border-color: var(--gold-accent); background: rgba(184, 150, 90, 0.05); }
+        .option.selected { border-color: var(--gold-accent); background: rgba(184, 150, 90, 0.1); font-weight: 600; }
+        
+        .correct { border-color: #4a7c59 !important; background-color: #f0f4f0 !important; color: #4a7c59; }
+        .incorrect { border-color: #a64d4d !important; background-color: #f4f0f0 !important; color: #a64d4d; }
+
+        .btn-gold {
+            background-color: var(--deep-gray);
+            color: var(--beige-bg);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 12px 30px;
+            transition: 0.3s;
+        }
+
+        .btn-gold:hover { background-color: var(--gold-accent); }
+
+        .progress-bar {
+            height: 2px;
+            background: var(--border-color);
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gold-accent);
+            width: 33.3%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-12">
+
+    <div class="max-w-2xl mx-auto bg-white p-8 md:p-12 shadow-sm border border-gray-100">
+        <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="text-center mb-8">
+            <h1 class="header-font text-xl text-gray-800 uppercase tracking-widest">Тестирование</h1>
+            <div class="h-px w-12 bg-gold-accent mx-auto mt-2"></div>
+        </div>
+
+        <div id="step1" class="step-container active" data-ans="1">
+            <p class="text-sm font-semibold mb-6">1. Какой инструмент используется для проверки пересечений электрических трасс с другими системами?</p>
+            <div class="options-list mb-8">
+                <div class="option" onclick="select(this, 1)">«Проверка на пересечения»</div>
+                <div class="option" onclick="select(this, 2)">«Синхронизация»</div>
+                <div class="option" onclick="select(this, 3)">«Фильтр по дисциплинам»</div>
+                <div class="option" onclick="select(this, 4)">«Создать цепь»</div>
+            </div>
+            <div class="flex justify-center">
+                <button onclick="check(1)" id="checkBtn1" class="btn-gold">Проверить</button>
+                <button onclick="next(2)" id="nextBtn1" class="btn-gold hidden">Далее</button>
+            </div>
+        </div>
+
+        <div id="step2" class="step-container" data-ans="3">
+            <p class="text-sm font-semibold mb-6">2. Какой нормативный документ регламентирует требования к освещённости помещений?</p>
+            <div class="options-list mb-8">
+                <div class="option" onclick="select(this, 1)">ПУЭ 7</div>
+                <div class="option" onclick="select(this, 2)">ГОСТ Р 21.101-2020</div>
+                <div class="option" onclick="select(this, 3)">СП 52.13330.2016</div>
+                <div class="option" onclick="select(this, 4)">СП 256.1325800.2016</div>
+            </div>
+            <div class="flex justify-center">
+                <button onclick="check(2)" id="checkBtn2" class="btn-gold">Проверить</button>
+                <button onclick="next(3)" id="nextBtn2" class="btn-gold hidden">Далее</button>
+            </div>
+        </div>
+
+        <div id="step3" class="step-container" data-ans="2,4">
+            <p class="text-sm font-semibold mb-2">3. Какие действия необходимо выполнить после важных изменений в модели Revit?</p>
+            <p class="text-[10px] text-gold-accent mb-6 uppercase tracking-wider">(Выберите 2 варианта)</p>
+            <div class="options-list mb-8">
+                <div class="option" onclick="selectMulti(this, 2)">Сохранять модель</div>
+                <div class="option" onclick="selectMulti(this, 1)">Всегда перезагружать программу</div>
+                <div class="option" onclick="selectMulti(this, 4)">Синхронизировать модель (на сервере)</div>
+                <div class="option" onclick="selectMulti(this, 3)">Распечатать чертёж для проверки</div>
+            </div>
+            <div class="flex justify-center">
+                <button onclick="check(3)" id="checkBtn3" class="btn-gold">Завершить</button>
+            </div>
+        </div>
+
+        <div id="step4" class="step-container text-center">
+            <div class="mb-4 text-gold-accent">
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h2 class="header-font text-2xl mb-4">Тест завершен</h2>
+            <p class="text-sm text-gray-600 mb-8">Поздравляем! Вы ответили верно на все вопросы урока.</p>
+            <button onclick="location.reload()" class="btn-gold">Вернуться к началу</button>
+        </div>
+
+        <div id="step-fail" class="step-container text-center">
+            <h2 class="header-font text-2xl mb-4 text-gray-800">Тест не завершен</h2>
+            <p class="text-sm text-gray-600 mb-8">К сожалению, в ответах были допущены ошибки. Попробуйте пройти тест еще раз, чтобы закрепить материал.</p>
+            <button onclick="location.reload()" class="btn-gold">Попробовать снова</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let errorsCount = 0;
+
+        function select(el, val) {
+            const list = el.parentElement;
+            list.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function selectMulti(el, val) {
+            el.classList.toggle('selected');
+        }
+
+        function check(step) {
+            const container = document.getElementById('step' + step);
+            const correctAns = container.dataset.ans.split(',');
+            const options = container.querySelectorAll('.option');
+            const selectedOptions = container.querySelectorAll('.option.selected');
+            
+            if (selectedOptions.length === 0) return;
+
+            let stepHasError = false;
+
+            // Проверяем все опции на корректность
+            options.forEach((opt, index) => {
+                const val = (index + 1).toString();
+                const isSelected = opt.classList.contains('selected');
+                const isCorrect = correctAns.includes(val);
+
+                if (isSelected) {
+                    if (isCorrect) {
+                        opt.classList.add('correct');
+                    } else {
+                        opt.classList.add('incorrect');
+                        stepHasError = true;
+                    }
+                } else if (isCorrect) {
+                    // Если правильный ответ не был выбран
+                    stepHasError = true;
+                }
+            });
+
+            if (stepHasError) errorsCount++;
+
+            document.getElementById('checkBtn' + step).classList.add('hidden');
+            const nextBtn = document.getElementById('nextBtn' + step);
+            
+            if (nextBtn) {
+                nextBtn.classList.remove('hidden');
+            } else {
+                // Если это последний вопрос
+                setTimeout(() => {
+                    document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
+                    if (errorsCount === 0) {
+                        document.getElementById('step4').classList.add('active');
+                    } else {
+                        document.getElementById('step-fail').classList.add('active');
+                    }
+                }, 1000);
+            }
+        }
+
+        function next(step) {
+            document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            currentStep = step;
+            const progress = (step / 3) * 100;
+            document.getElementById('progressFill').style.width = Math.min(progress, 100) + '%';
+        }
+    </script>
+</body>
+</html>

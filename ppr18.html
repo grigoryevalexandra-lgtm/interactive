@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Пульт управления: Лист согласования</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-silk: #fdfaf5;
+            --gold-accent: #bc932f;
+            --gold-gradient: linear-gradient(135deg, #d4af37, #bc932f);
+            --gold-border: #d4af37;
+            --text-dark: #2c2c2c;
+            --success: #2e7d32;
+            --error: #d32f2f;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-silk);
+            margin: 0; padding: 10px;
+            display: flex; justify-content: center;
+        }
+
+        #control-panel {
+            background: #ffffff;
+            border: 1px solid var(--gold-border);
+            border-radius: 4px;
+            padding: 25px 40px;
+            width: 100%;
+            max-width: 1600px; /* Ультра-широкий формат */
+            min-height: 500px;
+            box-shadow: 0 40px 90px rgba(188, 147, 47, 0.12);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--bg-silk);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-accent);
+            font-size: 32px; margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* ОСНОВНАЯ КОНСОЛЬ */
+        .console-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            gap: 20px;
+            flex: 1;
+            align-items: stretch;
+        }
+
+        /* БОКОВЫЕ ПАНЕЛИ НАКОПЛЕНИЯ */
+        .storage-panel {
+            background: #fcfbf8;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .storage-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        /* ЦЕНТРАЛЬНЫЙ МОНИТОР */
+        .monitor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #ffffff 0%, #fdfaf5 100%);
+            border: 2px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 40px;
+            position: relative;
+            box-shadow: inset 0 0 30px rgba(188, 147, 47, 0.05);
+        }
+
+        .data-card {
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text-dark);
+            line-height: 1.4;
+            margin-bottom: 40px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* КНОПКИ УПРАВЛЕНИЯ */
+        .controls {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 18px 40px;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 2px solid var(--gold-accent);
+            background: transparent;
+            color: var(--gold-accent);
+            min-width: 200px;
+        }
+
+        .btn-include:hover {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .btn-exclude:hover {
+            background: var(--error);
+            border-color: var(--error);
+            color: white;
+        }
+
+        /* ОТПРАВЛЕННЫЕ ЭЛЕМЕНТЫ */
+        .logged-item {
+            font-size: 13px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .is-correct { border-left: 4px solid var(--success); color: var(--success); }
+        .is-wrong { border-left: 4px solid var(--error); color: var(--error); }
+
+        /* ФИНАЛЬНЫЙ ОТЧЕТ */
+        .final-btn {
+            margin: 20px auto 0;
+            background: var(--gold-gradient);
+            color: white;
+            padding: 15px 60px;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+        }
+
+        #status-bar {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body onload="initSystem()">
+
+<div id="control-panel">
+    </header>
+
+    <div class="console-grid">
+        <div class="storage-panel">
+            <div class="storage-title">Указываются</div>
+            <div id="log-yes"></div>
+        </div>
+
+        <div class="monitor">
+            <div id="current-data" class="data-card">Загрузка системы...</div>
+            
+            <div class="controls" id="control-buttons">
+                <button class="btn-action btn-include" onclick="process(true)">✓ Включить в лист согласования</button>
+                <button class="btn-action btn-exclude" onclick="process(false)">✕ Отклонить</button>
+            </div>
+            
+            <button id="finish-btn" class="final-btn" onclick="audit()">Завершить упражнение</button>
+        </div>
+
+        <div class="storage-panel">
+            <div class="storage-title">Не указываются</div>
+            <div id="log-no"></div>
+        </div>
+    </div>
+
+    <div id="status-bar"></div>
+</div>
+
+<script>
+    const dataFlow = [
+        { t: "Список должностных лиц, которые согласовывают ППР", v: true },
+        { t: "Подписи представителей заказчика", v: true },
+        { t: "Должность и подпись согласующего", v: true },
+        { t: "Дата согласования", v: true },
+        { t: "Точное время согласования (чч:мм)", v: false },
+        { t: "Приказ о назначении должностного лица", v: false },
+        { t: "Подпись разработчика ППР", v: false }
+    ];
+
+    let index = 0;
+    const userAnswers = [];
+
+    function initSystem() {
+        dataFlow.sort(() => Math.random() - 0.5);
+        updateMonitor();
+    }
+
+    function updateMonitor() {
+        const monitor = document.getElementById('current-data');
+        if (index < dataFlow.length) {
+            monitor.innerText = dataFlow[index].t;
+            // Перезапуск анимации
+            monitor.style.animation = 'none';
+            monitor.offsetHeight; 
+            monitor.style.animation = null;
+        } else {
+            monitor.innerText = "Экспертиза данных завершена";
+            document.getElementById('control-buttons').style.display = 'none';
+            document.getElementById('finish-btn').style.display = 'block';
+        }
+    }
+
+    function process(choice) {
+        const logId = choice ? 'log-yes' : 'log-no';
+        const log = document.getElementById(logId);
+        
+        const entry = document.createElement('div');
+        entry.className = 'logged-item';
+        entry.innerText = dataFlow[index].t;
+        
+        // Сохраняем для аудита
+        userAnswers.push({
+            element: entry,
+            correct: dataFlow[index].v,
+            userChoice: choice
+        });
+
+        log.appendChild(entry);
+        index++;
+        updateMonitor();
+    }
+
+    function audit() {
+        let errors = 0;
+        userAnswers.forEach(ans => {
+            const ok = ans.correct === ans.userChoice;
+            ans.element.classList.add(ok ? 'is-correct' : 'is-wrong');
+            if (!ok) errors++;
+        });
+
+        const bar = document.getElementById('status-bar');
+        if (errors === 0) {
+            bar.innerHTML = "✅ Лист согласования сформирован без ошибок.";
+            bar.style.color = "var(--success)";
+        } else {
+            bar.innerHTML = `⚠️ Найдено ошибок — ${errors}`;
+            bar.style.color = "var(--error)";
+        }
+
+        const btn = document.getElementById('finish-btn');
+        btn.innerText = "Попробовать еще раз";
+        btn.onclick = () => location.reload();
+    }
+</script>
+
+</body>
+</html>

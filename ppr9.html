@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Инженерный тренажер: Проектирование ППР</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600&display=swap');
+
+        :root {
+            --bg-beige: #fdfaf5;
+            --gold-accent: #bc932f;
+            --gold-border: #d4af37;
+            --text-dark: #2c2c2c;
+            --white: #ffffff;
+            --success: #2e7d32;
+            --error: #d32f2f;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-beige);
+            margin: 0;
+            padding: 20px; /* Уменьшил отступы снаружи */
+            display: flex;
+            justify-content: center;
+        }
+
+        #designer-app {
+            background: var(--white);
+            border: 1px solid var(--gold-border);
+            border-radius: 8px;
+            padding: 30px; /* Уменьшил внутренние отступы для ширины */
+            width: 98%; /* Занимает почти весь экран */
+            max-width: 1600px; /* Увеличил лимит ширины */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--bg-beige);
+            padding-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-accent);
+            font-size: 32px;
+            margin: 0 0 10px 0;
+        }
+
+        .instruction {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .workspace-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .task-row {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr; /* Колонки стали шире */
+            align-items: center;
+            gap: 10px;
+        }
+
+        .problem-box {
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-left: 6px solid var(--gold-accent);
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .line-connector {
+            height: 2px;
+            background: var(--gold-border);
+            opacity: 0.3;
+            position: relative;
+        }
+
+        .drop-slot {
+            background: #f9f9f9;
+            border: 2px dashed var(--gold-border);
+            border-radius: 4px;
+            min-height: 80px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .drop-slot.active {
+            background: rgba(188, 147, 47, 0.1);
+        }
+
+        .correct-slot { border: 2px solid var(--success) !important; background: #f1f8e9 !important; }
+        .wrong-slot { border: 2px solid var(--error) !important; background: #ffebee !important; }
+
+        .chip {
+            background: #fff;
+            border: 1px solid var(--gold-border);
+            padding: 15px 20px;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 15px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 95%;
+        }
+
+        .chip-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 25px;
+            background: #fdfaf5;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-gold { background: var(--gold-accent); color: white; border: none; }
+        .btn-outline { background: transparent; border: 2px solid var(--gold-accent); color: var(--gold-accent); }
+
+        #feedback-log { text-align: center; margin-top: 20px; font-weight: 600; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div id="designer-app">
+    <header>
+        <h2>Проектирование ППР</h2>
+        <div class="instruction">Распределите задачи разработчика для решения возникших проблем на стройке</div>
+    </header>
+
+    <div class="workspace-grid">
+        <div class="task-row">
+            <div class="problem-box">Срыв сроков строительства</div>
+            <div class="line-connector"></div>
+            <div class="drop-slot" data-match="1"></div>
+        </div>
+        <div class="task-row">
+            <div class="problem-box">Переизбыток рабочих бригад и простой техники</div>
+            <div class="line-connector"></div>
+            <div class="drop-slot" data-match="2"></div>
+        </div>
+        <div class="task-row">
+            <div class="problem-box">Нарушение технологии строительства</div>
+            <div class="line-connector"></div>
+            <div class="drop-slot" data-match="3"></div>
+        </div>
+        <div class="task-row">
+            <div class="problem-box">Нарушение требований охраны труда на действующих объектах</div>
+            <div class="line-connector"></div>
+            <div class="drop-slot" data-match="4"></div>
+        </div>
+        <div class="task-row">
+            <div class="problem-box">Отсутствие строительных материалов при начале нового этапа работ</div>
+            <div class="line-connector"></div>
+            <div class="drop-slot" data-match="5"></div>
+        </div>
+    </div>
+
+    <div class="chip-pool" id="pool">
+        <div class="chip" draggable="true" id="chip-3">Разработать и описать точную технологию работ</div>
+        <div class="chip" draggable="true" id="chip-1">Разработать календарный план</div>
+        <div class="chip" draggable="true" id="chip-5">Разработать график доставки ресурсов на объект</div>
+        <div class="chip" draggable="true" id="chip-2">Рассчитать потребность в трудовых и технических ресурсах</div>
+        <div class="chip" draggable="true" id="chip-4">Описать меры безопасности в соответствии со спецификой предприятия</div>
+    </div>
+
+    <div class="footer-nav">
+        <button class="btn btn-outline" onclick="resetApp()">Сбросить все</button>
+        <button class="btn btn-gold" onclick="checkApp()">Проверить</button>
+    </div>
+
+    <div id="feedback-log"></div>
+</div>
+
+<script>
+    let activeItem = null;
+    const chips = document.querySelectorAll('.chip');
+    const slots = document.querySelectorAll('.drop-slot');
+    const pool = document.getElementById('pool');
+
+    chips.forEach(c => {
+        c.addEventListener('dragstart', () => { activeItem = c; c.style.opacity = '0.5'; });
+        c.addEventListener('dragend', () => { activeItem = null; c.style.opacity = '1'; });
+    });
+
+    slots.forEach(s => {
+        s.addEventListener('dragover', e => e.preventDefault());
+        s.addEventListener('dragenter', () => s.classList.add('active'));
+        s.addEventListener('dragleave', () => s.classList.remove('active'));
+        s.addEventListener('drop', () => {
+            s.classList.remove('active');
+            if(s.children.length > 0) pool.appendChild(s.children[0]);
+            s.appendChild(activeItem);
+            s.classList.remove('correct-slot', 'wrong-slot');
+        });
+    });
+
+    pool.addEventListener('dragover', e => e.preventDefault());
+    pool.addEventListener('drop', () => { if(activeItem) pool.appendChild(activeItem); });
+
+    function checkApp() {
+        let ok = 0;
+        slots.forEach(s => {
+            const matchId = s.getAttribute('data-match');
+            const child = s.children[0];
+            s.classList.remove('correct-slot', 'wrong-slot');
+            if(child && child.id === 'chip-' + matchId) {
+                ok++; s.classList.add('correct-slot');
+            } else if (child) {
+                s.classList.add('wrong-slot');
+            }
+        });
+        const log = document.getElementById('feedback-log');
+        if(ok === 5) {
+            log.innerHTML = "✅ Все верно! Вы продемонстрировали инженерный подход.";
+            log.style.color = "#2e7d32";
+        } else {
+            log.innerHTML = "❌ В решении есть ошибки. Попробуйте еще раз.";
+            log.style.color = "#d32f2f";
+        }
+    }
+
+    function resetApp() {
+        chips.forEach(c => pool.appendChild(c));
+        slots.forEach(s => s.classList.remove('correct-slot', 'wrong-slot'));
+        document.getElementById('feedback-log').innerHTML = "";
+    }
+</script>
+
+</body>
+</html>

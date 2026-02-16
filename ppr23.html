@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Интерактив: Последствия ошибок в ППР</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-silk: radial-gradient(circle at center, #fdfaf5 0%, #f7f4ed 100%);
+            --gold-accent: #bc932f;
+            --gold-gradient: linear-gradient(135deg, #d4af37, #bc932f);
+            --gold-border: #d4af37;
+            --text-dark: #2c2c2c;
+            --white: #ffffff;
+            --shadow-soft: 0 10px 30px rgba(188, 147, 47, 0.15);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-silk);
+            margin: 0; padding: 5px; /* Максимально кучно */
+            display: flex; justify-content: center;
+        }
+
+        #risks-app {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid var(--gold-border);
+            border-radius: 8px;
+            padding: 15px 20px; /* Уменьшены внутренние отступы */
+            width: 100%;
+            max-width: 1400px;
+            box-shadow: var(--shadow-soft);
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(188, 147, 47, 0.1);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px; /* Компактный заголовок */
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: #666; margin-top: 5px;
+            max-width: 900px; margin-left: auto; margin-right: auto;
+        }
+
+        /* СЕТКА: СТРОГО 3 В РЯД */
+        .risks-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 колонки */
+            gap: 10px; /* Минимальный зазор для кучности */
+            margin-top: 15px;
+        }
+
+        .risk-card {
+            perspective: 1000px;
+            height: 170px; /* Еще кучнее по высоте */
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%; height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .risk-card.is-flipped .card-inner { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        .card-front {
+            background: var(--white);
+            border-top: 3px solid var(--gold-accent);
+        }
+
+        .card-back {
+            background: #fdfaf5;
+            color: var(--text-dark);
+            transform: rotateY(180deg);
+            border: 1px solid var(--gold-border);
+            text-align: left;
+            line-height: 1.3;
+            font-size: 12px; /* Компактный шрифт для описания */
+        }
+
+        .risk-icon {
+            width: 35px; /* Компактные иконки */
+            height: 35px;
+            margin-bottom: 8px;
+            fill: var(--gold-accent);
+        }
+
+        .risk-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .back-label {
+            font-weight: 700;
+            color: var(--gold-accent);
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+
+        /* Адаптивность только для очень узких экранов (мобильных) */
+        @media (max-width: 600px) {
+            .risks-grid { grid-template-columns: repeat(2, 1fr); }
+            .risk-card { height: 160px; }
+        }
+        @media (max-width: 400px) {
+            .risks-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="risks-app">
+    <header>
+        <h2>Карта рисков некачественного ППР</h2>
+        <p class="desc">Нажмите на карточку, чтобы увидеть последствия.</p>
+    </header>
+
+    <div class="risks-grid">
+        <div class="risk-card" onclick="this.classList.toggle('is-flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <svg class="risk-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.08-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <div class="risk-title">Снижение качества</div>
+                </div>
+                <div class="card-back">
+                    <div class="back-label">Пример</div>
+                    Некорректный расчет прогрева бетона приведет к потере прочности конструкции, демонтажу и дорогостоящей переделке.
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-card" onclick="this.classList.toggle('is-flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <svg class="risk-icon" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                    <div class="risk-title">Травматизм</div>
+                </div>
+                <div class="card-back">
+                    <div class="back-label">Угроза жизни</div>
+                    Отсутствие внятных инструкций по охране труда — это прямой риск аварий и производственных травм на площадке.
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-card" onclick="this.classList.toggle('is-flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <svg class="risk-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    <div class="risk-title">Срыв сроков</div>
+                </div>
+                <div class="card-back">
+                    <div class="back-label">Логистика</div>
+                    Слабая проработка графиков ведет к простою техники и людей, срыву сроков сдачи объекта и нарушению договора.
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-card" onclick="this.classList.toggle('is-flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <svg class="risk-icon" viewBox="0 0 24 24"><path d="M13.5 3H7v9H5v2h2v2H5v2h2v3h2v-3h4v-2H9v-2h4.5c3.04 0 5.5-2.46 5.5-5.5S16.54 3 13.5 3zm0 9H9V5h4.5C15.43 5 17 6.57 17 8.5S15.43 12 13.5 12z"/></svg>
+                    <div class="risk-title">Расходы</div>
+                </div>
+                <div class="card-back">
+                    <div class="back-label">Финансы</div>
+                    «Сырой» ППР тянет цепочку затрат на исправления, которые могут перекрыть ожидаемую прибыль от проекта.
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-card" onclick="this.classList.toggle('is-flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <svg class="risk-icon" viewBox="0 0 24 24"><path d="M17,8C8,10,5.9,16.17,3.82,21.34L5.71,22l1-2.3A4.49,4.49,0,0,0,8,20C19,20,22,3,22,3,21,5,14,5.25,9,6.25S2,11.5,2,13.5a6.22,6.22,0,0,0,1.75,3.79C3.25,16.55,3,15.75,3,15c0-3.34,3-6.56,12-8A18.78,18.78,0,0,1,17,8Z"/></svg>
+                    <div class="risk-title">Экология</div>
+                </div>
+                <div class="card-back">
+                    <div class="back-label">Контроль</div>
+                    Ошибки в обращении с отходами грозят ущербом природе и колоссальными штрафами от проверяющих органов.
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-card" onclick="this.classList.toggle('is-flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <svg class="risk-icon" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v2.81l7 3.82 7-3.82v-2.81l-7 3.82-7-3.82z"/></svg>
+                    <div class="risk-title">Санкции</div>
+                </div>
+                <div class="card-back">
+                    <div class="back-label">Юстиция</div>
+                    Отклонения от стандартов ведут к судебным разбирательствам и остановке стройки, что бьет по имиджу фирмы.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

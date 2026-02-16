@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Премиум Конструктор Титульного листа ППР</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            /* Обновленная палитра с градиентами и глубокими тенями */
+            --bg-silk: radial-gradient(circle at center, #fdfaf5 0%, #f7f4ed 100%);
+            --gold-accent: #bc932f;
+            --gold-gradient: linear-gradient(135deg, #d4af37, #bc932f);
+            --gold-border: #d4af37;
+            --paper-gradient: linear-gradient(to bottom right, #ffffff, #fcfcfc);
+            --text-dark: #2c2c2c;
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --error: #d32f2f;
+            --error-bg: #ffebee;
+            
+            /* Новые эффекты теней для объема */
+            --shadow-soft: 0 10px 30px rgba(188, 147, 47, 0.15);
+            --shadow-card: 0 5px 15px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.05);
+            --shadow-hover: 0 20px 40px rgba(188, 147, 47, 0.25);
+            --shadow-inner: inset 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-silk);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #pro-constructor {
+            background: rgba(255, 255, 255, 0.98); /* Легкая прозрачность для премиум эффекта */
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 50px;
+            width: 100%;
+            max-width: 1800px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px); /* Эффект матового стекла если поддерживается */
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 4px solid rgba(188, 147, 47, 0.1);
+            padding-bottom: 25px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            /* Золотой градиент на тексте */
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 42px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .desc {
+            font-size: 24px;
+            color: #666;
+            margin-top: 15px;
+            font-weight: 300;
+        }
+
+        .layout-engine {
+            display: grid;
+            grid-template-columns: 550px 1fr;
+            gap: 60px;
+            flex: 1;
+        }
+
+        /* Пул фрагментов */
+        .stamps-storage {
+            background: #f8f8f8;
+            border: 2px dashed rgba(188, 147, 47, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            max-height: 900px;
+            box-shadow: var(--shadow-inner);
+        }
+
+        .visual-block {
+            background: var(--paper-gradient);
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            cursor: grab;
+            /* Объемная тень */
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            font-size: 15px;
+            border-radius: 8px;
+        }
+
+        .visual-block:hover {
+            border-color: var(--gold-accent);
+            /* Приподнимаем блок при наведении */
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Оформление внутренностей блоков */
+        .content-box { 
+            border: 1px solid #f5f5f5; 
+            padding: 15px; 
+            pointer-events: none; 
+            background: #fff;
+            border-radius: 4px;
+        }
+        .text-center { text-align: center; }
+        .text-bold { font-weight: 700; color: #000; }
+        .text-italic { font-style: italic; color: #555; }
+        .text-small { font-size: 13px; color: #777; }
+        
+        /* --- ЭМБЛЕМА (ИСПРАВЛЕНА) --- */
+        .company-logo-block {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px;
+            background: linear-gradient(to right, #ffffff, #fdfdfd);
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .logo-svg {
+            width: 55px; /* Чуть крупнее */
+            height: 55px;
+            filter: drop-shadow(0 2px 3px rgba(188, 147, 47, 0.3)); /* Тень для лого */
+        }
+
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            justify-content: center;
+        }
+
+        .logo-main-text {
+            font-family: 'Playfair Display', serif; /* Премиум шрифт для лого */
+            font-weight: 700;
+            font-size: 18px;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            line-height: 1.1;
+        }
+        /* Субтекст удален по запросу */
+        /* --------------------------- */
+
+        /* Имитация А4 */
+        .preview-area {
+            background: #e0e0e0;
+            padding: 50px;
+            display: flex;
+            justify-content: center;
+            border-radius: 16px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        .a4-page {
+            width: 750px;
+            background: white;
+            /* Реалистичная тень листа бумаги */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            border: 1px solid #ccc;
+            outline: 2px solid #000;
+            outline-offset: -25px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border-radius: 2px;
+        }
+
+        /* Слоты с эффектом углубления */
+        .page-slot {
+            width: 100%;
+            min-height: 75px;
+            background: #fcfcfc;
+            border: 2px dashed #d9d9d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 2;
+            border-radius: 6px;
+            /* Внутренняя тень для эффекта "вдавленности" */
+            box-shadow: var(--shadow-inner);
+        }
+
+        .page-slot.active-hover {
+            background: rgba(188, 147, 47, 0.08);
+            border-color: var(--gold-border);
+            box-shadow: inset 0 0 20px rgba(188, 147, 47, 0.15);
+        }
+
+        /* Индикация результатов с подсветкой */
+        .correct-frame { 
+            border: 3px solid var(--success) !important; 
+            background: var(--success-bg) !important; 
+            box-shadow: 0 0 25px rgba(46, 125, 50, 0.3) !important;
+        }
+        .error-frame { 
+            border: 3px solid var(--error) !important; 
+            background: var(--error-bg) !important;
+            box-shadow: 0 0 25px rgba(211, 47, 47, 0.3) !important;
+        }
+
+        .btn-verify {
+            background: var(--gold-gradient);
+            color: white;
+            padding: 25px 100px;
+            border: none;
+            border-radius: 50px; /* Более современная форма */
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin: 50px auto 0 auto;
+            display: block;
+            box-shadow: 0 20px 40px rgba(142, 109, 40, 0.4);
+            transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            letter-spacing: 2px;
+        }
+
+        .btn-verify:hover { 
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 25px 50px rgba(142, 109, 40, 0.5); 
+        }
+
+        #final-msg { text-align: center; font-size: 28px; font-weight: 700; margin-top: 35px; min-height: 40px; }
+    </style>
+</head>
+<body>
+
+<div id="pro-constructor">
+    </header>
+
+    <div class="layout-engine">
+        <div class="stamps-storage" id="pool">
+            
+            <div class="visual-block" draggable="true" id="p-3" data-order="3">
+                <div class="content-box">
+                    <div style="display:flex; justify-content:space-between; font-size:12px;">
+                        <div><b>СОГЛАСОВАНО:</b><br>Заказчик/Генподрядчик<br>_______ /И.И. Иванов/</div>
+                        <div style="text-align:right"><b>УТВЕРЖДАЮ:</b><br>Главный инженер<br>_______ /П.П. Петров/</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visual-block" draggable="true" id="p-6" data-order="6">
+                <div class="content-box text-center text-small">
+                    Юр. адрес: 440000, РФ, ЯНАО, г. Салехард, ул. Индустриальная, д. 1
+                </div>
+            </div>
+
+            <div class="visual-block" draggable="true" id="p-1" data-order="1">
+                <div class="content-box text-center">
+                    <div class="text-bold" style="font-size: 20px; margin-bottom: 5px;">ПРОЕКТ ПРОИЗВОДСТВА РАБОТ</div>
+                    <div class="text-small">Шифр: ППР.01-2026-СМР</div>
+                </div>
+            </div>
+
+            <div class="visual-block" draggable="true" id="p-8" data-order="8">
+                <div class="content-box text-center">г. Салехард</div>
+            </div>
+
+            <div class="visual-block" draggable="true" id="p-2" data-order="2">
+                <div class="company-logo-block">
+                    <svg class="logo-svg" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="25" cy="25" r="23" stroke="#bc932f" stroke-width="2"/>
+                        <path d="M25 5L30 20H20L25 5Z" fill="#bc932f"/> 
+                        <path d="M25 45L20 30H30L25 45Z" fill="#2c2c2c"/>
+                        <rect x="15" y="22" width="20" height="6" rx="1" fill="#2c2c2c" opacity="0.8"/>
+                        <path d="M10 25L15 28V22L10 25Z" fill="#bc932f"/>
+                        <path d="M40 25L35 28V22L40 25Z" fill="#bc932f"/>
+                    </svg>
+                    <div class="logo-text-group">
+                        <span class="logo-main-text">Строитель<br>Северных Объектов</span>
+                        </div>
+                </div>
+            </div>
+
+            <div class="visual-block" draggable="true" id="p-9" data-order="9">
+                <div class="content-box text-center text-bold" style="font-size: 18px;">2026</div>
+            </div>
+
+            <div class="visual-block" draggable="true" id="p-4" data-order="4">
+                <div class="content-box text-center">
+                    <div class="text-italic" style="margin-bottom: 5px; font-size: 14px;">на объект строительства:</div>
+                    <div class="text-bold" style="font-size: 16px;">«Обустройство нефтяного месторождения Куст №1. Этап 2»</div>
+                </div>
+            </div>
+
+            <div class="visual-block" draggable="true" id="p-7" data-order="7">
+                <div class="content-box text-center text-small">
+                    Тел./факс: (34922) 4-00-00, e-mail: info@sso-stroy.ru
+                </div>
+            </div>
+
+            <div class="visual-block" draggable="true" id="p-5" data-order="5">
+                <div class="content-box text-center">
+                    <div class="text-small" style="margin-bottom: 5px;">Разработал:</div>
+                    <div class="text-bold" style="font-size: 16px;">ООО «Строитель Северных Объектов»</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-area">
+            <div class="a4-page" id="sheet">
+                <div class="page-slot" data-slot="1" style="height: 90px;"></div> 
+                <div class="page-slot" data-slot="2" style="height: 85px;"></div> 
+                <div class="page-slot" data-slot="3" style="height: 90px;"></div> 
+                <div class="page-slot" data-slot="4" style="height: 110px;"></div> 
+                <div class="page-slot" data-slot="5" style="height: 80px; margin-top: auto;"></div> 
+                <div class="page-slot" data-slot="6" style="height: 60px;"></div> 
+                <div class="page-slot" data-slot="7" style="height: 60px;"></div> 
+                <div class="page-slot" data-slot="8" style="height: 60px; margin-top: 25px;"></div> 
+                <div class="page-slot" data-slot="9" style="height: 60px;"></div> 
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-verify" onclick="verifyFinal()">Проверить титульный лист</button>
+    <div id="final-msg"></div>
+</div>
+
+<script>
+    let dragObj = null;
+    const blocks = document.querySelectorAll('.visual-block');
+    const slots = document.querySelectorAll('.page-slot');
+    const pool = document.getElementById('pool');
+
+    blocks.forEach(b => {
+        b.addEventListener('dragstart', () => { dragObj = b; b.style.opacity = '0.6'; b.style.transform = 'scale(0.95)'; });
+        b.addEventListener('dragend', () => { dragObj = null; b.style.opacity = '1'; b.style.transform = 'scale(1)'; });
+    });
+
+    slots.forEach(s => {
+        s.addEventListener('dragover', e => e.preventDefault());
+        s.addEventListener('dragenter', () => s.classList.add('active-hover'));
+        s.addEventListener('dragleave', () => s.classList.remove('active-hover'));
+        s.addEventListener('drop', () => {
+            s.classList.remove('active-hover');
+            if(s.children.length > 0) pool.appendChild(s.children[0]);
+            s.appendChild(dragObj);
+            s.classList.remove('correct-frame', 'error-frame');
+        });
+    });
+
+    pool.addEventListener('dragover', e => e.preventDefault());
+    pool.addEventListener('drop', () => { if(dragObj) pool.appendChild(dragObj); });
+
+    function verifyFinal() {
+        let score = 0;
+        slots.forEach(s => {
+            const expectedId = s.getAttribute('data-slot');
+            const current = s.children[0];
+            s.classList.remove('correct-frame', 'error-frame');
+            
+            if(current && current.getAttribute('data-order') === expectedId) {
+                score++;
+                s.classList.add('correct-frame');
+            } else if (current) {
+                s.classList.add('error-frame');
+            }
+        });
+
+        const msg = document.getElementById('final-msg');
+        if(score === 9) {
+            msg.innerHTML = "✅ Все верно! Титульный лист оформлен согласно стандартам компании и ГОСТ.";
+            msg.style.color = "var(--success)";
+        } else {
+            msg.innerHTML = "⚠️ Нарушена последовательность элементов.";
+            msg.style.color = "var(--error)";
+        }
+    }
+</script>
+
+</body>
+</html>

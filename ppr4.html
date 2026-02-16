@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Visual Engineering Simulator 2.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-main: radial-gradient(ellipse at center, #fdfaf5 0%, #ece9e0 100%);
+            --gold: #bc932f;
+            --gold-grad: linear-gradient(135deg, #d4af37, #a47c1d);
+            --green-zone: rgba(220, 237, 200, 0.35);
+            --yellow-zone: rgba(255, 249, 196, 0.35);
+            --orange-zone: rgba(255, 204, 188, 0.35);
+            --success: #2e7d32;
+            --error: #d32f2f;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-main);
+            margin: 0;
+            padding: 5px; /* Максимально кучно */
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #app-canvas {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid var(--gold);
+            width: 99vw;
+            max-width: 2500px;
+            height: 98vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(188, 147, 47, 0.2);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            background: var(--gold-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 28px;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .grid-engine {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px; /* Кучно */
+            flex: 1;
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .col {
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.3s;
+            overflow-y: auto;
+            border: 2px solid transparent;
+            padding-top: 10px;
+        }
+
+        .col-1 { background: var(--green-zone); }
+        .col-2 { background: var(--yellow-zone); }
+        .col-3 { background: var(--orange-zone); }
+
+        .col.drag-over {
+            border-color: var(--gold);
+            box-shadow: inset 0 0 40px rgba(188, 147, 47, 0.2);
+        }
+
+        .col-h {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        /* ЦЕНТРАЛЬНАЯ КАРТА: ИСПРАВЛЕНО */
+        .card-mount {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .pro-card {
+            width: 580px;
+            height: 380px;
+            background: transparent; /* УБРАН БЕЛЫЙ ФОН */
+            border: 4px solid var(--gold);
+            cursor: grab;
+            pointer-events: auto;
+            /* Эффект пульсации свечения */
+            animation: 
+                fadeIn 0.5s ease-out,
+                goldBreathe 3s infinite alternate ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } }
+        @keyframes goldBreathe {
+            0% { box-shadow: 0 20px 50px rgba(188, 147, 47, 0.2); }
+            100% { box-shadow: 0 20px 80px rgba(188, 147, 47, 0.6), 0 0 30px rgba(188, 147, 47, 0.3); }
+        }
+
+        .pro-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* МИНИАТЮРЫ В КОЛОНКАХ */
+        .mini-chip {
+            width: 96%;
+            height: 140px;
+            margin-bottom: 6px;
+            border-radius: 2px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 2px solid #fff;
+            overflow: hidden;
+            animation: snap 0.3s ease-out;
+            transition: 0.3s;
+        }
+
+        @keyframes snap { from { transform: scale(0.8); opacity: 0; } }
+
+        .mini-chip img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ВАЛИДАЦИЯ */
+        .is-correct { border: 4px solid var(--success) !important; box-shadow: 0 0 25px var(--success) !important; }
+        .is-wrong { border: 4px solid var(--error) !important; box-shadow: 0 0 25px var(--error) !important; }
+
+        .audit-btn {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold-grad);
+            color: #fff;
+            padding: 20px 100px;
+            border: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: none;
+            z-index: 1100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-canvas">
+    <header>
+        <h2>Классификация условий производства работ</h2>
+    </header>
+
+    <div class="grid-engine">
+        <div class="col col-1" id="c1" ondragover="event.preventDefault()" ondrop="push(1)">
+            <div class="col-h">Нестандартные методы</div>
+            <div id="p1" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+        </div>
+
+        <div class="col col-2" id="c2" ondragover="event.preventDefault()" ondrop="push(2)">
+            <div class="col-h">Повышенная опасность</div>
+            <div id="p2" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+        </div>
+
+        <div class="col col-3" id="c3" ondragover="event.preventDefault()" ondrop="push(3)">
+            <div class="col-h">Сложные и стесненные</div>
+            <div id="p3" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+        </div>
+
+        <div class="card-mount" id="anchor"></div>
+    </div>
+
+    <button id="check" class="audit-btn" onclick="validate()">Проверить отчет</button>
+</div>
+
+<script>
+    // БАЗА ДАННЫХ: Замените имена файлов на полные ссылки!
+    const dataset = [
+        { c: 1, i: "urlxjzdpt2s.jpg" }, { c: 1, i: "qbrqiphpvyp.jpg" }, { c: 1, i: "fiuqyv7gvzd.jpg" },
+        { c: 2, i: "iec7ot0uv8p.jpg" }, { c: 2, i: "1hs6kaqqcgg.jpg" }, { c: 2, i: "8sd87mftivu.jpg" },
+        { c: 3, i: "yefo01d34fz.jpg" }, { c: 3, i: "m5zlrcxdbwv.jpg" }, { c: 3, i: "f8dn71x5s0p.jpg" }
+    ];
+
+    let idx = 0;
+
+    function draw() {
+        const mount = document.getElementById('anchor');
+        mount.innerHTML = '';
+        if (idx < dataset.length) {
+            const card = document.createElement('div');
+            card.className = 'pro-card';
+            card.draggable = true;
+            card.innerHTML = `<img src="${dataset[idx].i}" onerror="console.error('Ошибка загрузки: ' + this.src)">`;
+            card.ondragstart = (e) => e.dataTransfer.setData("text", "ok");
+            mount.appendChild(card);
+        } else {
+            document.getElementById('check').style.display = 'block';
+        }
+    }
+
+    function push(col) {
+        const pile = document.getElementById('p' + col);
+        const chip = document.createElement('div');
+        chip.className = 'mini-chip';
+        chip.innerHTML = `<img src="${dataset[idx].i}">`;
+        chip.dataset.target = dataset[idx].c;
+        chip.dataset.user = col;
+        pile.appendChild(chip);
+
+        idx++;
+        draw();
+    }
+
+    function validate() {
+        const chips = document.querySelectorAll('.mini-chip');
+        chips.forEach(t => {
+            const win = t.dataset.target === t.dataset.user;
+            t.classList.add(win ? 'is-correct' : 'is-wrong');
+        });
+        const btn = document.getElementById('check');
+        btn.innerText = "ПЕРЕЗАГРУЗИТЬ";
+        btn.onclick = () => location.reload();
+    }
+
+    const cols = document.querySelectorAll('.col');
+    cols.forEach(c => {
+        c.addEventListener('dragenter', () => c.classList.add('drag-over'));
+        c.addEventListener('dragleave', () => c.classList.remove('drag-over'));
+    });
+
+    draw();
+</script>
+
+</body>
+</html>

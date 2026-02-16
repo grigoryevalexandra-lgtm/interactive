@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тренажер: Лист регистрации изменений ППР</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-silk: #fdfaf5;
+            --gold-accent: #bc932f;
+            --gold-gradient: linear-gradient(135deg, #d4af37, #bc932f);
+            --gold-border: #d4af37;
+            --text-dark: #2c2c2c;
+            --success-green: #2e7d32;
+            --success-bg: #e8f5e9;
+            --error-red: #d32f2f;
+            --error-bg: #ffebee;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-silk);
+            margin: 0; padding: 10px;
+            display: flex; justify-content: center;
+        }
+
+        #changes-trainer {
+            background: #ffffff;
+            border: 1px solid var(--gold-border);
+            border-radius: 4px;
+            padding: 20px 30px;
+            width: 100%; max-width: 1600px; /* Широкий формат */
+            min-height: 520px;
+            box-shadow: 0 40px 90px rgba(188, 147, 47, 0.15);
+            display: flex; flex-direction: column;
+            position: relative; box-sizing: border-box;
+        }
+
+        header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            border-bottom: 2px solid var(--bg-silk); 
+            padding-bottom: 10px; 
+        }
+        h2 { 
+            font-family: 'Playfair Display', serif; 
+            color: var(--gold-accent); 
+            font-size: 28px; 
+            margin: 0; 
+            text-transform: uppercase; 
+        }
+        .desc { font-size: 16px; color: #666; margin: 5px 0; }
+
+        .workspace { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            flex: 1; 
+            position: relative; 
+        }
+
+        /* КОЛОНКИ */
+        .bucket {
+            border-radius: 8px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            padding: 20px; 
+            min-height: 380px; 
+            transition: 0.3s;
+            border: 2px dashed #ddd;
+        }
+        #bucket-yes { background: #f1f8e9; } 
+        #bucket-no { background: #fff1f0; } 
+
+        #bucket-yes.drag-over { border: 2px solid var(--success-green); background: #e8f5e9; }
+        #bucket-no.drag-over { border: 2px solid var(--error-red); background: #ffebee; }
+
+        .icon-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 15px; 
+            pointer-events: none; 
+        }
+        .icon-header svg { width: 35px; height: 35px; }
+        .icon-header span { font-size: 17px; font-weight: 700; text-transform: uppercase; }
+
+        /* ЦЕНТРАЛЬНАЯ КАРТОЧКА */
+        .card-anchor { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 1000; 
+            width: 0; 
+            height: 0; 
+        }
+        .task-card {
+            width: 400px; 
+            min-height: 100px; 
+            background: #ffffff;
+            border: 1px solid #ddd; 
+            border-left: 10px solid var(--gold-accent);
+            border-radius: 8px; 
+            padding: 20px; 
+            font-size: 17px; 
+            font-weight: 600;
+            text-align: center; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            cursor: grab; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            line-height: 1.4; 
+            color: var(--text-dark);
+            position: absolute; 
+            top: 50%; 
+            left: 50%;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn { 
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.6); } 
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
+        }
+
+        /* ЭЛЕМЕНТЫ В СПИСКЕ */
+        .added-item {
+            width: 95%; 
+            font-size: 14px; 
+            padding: 10px 15px;
+            background: #ffffff; 
+            border: 1px solid #eee; 
+            margin-bottom: 6px;
+            border-radius: 4px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            border-left: 4px solid #ddd; 
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .res-correct { border-color: var(--success-green) !important; color: var(--success-green) !important; font-weight: 600; }
+        .res-wrong { border-color: var(--error-red) !important; color: var(--error-red) !important; font-weight: 600; }
+
+        .btn-check {
+            margin: 20px auto 10px auto; 
+            background: var(--gold-accent); 
+            color: white;
+            padding: 15px 60px; 
+            border: none; 
+            border-radius: 4px;
+            font-size: 18px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: none;
+            box-shadow: 0 10px 25px rgba(188, 147, 47, 0.2);
+        }
+
+        #final-msg { text-align: center; font-size: 20px; font-weight: 700; margin-top: 5px; }
+    </style>
+</head>
+<body onload="initTrainer()">
+
+<div id="changes-trainer">
+    </header>
+
+    <div class="workspace">
+        <div class="bucket" id="bucket-yes" ondragover="over(event)" ondragleave="leave(event)" ondrop="drop(event, true)">
+            <div class="icon-header" style="color: var(--success-green);">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span>Нужно вносить изменения</span>
+            </div>
+            <div id="list-yes" style="width:100%;"></div>
+        </div>
+
+        <div class="card-anchor" id="anchor"></div>
+
+        <div class="bucket" id="bucket-no" ondragover="over(event)" ondragleave="leave(event)" ondrop="drop(event, false)">
+            <div class="icon-header" style="color: var(--error-red);">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                <span>Не нужно вносить изменения</span>
+            </div>
+            <div id="list-no" style="width:100%;"></div>
+        </div>
+    </div>
+
+    <button id="check-btn" class="btn-check" onclick="finish()">Проверить результат</button>
+    <div id="final-msg"></div>
+</div>
+
+<script>
+    const tasks = [
+        { t: "Замена оборудования или материалов", v: true },
+        { t: "Изменение технологии из-за отсутствия техники", v: true },
+        { t: "Уточнения в проектной документации", v: true },
+        { t: "Неучтенные подземные коммуникации", v: true },
+        { t: "Перенос строительного городка", v: true },
+        { t: "Обнаружение ошибок в ППР", v: true },
+        { t: "Изменение в маркировке оборудования (без смены характеристик)", v: false },
+        { t: "Корректировка грамматических ошибок в ПД", v: false },
+        { t: "Сезонное изменение погодных условий", v: false },
+        { t: "Замена блок-контейнера в строительном городке", v: false },
+        { t: "Замена размеров костюмов СИЗ", v: false },
+        { t: "Замена ответственного лица Заказчика", v: false }
+    ];
+
+    let current = 0;
+
+    function initTrainer() {
+        // Перемешиваем вопросы при старте
+        tasks.sort(() => Math.random() - 0.5);
+        showNext();
+    }
+
+    function showNext() {
+        const anchor = document.getElementById('anchor');
+        anchor.innerHTML = '';
+        if (current < tasks.length) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.draggable = true;
+            card.innerText = tasks[current].t;
+            card.ondragstart = (e) => e.dataTransfer.setData("text", "1");
+            anchor.appendChild(card);
+        } else {
+            document.getElementById('check-btn').style.display = 'block';
+        }
+    }
+
+    function over(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+    function leave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+    function drop(e, isYes) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+        
+        const listId = isYes ? 'list-yes' : 'list-no';
+        const list = document.getElementById(listId);
+        
+        const item = document.createElement('div');
+        item.className = 'added-item';
+        item.innerText = tasks[current].t;
+        item.dataset.correct = tasks[current].v;
+        item.dataset.choice = isYes;
+        list.appendChild(item);
+
+        current++;
+        setTimeout(showNext, 200);
+    }
+
+    function finish() {
+        const items = document.querySelectorAll('.added-item');
+        let errors = 0;
+        items.forEach(i => {
+            const isCorrect = (i.dataset.correct === "true" && i.dataset.choice === "true") || (i.dataset.correct === "false" && i.dataset.choice === "false");
+            i.classList.add(isCorrect ? 'res-correct' : 'res-wrong');
+            if(!isCorrect) errors++;
+        });
+
+        const msg = document.getElementById('final-msg');
+        msg.innerHTML = errors === 0 ? "✅ Блестяще! Вы точно знаете основания для внесения изменений в ППР." : `⚠️ Найдено ошибок: ${errors}. Попробуйте еще раз.`;
+        msg.style.color = errors === 0 ? "var(--success-green)" : "var(--error-red)";
+        
+        const btn = document.getElementById('check-btn');
+        btn.innerText = "ПОПРОБОВАТЬ СНОВА";
+        btn.onclick = () => location.reload();
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Инженерный тренажер: Исходные данные</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-silk: #fdfaf5;
+            --gold-accent: #bc932f;
+            --gold-border: #d4af37;
+            --text-dark: #2c2c2c;
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --error: #d32f2f;
+            --error-bg: #ffebee;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-silk);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            overflow: hidden; /* Убираем лишний скролл страницы */
+        }
+
+        #ultra-wide-designer {
+            background: #ffffff;
+            border: 1px solid var(--gold-border);
+            border-radius: 4px;
+            padding: 40px;
+            width: 100%;
+            max-width: 1750px; /* Ультра-ширина */
+            height: 92vh;
+            box-shadow: 0 40px 90px rgba(188, 147, 47, 0.15);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--bg-silk);
+            padding-bottom: 15px;
+            z-index: 10;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-accent);
+            font-size: 38px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .description {
+            font-size: 24px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Рабочая область: Столбцы вплотную */
+        .grid-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .category-bucket {
+            background: rgba(188, 147, 47, 0.01);
+            border: 3px dashed var(--gold-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto; /* Скролл только внутри колонок */
+        }
+
+        .category-bucket.drag-active {
+            background: rgba(188, 147, 47, 0.07);
+            border-style: solid;
+            transform: scale(1.005);
+        }
+
+        .header-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            pointer-events: none;
+        }
+
+        .header-group svg {
+            width: 70px;
+            height: 70px;
+            fill: var(--gold-accent);
+            margin-bottom: 10px;
+        }
+
+        .header-group span {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+        }
+
+        /* Центральная всплывающая плашка */
+        .overlay-anchor {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .popping-card {
+            width: 650px;
+            min-height: 220px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-left: 15px solid var(--gold-accent);
+            border-radius: 10px;
+            padding: 45px;
+            font-size: 28px; /* КРУПНЫЙ ШРИФТ ПЛАШКИ */
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 35px 70px rgba(0,0,0,0.2);
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+            pointer-events: auto;
+            animation: cardEntrance 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--text-dark);
+        }
+
+        @keyframes cardEntrance {
+            from { transform: scale(0.7) translateY(80px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Накопленные плашки в колонках */
+        .accumulated-item {
+            width: 92%;
+            font-size: 26px; /* ТАКОЙ ЖЕ КРУПНЫЙ ШРИФТ, КАК В ПЛАШКЕ */
+            padding: 25px 35px;
+            background: #ffffff;
+            border: 1px solid #eeeeee;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+            animation: itemSlide 0.4s ease-out;
+            transition: 0.4s;
+            line-height: 1.4;
+            text-align: left;
+            border-left: 6px solid #f0f0f0;
+        }
+
+        @keyframes itemSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Фидбек при проверке */
+        .state-correct {
+            border-color: var(--success) !important;
+            background-color: var(--success-bg) !important;
+            color: var(--success) !important;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(46, 125, 50, 0.2) !important;
+        }
+
+        .state-error {
+            border-color: var(--error) !important;
+            background-color: var(--error-bg) !important;
+            color: var(--error) !important;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(211, 47, 47, 0.2) !important;
+        }
+
+        /* Финальная кнопка */
+        .btn-check-final {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold-accent);
+            color: #fff;
+            border: none;
+            padding: 25px 120px;
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 15px 40px rgba(142, 109, 40, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-check-final:hover { background: #a37e26; transform: translateX(-50%) translateY(-5px); }
+
+        #final-report {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            margin-top: 25px;
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="ultra-wide-designer">
+    <header>
+        <h2>Данные для ППР</h2>
+        <p class="description">Сформируйте базу данных проекта: перетащите плашку в нужную категорию</p>
+    </header>
+
+    <div class="grid-workspace">
+        <div class="category-bucket" id="box-yes" ondragover="event.preventDefault()" ondrop="dropProcess(true)">
+            <div class="header-group">
+                <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"/></svg>
+                <span>Помогут</span>
+            </div>
+            <div id="container-yes" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+        </div>
+
+        <div class="overlay-anchor" id="card-holder">
+            </div>
+
+        <div class="category-bucket" id="box-no" ondragover="event.preventDefault()" ondrop="dropProcess(false)">
+            <div class="header-group">
+                <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v1.91l.01.01L1 14c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+                <span>Не помогут</span>
+            </div>
+            <div id="container-no" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+        </div>
+    </div>
+
+    <button id="final-btn-check" class="btn-check-final" onclick="performAudit()">Проверить базу проекта</button>
+    <div id="final-report"></div>
+</div>
+
+<script>
+    const dataset = [
+        { t: "СП 48.13330.2019 «Организация строительства»", v: true },
+        { t: "Проектная документация без штампа 'В производство работ'", v: false },
+        { t: "СП 127.13330.2016 «Безопасность труда в строительстве»", v: true },
+        { t: "Согласованная проектная документация", v: true },
+        { t: "Проект технического задания", v: false },
+        { t: "Проект организации строительства (ПОС)", v: true },
+        { t: "Техническое задание (ТЗ)", v: true },
+        { t: "СНиП 3.02.01-87 'Земляные сооружения основания и фундаменты'", v: false },
+        { t: "Топографический план", v: true },
+        { t: "Приказ №1128 от 26.12.2006 (Исполнительная документация)", v: false },
+        { t: "Список техники организации", v: true },
+        { t: "Проект рабочей документации", v: false },
+        { t: "Анализ численности населения региона", v: false },
+        { t: "Данные о ценах и тарифах на услуги ЖКХ", v: false }
+    ];
+
+    let currentStep = 0;
+
+    function nextStep() {
+        const holder = document.getElementById('card-holder');
+        holder.innerHTML = '';
+        if (currentStep < dataset.length) {
+            const card = document.createElement('div');
+            card.className = 'popping-card';
+            card.draggable = true;
+            card.innerText = dataset[currentStep].t;
+            card.ondragstart = (e) => { e.dataTransfer.setData("text", "go"); };
+            holder.appendChild(card);
+        } else {
+            document.getElementById('final-btn-check').style.display = 'block';
+        }
+    }
+
+    function dropProcess(isPositive) {
+        const targetId = isPositive ? 'container-yes' : 'container-no';
+        const targetContainer = document.getElementById(targetId);
+        
+        const item = document.createElement('div');
+        item.className = 'accumulated-item';
+        item.innerText = dataset[currentStep].t;
+        item.dataset.isCorrect = dataset[currentStep].v;
+        item.dataset.userChoice = isPositive;
+        targetContainer.appendChild(item);
+
+        currentStep++;
+        nextStep();
+    }
+
+    function performAudit() {
+        const items = document.querySelectorAll('.accumulated-item');
+        let errorCount = 0;
+        
+        items.forEach(it => {
+            const correct = (it.dataset.isCorrect === "true" && it.dataset.userChoice === "true") || 
+                            (it.dataset.isCorrect === "false" && it.dataset.userChoice === "false");
+            if (correct) {
+                it.classList.add('state-correct');
+            } else {
+                it.classList.add('state-error');
+                errorCount++;
+            }
+        });
+
+        const report = document.getElementById('final-report');
+        if(errorCount === 0) {
+            report.innerHTML = "✅ БАЗА ДАННЫХ ППР УСПЕШНО СФОРМИРОВАНА.";
+            report.style.color = "var(--success)";
+        } else {
+            report.innerHTML = `⚠️ ТРЕБУЕТСЯ КОРРЕКТИРОВКА. ОШИБОК: ${errorCount}.`;
+            report.style.color = "var(--error)";
+        }
+        const btn = document.getElementById('final-btn-check');
+        btn.innerText = "ПЕРЕЗАГРУЗИТЬ СИСТЕМУ";
+        btn.onclick = () => location.reload();
+    }
+
+    // Эффекты наведения
+    const boxes = document.querySelectorAll('.category-bucket');
+    boxes.forEach(bx => {
+        bx.addEventListener('dragenter', () => bx.classList.add('drag-active'));
+        bx.addEventListener('dragleave', () => bx.classList.remove('drag-active'));
+    });
+
+    nextStep();
+</script>
+
+</body>
+</html>

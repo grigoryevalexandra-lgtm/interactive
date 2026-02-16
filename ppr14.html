@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Конструктор-пазл Титульного листа ППР</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-silk: #fdfaf5;
+            --gold-accent: #bc932f;
+            --gold-gradient: linear-gradient(135deg, #d4af37, #bc932f);
+            --gold-border: #d4af37;
+            --text-dark: #2c2c2c;
+            --success: #2e7d32;
+            --error: #d32f2f;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-silk);
+            margin: 0; padding: 10px;
+            display: flex; justify-content: center;
+        }
+
+        #puzzle-constructor {
+            background: #ffffff;
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 650px; /* Ограничиваем ширину под стандартный А4 */
+            box-shadow: 0 10px 30px rgba(188, 147, 47, 0.15);
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-accent);
+            font-size: 24px; text-transform: uppercase; margin: 0;
+        }
+
+        .hint { font-size: 14px; color: #888; margin-top: 5px; }
+
+        /* ИМИТАЦИЯ ЛИСТА А4 */
+        .a4-container {
+            background: white;
+            border: 1px solid #000;
+            padding: 40px 20px 20px 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 800px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Внутренняя рамка по ГОСТ */
+        .a4-container::before {
+            content: "";
+            position: absolute;
+            top: 15px; left: 20px; right: 10px; bottom: 10px;
+            border: 1px solid #000;
+            pointer-events: none;
+        }
+
+        /* СТИЛЬ БЛОКОВ-КУБИКОВ */
+        .draggable-block {
+            background: #fff;
+            border: 1px dashed #ccc;
+            padding: 12px;
+            cursor: grab;
+            transition: all 0.2s;
+            user-select: none;
+            position: relative;
+            z-index: 10;
+        }
+
+        .draggable-block:hover {
+            background: #fdfaf5;
+            border-color: var(--gold-accent);
+        }
+
+        .dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+
+        /* СОДЕРЖИМОЕ БЛОКОВ (из вашего оригинала) */
+        .logo-block { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .logo-svg { width: 40px; height: 40px; }
+        .text-bold { font-weight: 700; color: #000; }
+        .text-center { text-align: center; }
+        .text-small { font-size: 11px; color: #666; }
+
+        .btn-verify {
+            background: var(--gold-gradient); color: white;
+            padding: 15px 40px; border: none; border-radius: 50px;
+            font-size: 16px; font-weight: 700; text-transform: uppercase;
+            cursor: pointer; margin: 25px auto 0 auto; display: block;
+            box-shadow: 0 10px 20px rgba(188, 147, 47, 0.2);
+        }
+
+        #result-msg { text-align: center; font-weight: 700; margin-top: 15px; font-size: 16px; }
+
+        /* Подсветка при проверке */
+        .correct { border: 2px solid var(--success) !important; background: #f1f8e9; }
+        .incorrect { border: 2px solid var(--error) !important; background: #ffebee; }
+    </style>
+</head>
+<body>
+
+<div id="puzzle-constructor">
+    </header>
+
+    <div class="a4-container" id="sheet">
+        <div class="draggable-block" draggable="true" data-id="1">
+            <div class="text-center">
+                <div class="text-bold">ПРОЕКТ ПРОИЗВОДСТВА РАБОТ</div>
+                <div class="text-small">Шифр: ППР.01-2026-СМР</div>
+            </div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="2">
+            <div class="logo-block">
+                <svg class="logo-svg" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="23" stroke="#bc932f" stroke-width="2"/>
+                    <path d="M25 5L30 20H20L25 5Z" fill="#bc932f"/> 
+                    <path d="M25 45L20 30H30L25 45Z" fill="#2c2c2c"/>
+                    <rect x="15" y="22" width="20" height="6" rx="1" fill="#2c2c2c" opacity="0.8"/>
+                </svg>
+                <div class="text-bold" style="font-size: 12px; text-transform: uppercase;">Строитель Северных Объектов</div>
+            </div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="3">
+            <div style="display:flex; justify-content:space-between; font-size:10px;">
+                <div><b>СОГЛАСОВАНО:</b><br>Заказчик/Генподрядчик<br>_______ /И.И. Иванов/</div>
+                <div style="text-align:right"><b>УТВЕРЖДАЮ:</b><br>Главный инженер<br>_______ /П.П. Петров/</div>
+            </div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="4">
+            <div class="text-center">
+                <div style="font-style: italic; font-size: 11px;">на объект строительства:</div>
+                <div class="text-bold" style="font-size: 12px;">«Обустройство нефтяного месторождения Куст №1. Этап 2»</div>
+            </div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="5">
+            <div class="text-center">
+                <div class="text-small">Разработал:</div>
+                <div class="text-bold">ООО «Строитель Северных Объектов»</div>
+            </div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="6">
+            <div class="text-center text-small">Юр. адрес: 440000, РФ, ЯНАО, г. Салехард, ул. Индустриальная, д. 1</div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="7">
+            <div class="text-center text-small">Тел./факс: (34922) 4-00-00, info@sso-stroy.ru</div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="8" style="margin-top: auto;">
+            <div class="text-center">г. Салехард</div>
+        </div>
+
+        <div class="draggable-block" draggable="true" data-id="9">
+            <div class="text-center text-bold">2026</div>
+        </div>
+    </div>
+
+    <button class="btn-verify" onclick="checkOrder()">Проверить лист</button>
+    <div id="result-msg"></div>
+</div>
+
+<script>
+    const sheet = document.getElementById('sheet');
+    
+    // Перемешиваем блоки при загрузке
+    function shuffle() {
+        const blocks = Array.from(sheet.querySelectorAll('.draggable-block'));
+        // Город и год оставляем внизу (последние два), остальные мешаем
+        const toShuffle = blocks.slice(0, 7);
+        for (let i = toShuffle.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            sheet.insertBefore(toShuffle[i], toShuffle[j]);
+        }
+    }
+    shuffle();
+
+    // Логика Drag and Drop (перестановка блоков)
+    sheet.addEventListener('dragstart', (e) => {
+        if (e.target.classList.contains('draggable-block')) {
+            e.target.classList.add('dragging');
+        }
+    });
+
+    sheet.addEventListener('dragend', (e) => {
+        if (e.target.classList.contains('draggable-block')) {
+            e.target.classList.remove('dragging');
+        }
+    });
+
+    sheet.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(sheet, e.clientY);
+        const dragging = document.querySelector('.dragging');
+        if (afterElement == null) {
+            sheet.appendChild(dragging);
+        } else {
+            sheet.insertBefore(dragging, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.draggable-block:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    // Проверка порядка
+    function checkOrder() {
+        const blocks = sheet.querySelectorAll('.draggable-block');
+        const correctOrder = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        let correctCount = 0;
+
+        blocks.forEach((block, index) => {
+            block.classList.remove('correct', 'incorrect');
+            if (block.getAttribute('data-id') === correctOrder[index]) {
+                block.classList.add('correct');
+                correctCount++;
+            } else {
+                block.classList.add('incorrect');
+            }
+        });
+
+        const msg = document.getElementById('result-msg');
+        if (correctCount === 9) {
+            msg.innerText = "✅ Превосходно! Титульный лист оформлен идеально.";
+            msg.style.color = "var(--success)";
+        } else {
+            msg.innerText = "❌ Порядок элементов нарушен. Попробуйте еще раз.";
+            msg.style.color = "var(--error)";
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-page: #fcfaf7; 
+            --bg-card: #ffffff;
+            --gold: #c5a059;    
+            --text: #3a352f;
+            --border: #e8e2d9;
+            --success: #6b8e4e;
+            --error: #b35a5a;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif; 
+            background-color: var(--bg-page);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+            align-items: center;
+        }
+
+        .container {
+            background: var(--bg-card);
+            max-width: 620px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 2px; 
+            border: 1px solid var(--border);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.04);
+        }
+
+        h2 {
+            font-family: 'Arial', sans-serif;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 35px;
+            color: var(--gold);
+            line-height: 1.5;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .label {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            padding-right: 20px;
+        }
+
+        select {
+            font-family: 'Arial', sans-serif;
+            border: 1px solid var(--border);
+            background: transparent;
+            padding: 10px 8px;
+            color: var(--text);
+            outline: none;
+            cursor: pointer;
+            min-width: 165px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        select:hover {
+            border-color: var(--gold);
+            background-color: rgba(197, 160, 89, 0.02);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin-top: 40px;
+            padding: 18px;
+            background: var(--gold);
+            color: white;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #b38f4a;
+            letter-spacing: 2.5px;
+        }
+
+        #feedback {
+            margin-top: 30px;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-height: 20px;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        #feedback.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .correct { border-color: var(--success) !important; color: var(--success); }
+        .wrong { border-color: var(--error) !important; color: var(--error); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+<h2>Состав ППР в сокращенном объеме</h2>
+
+    <div class="item" data-answer="1">
+        <div class="label">Титульный лист</div>
+        <select>
+            <option value="0" selected disabled>Выбрать...</option>
+            <option value="1">Входит в состав</option>
+            <option value="2">Не входит</option>
+        </select>
+    </div>
+
+    <div class="item" data-answer="1">
+        <div class="label">Схемы размещения геодезических знаков</div>
+        <select>
+            <option value="0" selected disabled>Выбрать...</option>
+            <option value="1">Входит в состав</option>
+            <option value="2">Не входит</option>
+        </select>
+    </div>
+
+    <div class="item" data-answer="1">
+        <div class="label">Лист ознакомления персонала</div>
+        <select>
+            <option value="0" selected disabled>Выбрать...</option>
+            <option value="1">Входит в состав</option>
+            <option value="2">Не входит</option>
+        </select>
+    </div>
+
+    <div class="item" data-answer="1">
+        <div class="label">Пояснительная записка (основные решения)</div>
+        <select>
+            <option value="0" selected disabled>Выбрать...</option>
+            <option value="1">Входит в состав</option>
+            <option value="2">Не входит</option>
+        </select>
+    </div>
+
+    <div class="item" data-answer="2">
+        <div class="label">График движения строительных машин</div>
+        <select>
+            <option value="0" selected disabled>Выбрать...</option>
+            <option value="1">Входит в состав</option>
+            <option value="2">Не входит</option>
+        </select>
+    </div>
+
+    <div class="item" data-answer="2">
+        <div class="label">График движения трудовых ресурсов</div>
+        <select>
+            <option value="0" selected disabled>Выбрать...</option>
+            <option value="1">Входит в состав</option>
+            <option value="2">Не входит</option>
+        </select>
+    </div>
+
+    <div class="item" data-answer="2">
+        <div class="label">Пояснительная записка в полном объёме</div>
+        <select>
+            <option value="0" selected disabled>Выбрать...</option>
+            <option value="1">Входит в состав</option>
+            <option value="2">Не входит</option>
+        </select>
+    </div>
+
+    <button class="btn" onclick="check()">Проверить результат</button>
+    <div id="feedback"></div>
+</div>
+
+<script>
+    function check() {
+        const items = document.querySelectorAll('.item');
+        const feedback = document.getElementById('feedback');
+        let correctCount = 0;
+
+        feedback.classList.remove('visible');
+
+        items.forEach(item => {
+            const select = item.querySelector('select');
+            const answer = item.getAttribute('data-answer');
+            select.classList.remove('correct', 'wrong');
+
+            if (select.value === answer) {
+                correctCount++;
+                select.classList.add('correct');
+            } else {
+                select.classList.add('wrong');
+            }
+        });
+
+        setTimeout(() => {
+            if (correctCount === items.length) {
+                feedback.style.color = 'var(--success)';
+                feedback.innerHTML = 'ВЕРНО. СОСТАВ ОПРЕДЕЛЕН ПРАВИЛЬНО.';
+            } else {
+                feedback.style.color = 'var(--error)';
+                feedback.innerHTML = 'ЕСТЬ ОШИБКИ. ПОПРОБУЙТЕ ЕЩЕ РАЗ.';
+            }
+            feedback.classList.add('visible');
+        }, 100);
+    }
+</script>
+
+</body>
+</html>

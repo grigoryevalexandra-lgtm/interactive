@@ -2,128 +2,73 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тренажер: Определитель программ</title>
     <style>
-        body {
-            background-color: #FDFBF7;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .calculator-card {
-            background: white;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(184, 165, 122, 0.15);
-            border: 1px solid #ECE3D0;
-            width: 400px;
-            text-align: center;
-        }
-
-        h2 {
-            color: #4A453E;
-            font-weight: 300;
-            margin-bottom: 30px;
-            letter-spacing: 1px;
-        }
-
-        /* Стиль ползунка (Slider) */
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #ECE3D0;
-            border-radius: 5px;
-            outline: none;
-            margin: 40px 0;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            background: #D4AF37; /* Золото */
-            border-radius: 50%;
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
-        }
-
-        .hours-display {
-            font-size: 48px;
-            color: #D4AF37;
-            font-weight: 200;
-        }
-
-        .status-badge {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-
-        /* Динамические классы для статуса */
-        .status-low { background: #F5F5F5; color: #999; }
+        body { background-color: #FDFBF7; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 40px; box-shadow: 0 20px 50px rgba(184, 165, 122, 0.15); border: 1px solid #ECE3D0; width: 100%; max-width: 420px; text-align: center; }
+        h2 { color: #8C7342; font-weight: 300; margin-bottom: 20px; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px; }
+        .img-viewport { width: 100%; height: 250px; background-color: #F9F7F2; border-radius: 20px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; border: 1px solid #F0EAE0; overflow: hidden; }
+        #docImage { max-width: 90%; max-height: 90%; border-radius: 10px; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: 0.3s; }
+        .hours { font-size: 64px; color: #D4AF37; font-weight: 200; }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; background: #ECE3D0; border-radius: 5px; outline: none; margin: 30px 0; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; background: #D4AF37; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        .badge { display: inline-block; padding: 10px 25px; border-radius: 50px; font-size: 14px; font-weight: 600; background: #F5F5F5; color: #999; }
+        .status-micro { background: #F0F4F8; color: #455A64; border: 1px solid #CFD8DC; }
         .status-pk { background: #E9F2E9; color: #2D5A2D; border: 1px solid #C2DCC2; }
         .status-pp { background: #FFF4E6; color: #85551D; border: 1px solid #EDD1B0; }
     </style>
 </head>
 <body>
 
-<div class="calculator-card">
-    <h2>Объем программы</h2>
-    <div class="hours-display"><span id="hourValue">0</span> ч.</div>
-    
+<div class="card">
+    <h2>Объем обучения</h2>
+    <div class="img-viewport">
+        <img id="docImage" src="" alt="Документ">
+        <div id="placeholder" style="color: #CDC3B0;">Выберите часы</div>
+    </div>
+    <div class="hours"><span id="hourValue">0</span> ч.</div>
     <input type="range" min="0" max="300" value="0" class="slider" id="hourSlider">
-    
-    <div id="statusBadge" class="status-badge status-low">Выберите часы</div>
-    
-    <p style="color: #A09B93; font-size: 13px; margin-top: 25px;" id="instructionHint">
-        Передвиньте ползунок, чтобы определить тип обучения согласно инструкции.
-    </p>
+    <div id="statusBadge" class="badge">Начните выбор</div>
+    <p style="color: #A09B93; font-size: 14px; margin-top: 20px;" id="hint">Передвиньте ползунок</p>
 </div>
 
 <script>
     const slider = document.getElementById('hourSlider');
     const output = document.getElementById('hourValue');
     const badge = document.getElementById('statusBadge');
-    const hint = document.getElementById('instructionHint');
+    const img = document.getElementById('docImage');
+    const placeholder = document.getElementById('placeholder');
+    const hint = document.getElementById('hint');
 
     slider.oninput = function() {
         const val = parseInt(this.value);
         output.innerHTML = val;
+        img.style.display = "block";
+        placeholder.style.display = "none";
 
-        // Логика из вашей инструкции
         if (val === 0) {
-            badge.innerHTML = "Выберите часы";
-            badge.className = "status-badge status-low";
-            hint.innerHTML = "Ждем вашего выбора...";
-        } 
-        else if (val < 16) {
-            badge.innerHTML = "Микрокурс / Вебинар";
-            badge.className = "status-badge status-low";
-            hint.innerHTML = "Для удостоверения ПК нужно минимум 16 часов!";
-        } 
-        else if (val >= 16 && val < 250) {
-            badge.innerHTML = "Повышение квалификации";
-            badge.className = "status-badge status-pk";
-            hint.innerHTML = "Выдается удостоверение установленного образца.";
-        } 
-        else {
-            badge.innerHTML = "Профпереподготовка";
-            badge.className = "status-badge status-pp";
-            hint.innerHTML = "Выдается диплом о профессиональной переподготовке.";
+            img.style.display = "none";
+            placeholder.style.display = "block";
+            badge.innerHTML = "Начните выбор";
+            badge.className = "badge";
+            hint.innerHTML = "Передвиньте ползунок";
+        } else if (val < 16) {
+            updateUI("Screenshot_3.jpg", "Микрокурс", "status-micro", "Электронный сертификат");
+        } else if (val >= 16 && val < 250) {
+            updateUI("Screenshot_1.jpg", "Повышение квалификации", "status-pk", "Удостоверение ПК");
+        } else {
+            updateUI("Screenshot_2.jpg", "Профпереподготовка", "status-pp", "Диплом о переподготовке");
         }
     }
-</script>
 
+    function updateUI(src, text, className, message) {
+        // Мы добавляем случайное число к ссылке, чтобы заставить браузер обновить картинку
+        img.src = src + "?v=" + new Date().getTime(); 
+        badge.innerHTML = text;
+        badge.className = "badge " + className;
+        hint.innerHTML = message;
+    }
+</script>
 </body>
 </html>

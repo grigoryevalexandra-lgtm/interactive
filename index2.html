@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тренажер: Определитель программ с визуализацией</title>
+    <style>
+        body {
+            background-color: #FDFBF7;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .calculator-card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(184, 165, 122, 0.15);
+            border: 1px solid #ECE3D0;
+            width: 420px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            color: #4A453E;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* Контейнер для скриншотов документов */
+        .image-container {
+            height: 180px; /* Фиксированная высота, чтобы карточка не "прыгала" */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #docImage {
+            max-width: 220px;
+            max-height: 160px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 1px solid #EEE;
+            display: none; /* Скрыто по умолчанию */
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hours-display {
+            font-size: 48px;
+            color: #D4AF37;
+            font-weight: 200;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #ECE3D0;
+            border-radius: 5px;
+            outline: none;
+            margin: 30px 0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #D4AF37;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        }
+
+        .status-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .status-low { background: #F5F5F5; color: #999; }
+        .status-pk { background: #E9F2E9; color: #2D5A2D; border: 1px solid #C2DCC2; }
+        .status-pp { background: #FFF4E6; color: #85551D; border: 1px solid #EDD1B0; }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h2>Объем программы</h2>
+    
+    <div class="image-container">
+        <img id="docImage" src="" alt="Вид документа">
+    </div>
+
+    <div class="hours-display"><span id="hourValue">0</span> ч.</div>
+    
+    <input type="range" min="0" max="300" value="0" class="slider" id="hourSlider">
+    
+    <div id="statusBadge" class="status-badge status-low">Выберите часы</div>
+    
+    <p style="color: #A09B93; font-size: 13px; margin-top: 20px; min-height: 40px;" id="instructionHint">
+        Передвиньте ползунок для определения типа обучения.
+    </p>
+</div>
+
+<script>
+    const slider = document.getElementById('hourSlider');
+    const output = document.getElementById('hourValue');
+    const badge = document.getElementById('statusBadge');
+    const hint = document.getElementById('instructionHint');
+    const img = document.getElementById('docImage');
+
+    slider.oninput = function() {
+        const val = parseInt(this.value);
+        output.innerHTML = val;
+        
+        // Сбрасываем анимацию, чтобы она срабатывала при смене типа
+        img.style.animation = 'none';
+        img.offsetHeight; /* триггер перерисовки */
+        img.style.animation = null;
+
+        if (val === 0) {
+            img.style.display = "none";
+            badge.innerHTML = "Выберите часы";
+            badge.className = "status-badge status-low";
+            hint.innerHTML = "Ждем вашего выбора...";
+        } 
+        else if (val < 16) {
+            img.style.display = "block";
+            img.src = "Screenshot_3.jpg"; // Сертификат
+            badge.innerHTML = "Микрокурс";
+            badge.className = "status-badge status-low";
+            hint.innerHTML = "Выдается электронный сертификат.";
+        } 
+        else if (val >= 16 && val < 250) {
+            img.style.display = "block";
+            img.src = "Screenshot_1.jpg"; // Удостоверение ПК
+            badge.innerHTML = "Повышение квалификации";
+            badge.className = "status-badge status-pk";
+            hint.innerHTML = "Выдается удостоверение установленного образца.";
+        } 
+        else {
+            img.style.display = "block";
+            img.src = "Screenshot_2.jpg"; // Диплом ПП
+            badge.innerHTML = "Профпереподготовка";
+            badge.className = "status-badge status-pp";
+            hint.innerHTML = "Выдается диплом о профессиональной переподготовке.";
+        }
+    }
+</script>
+
+</body>
+</html>

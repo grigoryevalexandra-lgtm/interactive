@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --primary-emerald: #1b4d3e;
+            --steel-blue: #2c3e50;
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+            --error-red: #c0392b;
+            --success-green: #27ae60;
+            --warning-amber: #f39c12;
+            --border-color: #d1d8e0;
+        }
+
+        .lesson-container {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .exercise-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--primary-emerald);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        /* Состояния подсветки */
+        .card.correct { border-color: var(--success-green); background-color: #f0fff4; }
+        .card.error { border-color: var(--error-red); background-color: #fff5f5; }
+        .card.warning { border-color: var(--warning-amber); background-color: #fffdf0; }
+
+        .task-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--steel-blue);
+            margin-bottom: 20px;
+            min-height: 110px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: var(--white);
+            transition: border 0.3s;
+        }
+
+        .btn-check {
+            background: var(--primary-emerald);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-check:hover { background: var(--steel-blue); }
+
+        .feedback-message {
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .card.correct .feedback-message { display: block; color: var(--success-green); }
+        .card.error .feedback-message { display: block; color: var(--error-red); }
+        .card.warning .feedback-message { display: block; color: var(--warning-amber); }
+
+        @media (max-width: 1024px) {
+            .exercise-wrapper { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lesson-container">
+    <div class="exercise-wrapper">
+        
+        <div class="card" id="card1">
+            <div class="task-text">
+                Какие инструменты на базе ИИ позволяют автоматизировать точные заказы материалов через интеграцию с BIM и онлайн-сравнение цен?
+            </div>
+            <div>
+                <select id="q1">
+                    <option value="none">Выберите вариант...</option>
+                    <option value="correct">CostOS / Kojo / ConstructBuy</option>
+                    <option value="1">Gmail / Outlook Copilot</option>
+                    <option value="2">NVIDIA Metropolis</option>
+                    <option value="3">Adobe MidJourney</option>
+                </select>
+                <button class="btn-check" onclick="checkQ1()">Проверить</button>
+                <div class="feedback-message" id="msg1"></div>
+            </div>
+        </div>
+
+        <div class="card" id="card2">
+            <div class="task-text">
+                Что именно оптимизируют такие программы, как Procore и ALICE Technologies, используя ИИ-анализ на стройплощадке?
+            </div>
+            <div>
+                <select id="q2">
+                    <option value="none">Выберите вариант...</option>
+                    <option value="correct">Загрузка бригад и подбор количества рабочих</option>
+                    <option value="1">Цвет фасадных решений</option>
+                    <option value="2">Скорость интернета на объекте</option>
+                    <option value="3">Юридическая проверка договоров</option>
+                </select>
+                <button class="btn-check" onclick="checkQ2()">Проверить</button>
+                <div class="feedback-message" id="msg2"></div>
+            </div>
+        </div>
+
+        <div class="card" id="card3">
+            <div class="task-text">
+                Впишите название сервиса, который записывает совещания и выполняет транскрибацию (перевод речи в текст) в реальном времени:
+            </div>
+            <div>
+                <input type="text" id="q3" placeholder="Введите название...">
+                <button class="btn-check" onclick="checkQ3()">Проверить</button>
+                <div class="feedback-message" id="msg3"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function resetCard(card, msg) {
+        card.classList.remove('correct', 'error', 'warning');
+        msg.style.display = 'none';
+    }
+
+    function checkQ1() {
+        const card = document.getElementById('card1');
+        const msg = document.getElementById('msg1');
+        const val = document.getElementById('q1').value;
+        resetCard(card, msg);
+
+        setTimeout(() => {
+            if (val === 'none') {
+                card.classList.add('warning');
+                msg.innerText = '⚠ Пожалуйста, выберите ответ.';
+            } else if (val === 'correct') {
+                card.classList.add('correct');
+                msg.innerText = '✓ Верно! Эти системы анализируют проекты для точных заказов и управления запасами.';
+            } else {
+                card.classList.add('error');
+                msg.innerText = '✕ Ошибка. Подсказка: ищите специализированное ПО для закупок.';
+            }
+            msg.style.display = 'block';
+        }, 50);
+    }
+
+    function checkQ2() {
+        const card = document.getElementById('card2');
+        const msg = document.getElementById('msg2');
+        const val = document.getElementById('q2').value;
+        resetCard(card, msg);
+
+        setTimeout(() => {
+            if (val === 'none') {
+                card.classList.add('warning');
+                msg.innerText = '⚠ Выберите один из вариантов.';
+            } else if (val === 'correct') {
+                card.classList.add('correct');
+                msg.innerText = '✓ Правильно! Они помогают распределять людей без перегрузок и простоев.';
+            } else {
+                card.classList.add('error');
+                msg.innerText = '✕ Неверно. Эти программы сфокусированы на управлении ресурсами.';
+            }
+            msg.style.display = 'block';
+        }, 50);
+    }
+
+    function checkQ3() {
+        const card = document.getElementById('card3');
+        const msg = document.getElementById('msg3');
+        const val = document.getElementById('q3').value.toLowerCase().trim();
+        resetCard(card, msg);
+
+        setTimeout(() => {
+            if (val === '') {
+                card.classList.add('warning');
+                msg.innerText = '⚠ Поле не может быть пустым.';
+            } else if (val.includes('otter')) {
+                card.classList.add('correct');
+                msg.innerText = '✓ Верно! Otter.ai структурирует совещания в реальном времени.';
+            } else {
+                card.classList.add('error');
+                msg.innerText = '✕ Ошибка. Подсказка: название начинается на букву "O".';
+            }
+            msg.style.display = 'block';
+        }, 50);
+    }
+</script>
+
+</body>
+</html>

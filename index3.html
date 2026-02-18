@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --primary-emerald: #1b4d3e;
+            --steel-blue: #2c3e50;
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+            --error-red: #c0392b;
+            --success-green: #27ae60;
+            --border-color: #d1d8e0;
+        }
+
+        .lesson-container {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .exercise-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--primary-emerald);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        /* Состояния подсветки */
+        .card.correct {
+            border-color: var(--success-green);
+            background-color: #f0fff4;
+        }
+
+        .card.error {
+            border-color: var(--error-red);
+            background-color: #fff5f5;
+        }
+
+        .task-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--steel-blue);
+            margin-bottom: 20px;
+            min-height: 85px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: var(--white);
+            transition: border 0.3s;
+        }
+
+        .btn-check {
+            background: var(--primary-emerald);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-check:hover {
+            background: var(--steel-blue);
+        }
+
+        /* Блок обратной связи */
+        .feedback-message {
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .card.correct .feedback-message { display: block; color: var(--success-green); }
+        .card.error .feedback-message { display: block; color: var(--error-red); }
+
+        @media (max-width: 1024px) {
+            .exercise-wrapper { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lesson-container">
+    <div class="exercise-wrapper">
+        
+        <div class="card" id="card1">
+            <div class="task-text">
+                Какое ПО использует ИИ-модули для автоматической генерации графиков и анализа ресурсов в реальном времени?
+            </div>
+            <div>
+                <select id="q1">
+                    <option value="0">Выберите вариант...</option>
+                    <option value="correct">Microsoft Project (Copilot) / Primavera P6</option>
+                    <option value="1">Microsoft Excel (базовая версия)</option>
+                    <option value="2">AutoCAD Civil 3D</option>
+                    <option value="3">WhatsApp Business</option>
+                </select>
+                <button class="btn-check" onclick="checkQ1()">Проверить</button>
+                <div class="feedback-message" id="msg1"></div>
+            </div>
+        </div>
+
+        <div class="card" id="card2">
+            <div class="task-text">
+                Впишите название ИИ-программы, которая специализируется на оценке рисков задержек на основе <b>BIM-модели</b>:
+            </div>
+            <div>
+                <input type="text" id="q2" placeholder="Введите название...">
+                <button class="btn-check" onclick="checkQ2()">Проверить</button>
+                <div class="feedback-message" id="msg2"></div>
+            </div>
+        </div>
+
+        <div class="card" id="card3">
+            <div class="task-text">
+                Расположите этапы работы систем типа OpenSpace в порядке: <br>
+                <b>1.</b> Сравнение с планом | <b>2.</b> Съемка 360 | <b>3.</b> Отчет
+            </div>
+            <div>
+                <input type="text" id="q3" placeholder="Пример: 123">
+                <button class="btn-check" onclick="checkQ3()">Проверить</button>
+                <div class="feedback-message" id="msg3"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function updateCard(cardId, msgId, isCorrect, text) {
+        const card = document.getElementById(cardId);
+        const msg = document.getElementById(msgId);
+        card.classList.remove('correct', 'error');
+        
+        // Маленькая задержка для визуального эффекта переключения
+        setTimeout(() => {
+            card.classList.add(isCorrect ? 'correct' : 'error');
+            msg.innerText = text;
+        }, 50);
+    }
+
+    function checkQ1() {
+        const val = document.getElementById('q1').value;
+        if(val === 'correct') {
+            updateCard('card1', 'msg1', true, '✓ Верно! Это профильное ПО для графиков.');
+        } else {
+            updateCard('card1', 'msg1', false, '✕ Неверно. Выберите специализированную систему.');
+        }
+    }
+    
+    function checkQ2() {
+        const val = document.getElementById('q2').value.toLowerCase().trim();
+        if(val.includes('alice')) {
+            updateCard('card2', 'msg2', true, '✓ Верно! ALICE — лидер в аналитике BIM-рисков.');
+        } else {
+            updateCard('card2', 'msg2', false, '✕ Ошибка. Подсказка: название начинается на "A".');
+        }
+    }
+    
+    function checkQ3() {
+        const val = document.getElementById('q3').value.trim();
+        if(val === '213') {
+            updateCard('card3', 'msg3', true, '✓ Верно! Порядок: Сбор -> Анализ -> Отчет.');
+        } else {
+            updateCard('card3', 'msg3', false, '✕ Ошибка. Сначала всегда идет съемка (2).');
+        }
+    }
+</script>
+
+</body>
+</html>

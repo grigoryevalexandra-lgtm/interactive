@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --primary-emerald: #1b4d3e;
+            --steel-blue: #2c3e50;
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+            --error-red: #c0392b;
+            --success-green: #27ae60;
+            --border-color: #d1d8e0;
+        }
+
+        .lesson-container {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .exercise-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--primary-emerald);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .card.correct { border-color: var(--success-green); background-color: #f0fff4; }
+        .card.error { border-color: var(--error-red); background-color: #fff5f5; }
+        .card.warning { border-color: #f1c40f; background-color: #fffde7; }
+
+        .task-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--steel-blue);
+            margin-bottom: 20px;
+            min-height: 100px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: var(--white);
+        }
+
+        .btn-check {
+            background: var(--primary-emerald);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-check:hover { background: var(--steel-blue); }
+
+        .feedback-message {
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .card.correct .feedback-message, 
+        .card.error .feedback-message,
+        .card.warning .feedback-message { display: block; }
+
+        .card.correct .feedback-message { color: var(--success-green); }
+        .card.error .feedback-message { color: var(--error-red); }
+        .card.warning .feedback-message { color: #856404; }
+
+        @media (max-width: 1024px) {
+            .exercise-wrapper { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lesson-container">
+    <div class="exercise-wrapper">
+        
+        <div class="card" id="card1">
+            <div class="task-text">
+                Какую программу следует использовать для непрерывного отслеживания запасов на складах и сравнения цен поставщиков онлайн?
+            </div>
+            <div>
+                <select id="q1">
+                    <option value="0">Выберите вариант...</option>
+                    <option value="correct">CostOS / Kojo / ConstructBuy</option>
+                    <option value="1">NVIDIA Metropolis</option>
+                    <option value="2">Gmail / Outlook</option>
+                    <option value="3">Autodesk Tandem</option>
+                </select>
+                <button class="btn-check" onclick="checkQ1()">Проверить</button>
+                <div class="feedback-message" id="msg1"></div>
+            </div>
+        </div>
+
+        <div class="card" id="card2">
+            <div class="task-text">
+                Впишите название ИИ-планировщика, который оптимизирует маршруты перевозок с учетом пробок, погоды и загруженности складов:
+            </div>
+            <div>
+                <input type="text" id="q2" placeholder="Название программы...">
+                <button class="btn-check" onclick="checkQ2()">Проверить</button>
+                <div class="feedback-message" id="msg2"></div>
+            </div>
+        </div>
+
+        <div class="card" id="card3">
+            <div class="task-text">
+                Какой инструмент позволяет проводить ИИ-анализ загрузки бригад и подбирать оптимальное количество рабочих для объекта?
+            </div>
+            <div>
+                <select id="q3">
+                    <option value="0">Выберите вариант...</option>
+                    <option value="correct">Procore / ALICE Technologies</option>
+                    <option value="1">Stable Diffusion</option>
+                    <option value="2">Power BI</option>
+                    <option value="3">1С:Бухгалтерия</option>
+                </select>
+                <button class="btn-check" onclick="checkQ3()">Проверить</button>
+                <div class="feedback-message" id="msg3"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function updateCard(cardId, msgId, type, text) {
+        const card = document.getElementById(cardId);
+        const msg = document.getElementById(msgId);
+        card.classList.remove('correct', 'error', 'warning');
+        
+        setTimeout(() => {
+            card.classList.add(type);
+            msg.innerText = text;
+        }, 50);
+    }
+
+    function checkQ1() {
+        const val = document.getElementById('q1').value;
+        if(val === "0") {
+            updateCard('card1', 'msg1', 'warning', '⚠ Пожалуйста, выберите ответ из списка.');
+        } else if(val === 'correct') {
+            updateCard('card1', 'msg1', 'correct', '✓ Верно! Эти системы автоматизируют закупки и учет материалов.');
+        } else {
+            updateCard('card1', 'msg1', 'error', '✕ Неверно. Этот инструмент предназначен для других задач.');
+        }
+    }
+    
+    function checkQ2() {
+        const val = document.getElementById('q2').value.toLowerCase().trim();
+        if(val === "") {
+            updateCard('card2', 'msg2', 'warning', '⚠ Поле не может быть пустым.');
+        } else if(val.includes('flexport') || val.includes('convoy')) {
+            updateCard('card2', 'msg2', 'correct', '✓ Верно! Flexport и Convoy — лидеры "умной" логистики.');
+        } else {
+            updateCard('card2', 'msg2', 'error', '✕ Ошибка. Подсказка: название начинается на F или C.');
+        }
+    }
+    
+    function checkQ3() {
+        const val = document.getElementById('q3').value;
+        if(val === "0") {
+            updateCard('card3', 'msg3', 'warning', '⚠ Выберите инструмент из списка.');
+        } else if(val === 'correct') {
+            updateCard('card3', 'msg3', 'correct', '✓ Правильно! Procore и ALICE оптимизируют трудозатраты.');
+        } else {
+            updateCard('card3', 'msg3', 'error', '✕ Ошибка. Этот софт не анализирует загрузку бригад.');
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Интерактив: кто за что отвечает при выездном отборе проб</title>
+  <style>
+    body {
+      margin: 20px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      background: #ffffff;
+      color: #222222;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .controls-block {
+      margin-bottom: 16px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fafafa;
+      font-size: 13px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #d0d4dd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f2f5;
+      font-weight: 600;
+      text-align: left;
+    }
+    select {
+      padding: 4px 6px;
+      font-size: 13px;
+      max-width: 260px;
+    }
+    .btn {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 8px;
+      margin-top: 10px;
+    }
+    .btn-check {
+      background: #2a9d4a;
+      color: #fff;
+    }
+    .btn-reset {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .row-correct {
+      background: #e6ffed;
+    }
+    .row-wrong {
+      background: #ffecec;
+    }
+    .feedback {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Интерактив: кто за что отвечает при выездном отборе проб</h1>
+
+<div class="controls-block">
+  <p><strong>Задание.</strong> Для каждой строки выбери из выпадающих списков: действие, ответственного и результат. Каждое действие и каждый результат можно использовать только один раз - после выбора вариант становится недоступным в других строках. Нажми «Проверить ответы», чтобы увидеть, какие строки верные.</p>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Действие</th>
+      <th>Ответственный</th>
+      <th>Результат</th>
+    </tr>
+  </thead>
+  <tbody id="table-body">
+  </tbody>
+</table>
+
+<button class="btn btn-check" onclick="checkAnswers()">Проверить ответы</button>
+<button class="btn btn-reset" onclick="resetTable()">Сбросить</button>
+
+<div class="feedback" id="feedback"></div>
+
+<script>
+  const actions = [
+    { id: 1, text: 'Провести вводный и целевой инструктаж сторонних специалистов перед началом работ на площадке' },
+    { id: 2, text: 'Оформить наряд-допуск на работы в газоопасной или взрывоопасной зоне' },
+    { id: 3, text: 'Проверить, что у всех участников выезда есть нужные СИЗ и они ими реально пользуются' },
+    { id: 4, text: 'Проверить исправность газоходов и убедиться, что к ним есть безопасный доступ' },
+    { id: 5, text: 'Подготовить и проверить штуцеры для отбора проб' },
+    { id: 6, text: 'Обеспечить доступ на кровлю или в технологические зоны и сопровождение лаборатории по маршруту' },
+    { id: 7, text: 'Подобрать корректные методики отбора и измерений под конкретные источники' },
+    { id: 8, text: 'Выбрать и настроить оборудование для отбора и измерений' },
+    { id: 9, text: 'Провести измерения и оформить все необходимые протоколы и отчёты' }
+  ];
+
+  const roles = [
+    { id: '1', text: 'Служба охраны труда' },
+    { id: '2', text: 'Инженерные службы' },
+    { id: '3', text: 'Лаборатория' }
+  ];
+
+  const results = [
+    { id: 1, text: 'Специалисты допущены к работам, понимают риски и требования, вероятность травм и нарушений снижается' },
+    { id: 2, text: 'Работы в опасных зонах ведутся легально, с чётко прописанными мерами защиты и ответственными лицами' },
+    { id: 3, text: 'Люди защищены от вредных факторов, а нарушения требований по СИЗ выявляются до начала работ' },
+    { id: 4, text: 'Лаборатория может безопасно подойти к источнику и провести работы без риска для людей и оборудования' },
+    { id: 5, text: 'Есть рабочие точки отбора, пробу можно взять корректно и без дополнительных задержек на месте' },
+    { id: 6, text: 'Лаборатория проходит весь маршрут без срывов, простоев на проходных и долгих поисков площадок' },
+    { id: 7, text: 'Результаты измерений соответствуют нормативным требованиям и признаются контролирующими органами' },
+    { id: 8, text: 'Оборудование даёт точные и воспроизводимые результаты, снижается риск брака и повторных выездов' },
+    { id: 9, text: 'Предприятие получает полный пакет достоверных документов для отчётности, ПЭК и проверок надзора' }
+  ];
+
+  const correctMap = {
+    1: { role: '1', result: 1 },
+    2: { role: '1', result: 2 },
+    3: { role: '1', result: 3 },
+    4: { role: '2', result: 4 },
+    5: { role: '2', result: 5 },
+    6: { role: '2', result: 6 },
+    7: { role: '3', result: 7 },
+    8: { role: '3', result: 8 },
+    9: { role: '3', result: 9 }
+  };
+
+  function buildTable() {
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+
+    for (let i = 0; i < 9; i++) {
+      const tr = document.createElement('tr');
+
+      const tdAction = document.createElement('td');
+      const tdRole = document.createElement('td');
+      const tdResult = document.createElement('td');
+
+      const selAction = document.createElement('select');
+      selAction.setAttribute('data-name', 'action');
+      selAction.addEventListener('change', updateAllActionSelects);
+
+      const selRole = document.createElement('select');
+      selRole.setAttribute('data-name', 'role');
+
+      const selResult = document.createElement('select');
+      selResult.setAttribute('data-name', 'result');
+      selResult.addEventListener('change', updateAllResultSelects);
+
+      tdAction.appendChild(selAction);
+      tdRole.appendChild(selRole);
+      tdResult.appendChild(selResult);
+
+      tr.appendChild(tdAction);
+      tr.appendChild(tdRole);
+      tr.appendChild(tdResult);
+
+      tbody.appendChild(tr);
+    }
+
+    populateAllSelects();
+  }
+
+  function populateAllSelects() {
+    updateAllActionSelects();
+    updateAllRoleSelects();
+    updateAllResultSelects();
+  }
+
+  function updateAllActionSelects() {
+    const actionSelects = document.querySelectorAll('select[data-name="action"]');
+
+    const used = new Set();
+    actionSelects.forEach(sel => {
+      if (sel.value) used.add(sel.value);
+    });
+
+    actionSelects.forEach(sel => {
+      const current = sel.value;
+      sel.innerHTML = '';
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = '- выбери действие -';
+      sel.appendChild(empty);
+
+      actions.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = a.text;
+        if (used.has(String(a.id)) && String(a.id) !== current) {
+          opt.disabled = true;
+        }
+        sel.appendChild(opt);
+      });
+
+      if (current) {
+        sel.value = current;
+      }
+    });
+  }
+
+  function updateAllRoleSelects() {
+    const roleSelects = document.querySelectorAll('select[data-name="role"]');
+    roleSelects.forEach(sel => {
+      const current = sel.value;
+      sel.innerHTML = '';
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = '- выбери ответственного -';
+      sel.appendChild(empty);
+
+      roles.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = r.text;
+        sel.appendChild(opt);
+      });
+
+      if (current) {
+        sel.value = current;
+      }
+    });
+  }
+
+  function updateAllResultSelects() {
+    const resultSelects = document.querySelectorAll('select[data-name="result"]');
+
+    const used = new Set();
+    resultSelects.forEach(sel => {
+      if (sel.value) used.add(sel.value);
+    });
+
+    resultSelects.forEach(sel => {
+      const current = sel.value;
+      sel.innerHTML = '';
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = '- выбери результат -';
+      sel.appendChild(empty);
+
+      results.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = r.text;
+        if (used.has(String(r.id)) && String(r.id) !== current) {
+          opt.disabled = true;
+        }
+        sel.appendChild(opt);
+      });
+
+      if (current) {
+        sel.value = current;
+      }
+    });
+  }
+
+  function checkAnswers() {
+    const tbody = document.getElementById('table-body');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const feedback = document.getElementById('feedback');
+
+    let correctCount = 0;
+    let filledRows = 0;
+
+    rows.forEach(tr => {
+      tr.classList.remove('row-correct', 'row-wrong');
+      const selects = tr.querySelectorAll('select');
+      const actionId = parseInt(selects[0].value, 10);
+      const roleId = selects[1].value;
+      const resultId = parseInt(selects[2].value, 10);
+
+      if (!actionId || !roleId || !resultId) {
+        return;
+      }
+
+      filledRows++;
+
+      const correct = correctMap[actionId] &&
+                      correctMap[actionId].role === roleId &&
+                      correctMap[actionId].result === resultId;
+
+      if (correct) {
+        tr.classList.add('row-correct');
+        correctCount++;
+      } else {
+        tr.classList.add('row-wrong');
+      }
+    });
+
+    if (filledRows === 0) {
+      feedback.textContent = 'Заполни хотя бы одну строку перед проверкой.';
+      return;
+    }
+
+    if (correctCount === filledRows && correctCount === Object.keys(correctMap).length) {
+      feedback.textContent = 'Все связки верные, и ты использовал все действия и результаты. Отличная работа.';
+    } else if (correctCount === 0) {
+      feedback.textContent = 'Пока нет верных строк. Подумай, какие действия относятся к охране труда, инженерным службам и лаборатории.';
+    } else {
+      feedback.textContent = 'Верных строк: ' + correctCount + ' из ' + filledRows + '. Зелёный фон - верно, красный - неверно.';
+    }
+  }
+
+  function resetTable() {
+    document.getElementById('feedback').textContent = '';
+    buildTable();
+  }
+
+  buildTable();
+</script>
+
+</body>
+</html>

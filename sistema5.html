@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Интерактив: Атрибут в схеме</title>
+    <style>
+        body {
+            background-color: #fff3eb;
+            margin: 0;
+            padding: 40px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #000;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            margin: 0 0 20px 0;
+            font-size: 24px;
+            text-align: left;
+        }
+
+        .intro-text {
+            margin-bottom: 25px;
+            font-size: 18px;
+            text-align: left;
+        }
+
+        /* Блок с кодом */
+        .xml-box {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 19px;
+            margin-bottom: 30px;
+            white-space: pre-wrap;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Элементы разбора */
+        .part {
+            transition: background-color 0.4s ease;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* Цвет подсветки #d9f0f4 */
+        .highlight {
+            background-color: #d9f0f4;
+        }
+
+        /* Текстовая расшифровка внизу */
+        .breakdown {
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .breakdown-item {
+            margin-top: 15px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.6s ease;
+        }
+
+        .breakdown-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .xml-box.visible, .breakdown.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="main-trigger">
+    <h2>Как найти атрибут в схеме</h2>
+    
+    <div class="intro-text">
+        Атрибут в контексте разметочных языков вроде HTML, XML или JSON – это дополнительная характеристика или свойство конкретного элемента, которая уточняет его поведение, внешний вид или назначение. Например, проанализируем простую структуру XML-документа:
+    </div>
+
+    <div class="xml-box" id="xmlBlock">
+&lt;<span id="el-1" class="part">дом</span> <span id="attr-1" class="part">адрес="ул. Пушкина, д. 1"</span>&gt; 
+  &lt;этаж номер="1"&gt;...&lt;/этаж&gt; 
+  &lt;этаж номер="2"&gt;...&lt;/этаж&gt; 
+&lt;/дом&gt;
+    </div>
+
+    <div class="breakdown" id="breakdownBlock">
+        <div>В этой строчке:</div>
+        <div class="breakdown-item" id="item1">
+            <strong>&lt;дом&gt;</strong> – это элемент;
+        </div>
+        <div class="breakdown-item" id="item2">
+            <strong>адрес="ул. Пушкина, д. 1"</strong> – это атрибут элемента &lt;дом&gt;, который уточняет его местоположение.
+        </div>
+    </div>
+</div>
+
+<script>
+    const options = {
+        root: null,
+        threshold: 0.4
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                runFullAnimation();
+                observer.unobserve(entry.target);
+            }
+        });
+    }, options);
+
+    observer.observe(document.getElementById('main-trigger'));
+
+    function runFullAnimation() {
+        const xmlBox = document.getElementById('xmlBlock');
+        const breakdown = document.getElementById('breakdownBlock');
+        const item1 = document.getElementById('item1');
+        const item2 = document.getElementById('item2');
+        const elHighlight = document.getElementById('el-1');
+        const attrHighlight = document.getElementById('attr-1');
+
+        // 1. Появление блока с кодом
+        setTimeout(() => {
+            xmlBox.classList.add('visible');
+        }, 300);
+
+        // 2. Появление расшифровки "В этой строчке..."
+        setTimeout(() => {
+            breakdown.classList.add('visible');
+        }, 1200);
+
+        // 3. Подсветка ЭЛЕМЕНТА и появление текста про него
+        setTimeout(() => {
+            item1.classList.add('visible');
+            elHighlight.classList.add('highlight');
+        }, 2200);
+
+        // 4. Подсветка АТРИБУТА и появление текста про него
+        setTimeout(() => {
+            elHighlight.classList.remove('highlight'); // Убираем первую подсветку, чтобы сфокусировать внимание
+            item2.classList.add('visible');
+            attrHighlight.classList.add('highlight');
+        }, 4500);
+
+        // 5. Финал: оставляем обе подсветки для наглядности
+        setTimeout(() => {
+            elHighlight.classList.add('highlight');
+        }, 6500);
+    }
+</script>
+
+</body>
+</html>

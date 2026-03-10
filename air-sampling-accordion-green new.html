@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Основные методы отбора проб воздуха</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg-silk: #f3fbf7;
+      --green-accent: #007760;
+      --green-gradient: linear-gradient(135deg, #19a86e, #007760);
+      --green-border: #19a86e;
+      --text-dark: #2c2c2c;
+      --success: #2e7d32;
+      --success-bg: #e8f5e9;
+      --error: #d32f2f;
+      --error-bg: #ffebee;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-silk);
+      margin: 0;
+      padding: 5px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #accordion-wide {
+      background: #ffffff;
+      border: 1px solid var(--green-border);
+      border-radius: 4px;
+      padding: 15px 30px;
+      width: 100%;
+      max-width: 1100px;
+      min-height: auto;
+      box-shadow: 0 40px 90px rgba(0, 119, 96, 0.12);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 119, 96, 0.12);
+      padding-bottom: 10px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--green-accent);
+      font-size: 24px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .accordion {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .accordion-item {
+      border-radius: 6px;
+      border: 1px solid #eee;
+      background: #fff;
+      overflow: hidden;
+      transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .accordion-item.open {
+      border-color: var(--green-accent);
+      box-shadow: 0 8px 20px rgba(0, 119, 96, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .accordion-header {
+      width: 100%;
+      padding: 10px 15px;
+      border: none;
+      background: transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-align: left;
+      outline: none;
+    }
+
+    .accordion-header:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .accordion-title {
+      flex: 1;
+      padding-right: 10px;
+    }
+
+    .accordion-icon {
+      font-size: 18px;
+      line-height: 1;
+      color: var(--green-accent);
+      margin-left: 10px;
+      flex-shrink: 0;
+    }
+
+    .accordion-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+      border-top: 1px solid #f1f1f1;
+    }
+
+    .accordion-panel-inner {
+      padding: 8px 15px 12px 15px;
+      font-size: 14px;
+      color: var(--text-dark);
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div id="accordion-wide">
+    <header>
+      <h2>Основные методы отбора проб воздуха</h2>
+    </header>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-title">Жидкие поглотительные среды</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-panel">
+          <div class="accordion-panel-inner">
+            Воздух прогоняется через жидкий реагент в стеклянном поглотителе (Петри, Полежаева, Тищенко). Газы и пары растворяются или вступают в химическую реакцию с раствором - применяют растворы кислот для щелочных газов, растворы щелочей для кислых газов, органические растворители для неполярных веществ. Скорость отбора 0,3-0,5 дм³/мин, время 20-30 минут, за отбор через поглотитель проходит 6-15 литров воздуха. Применяют для диоксида азота, оксида азота, сероводорода, аммиака, фенола, формальдегида, хлороводорода - метод оптимален при высоких концентрациях на уровне ПДК. <br> Преимущества - простота и низкая стоимость. <br> Ограничения - работает только при высоких концентрациях. Хранение: сутки-неделя.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-title">Твердые сорбенты</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-panel">
+          <div class="accordion-panel-inner">
+             Воздух проходит через трубку, заполненную твердым сорбентом, молекулы загрязнителя задерживаются на развитой поверхности материала. Активированный уголь (до 1500 м²/г) для неполярной органики, силикагель для полярных веществ, пористые полимеры Tenax и Porapak для особо летучих соединений. Скорость 0,5-5 л/мин, время 10-30 минут, за отбор через трубку проходит 20-150 литров воздуха с эффектом концентрирования - чувствительность повышается в десятки-сотни раз. Применяют для бензола, толуола, ксилола, ацетона, растворителей, альдегидов, летучих органических соединений при низких и средних концентрациях. <br> Преимущества - высокая чувствительность и стабильность при хранении: недели-месяцы. <br> Ограничения - нужно правильно подобрать сорбент, дополнительная стадия десорбции в лаборатории.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-title">Фильтры</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-panel">
+          <div class="accordion-panel-inner">
+            Воздух прокачивается через волокнистый фильтр АФА, твердые и жидкие частицы задерживаются на волокнах и в порах - фильтр улавливает более 99% частиц любого размера. Фильтр высушивают при 105-110°C, взвешивают с точностью 0,0001 г, устанавливают в алонж на высоте 1,5 м от земли. Прокачивают воздух со скоростью 10-12 л/мин в течение 8-10 минут, за отбор проходит 80-120 литров, в лаборатории снова сушат и взвешивают. Применяют для взвешенных веществ, производственной пыли всех типов, дыма от сварки и горения, тумана кислот и щелочей, аэрозолей металлов. <br> Преимущества - единственный способ для частиц, высокая точность и стабильность прихранении: месяцы-годы <br> Ограничения - не подходит для газов и паров, требуются аналитические весы
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-title">Контейнеры</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-panel">
+          <div class="accordion-panel-inner">
+            Воздух отбирается в герметичную емкость без обработки - пробоотборные мешки, стеклянные сосуды или металлические контейнеры из нержавейки. Контейнер предварительно вакуумируют, открывают клапан на месте отбора, воздух засасывается внутрь до выравнивания давления со скоростью 0,1-0,4 л/мин. Пробу вводят непосредственно в газовый хроматограф без подготовки, один контейнер можно проанализировать на десятки соединений хромато-масс-спектрометрией. Применяют только для газов и особо летучих соединений - метан, этан, пропан, легкие углеводороды, хлорфторуглероды, когда нужен широкий спектр органики в одной пробе. <br> Преимущества - простота и проба в исходном составе <br> Ограничения - узкий круг веществ, низкий предел обнаружения, анализ в день отбора обязателен.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const headers = document.querySelectorAll('.accordion-header');
+
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.parentElement;
+        const panel = header.nextElementSibling;
+        const icon = header.querySelector('.accordion-icon');
+        const isOpen = item.classList.contains('open');
+
+        if (isOpen) {
+          item.classList.remove('open');
+          panel.style.maxHeight = 0;
+          icon.textContent = '+';
+        } else {
+          item.classList.add('open');
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+          icon.textContent = '−';
+        }
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.accordion-item.open .accordion-panel').forEach(panel => {
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      });
+    });
+  </script>
+</body>
+</html>

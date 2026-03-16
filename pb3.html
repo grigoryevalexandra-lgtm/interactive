@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Динамика развития пожара: Практикум</title>
+    <style>
+        :root {
+            --accent: #FF6B00;
+            --bg: #FFFFFF;
+            --text: #1A1A1A;
+            --text-sec: #666666;
+            --border: #EEEEEE;
+            --success: #27AE60;
+            --error: #EB5757;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container { width: 100%; max-width: 600px; padding: 60px 20px; }
+
+        .header { margin-bottom: 50px; }
+        .progress-track { height: 2px; background: var(--border); position: relative; }
+        .progress-fill { position: absolute; height: 100%; background: var(--accent); width: 20%; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .step-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-sec); margin-bottom: 12px; display: block; }
+
+        .card { display: none; animation: slideUp 0.6s ease-out forwards; }
+        .card.active { display: block; }
+
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 250px;
+            background: #FAFAFA;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .img-placeholder img { width: 100%; height: 100%; object-fit: contain; }
+
+        h2 { font-size: 26px; font-weight: 600; margin: 0 0 15px 0; letter-spacing: -0.02em; }
+        .desc { font-size: 16px; line-height: 1.6; color: var(--text-sec); margin-bottom: 35px; }
+
+        .options { display: grid; gap: 10px; }
+        .opt {
+            padding: 20px 24px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+        .opt:hover:not(.disabled) { border-color: var(--accent); }
+        .opt.selected { border-color: var(--accent); background: #FFF9F5; }
+        .opt.correct { border-color: var(--success); color: var(--success); background: #F2FAF5; }
+        .opt.wrong { border-color: var(--error); color: var(--error); background: #FFF5F5; }
+        .opt.disabled { pointer-events: none; }
+
+        .actions { margin-top: 40px; }
+        .btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 2px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+        .btn:disabled { background: #E0E0E0; cursor: not-allowed; }
+
+        .hint-btn { background: none; border: none; color: var(--text-sec); font-size: 13px; text-decoration: underline; cursor: pointer; margin-top: 20px; padding: 0; }
+        .hint-text { display: none; font-size: 14px; color: var(--accent); margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
+        
+        .feedback { margin-top: 20px; font-size: 14px; font-weight: 500; min-height: 20px; }
+        .final { text-align: center; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header" id="header">
+        <span class="step-label" id="stepCounter">Задание 1 из 5</span>
+        <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
+    </div>
+
+    <div id="quiz-flow"></div>
+
+    <div class="final" id="finalScreen">
+        <h2 style="font-size: 42px;">Анализ завершен</h2>
+        <p class="desc">Вы успешно изучили физику пожара и алгоритмы действий в каждой фазе.</p>
+        <button class="btn" onclick="location.reload()">Начать заново</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            img: "Screenshot_1.png", // Вставьте ссылку на 1-ю картинку
+            title: "Факторы воздействия",
+            desc: "Какое явление при пожаре приводит к разрушению остекления и резкому переходу ко II фазе?",
+            options: ["Постепенное тление", "Рост температуры до 200°C", "Высокая температура (800-900°C)"],
+            correct: 2,
+            hint: "На объемной стадии температура скачет до критических значений."
+        },
+        {
+            img: "Screenshot_5.png", // Вставьте ссылку на 2-ю картинку
+            title: "Управление кислородом",
+            desc: "Вы находитесь в помещении в начале I фазы (до 10 минут). Почему важно плотно закрыть все окна и двери?",
+            options: ["Чтобы дым не шел к соседям", "Чтобы ограничить приток кислорода и не усилить пламя", "Для сохранения температуры в 200°C"],
+            correct: 1,
+            hint: "Приток свежего воздуха превращает пожар в неуправляемый объемный процесс."
+        },
+        {
+            img: "Screenshot_3.png", // Вставьте ссылку на 3-ю картинку
+            title: "Точка невозврата",
+            desc: "Через сколько минут после начала пожара обычно разрушается остекление, превращая его в объемный?",
+            options: ["Через 2-5 минут", "Через 15-20 минут", "Только в фазе затухания"],
+            correct: 1,
+            hint: "Это происходит во второй фазе развития пожара."
+        },
+        {
+            img: "Screenshot_4.png", // Вставьте ссылку на 4-ю картинку
+            title: "Устойчивость стали",
+            desc: "При какой температуре наступает предел текучести стали, после которого здание может мгновенно обрушиться?",
+            options: ["200°C", "450°C", "900°C"],
+            correct: 1,
+            hint: "Металлические опоры деформируются под нагревом и резко сжимаются при охлаждении."
+        },
+        {
+            img: "Screenshot_2.png", // Вставьте ссылку на 5-ю картинку
+            title: "После ликвидации",
+            desc: "Пожар полностью потушен. Почему свободный доступ на объект все равно запрещен?",
+            options: ["Из-за риска обрушения и работы экспертов", "Для экономии воды", "Доступ разрешен сразу"],
+            correct: 0,
+            hint: "Нужно сохранить обстановку для следствия и избежать риска падения конструкций."
+        }
+    ];
+
+    let current = 0;
+    let selectedIdx = null;
+
+    function render() {
+        const q = questions[current];
+        const flow = document.getElementById('quiz-flow');
+        flow.innerHTML = `
+            <div class="card active">
+                <div class="img-placeholder">${q.img ? `<img src="${q.img}">` : '<i>Иллюстрация процесса</i>'}</div>
+                <h2>${q.title}</h2>
+                <p class="desc">${q.desc}</p>
+                <div class="options">
+                    ${q.options.map((opt, i) => `<div class="opt" onclick="selectOpt(${i})">${opt}</div>`).join('')}
+                </div>
+                <button class="hint-btn" onclick="toggleHint()">Подсказка из текста</button>
+                <div class="hint-text" id="hintBox">${q.hint}</div>
+                <div class="feedback" id="feedback"></div>
+                <div class="actions">
+                    <button class="btn" id="nextBtn" onclick="check()" disabled>Проверить</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('stepCounter').innerText = `Задание ${current + 1} из ${questions.length}`;
+        document.getElementById('pFill').style.width = ((current + 1) / questions.length * 100) + '%';
+    }
+
+    window.selectOpt = (idx) => {
+        const opts = document.querySelectorAll('.opt');
+        opts.forEach(o => o.classList.remove('selected'));
+        opts[idx].classList.add('selected');
+        selectedIdx = idx;
+        document.getElementById('nextBtn').disabled = false;
+    };
+
+    window.toggleHint = () => {
+        const h = document.getElementById('hintBox');
+        h.style.display = h.style.display === 'block' ? 'none' : 'block';
+    };
+
+    window.check = () => {
+        const btn = document.getElementById('nextBtn');
+        const q = questions[current];
+        const opts = document.querySelectorAll('.opt');
+        const fb = document.getElementById('feedback');
+
+        if (btn.innerText === "ДАЛЕЕ") {
+            current++;
+            if (current < questions.length) render(); else finish();
+            return;
+        }
+
+        opts.forEach((o, i) => {
+            o.classList.add('disabled');
+            if (i === q.correct) o.classList.add('correct');
+            else if (i === selectedIdx) o.classList.add('wrong');
+        });
+
+        const isCorrect = selectedIdx === q.correct;
+        fb.style.color = isCorrect ? "var(--success)" : "var(--error)";
+        fb.innerText = isCorrect ? "Верно согласно физике процесса." : "Неверно. Обратите внимание на выделенный вариант.";
+        btn.innerText = "ДАЛЕЕ";
+    };
+
+    function finish() {
+        document.getElementById('quiz-flow').style.display = 'none';
+        document.getElementById('header').style.display = 'none';
+        document.getElementById('finalScreen').style.display = 'block';
+    }
+
+    render();
+</script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система аттестации: Первичные средства пожаротушения</title>
+    <style>
+        :root {
+            --accent: #FF6B00;
+            --accent-hover: #E66000;
+            --bg: #FFFFFF;
+            --surface: #F8F8F8;
+            --text-main: #1A1A1A;
+            --text-secondary: #666666;
+            --border: #EEEEEE;
+            --success: #27AE60;
+            --error: #EB5757;
+            --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            padding: 40px;
+        }
+
+        /* Прогресс-бар */
+        .header {
+            margin-bottom: 60px;
+        }
+
+        .progress-track {
+            height: 2px;
+            background: var(--border);
+            width: 100%;
+            position: relative;
+        }
+
+        .progress-fill {
+            position: absolute;
+            height: 100%;
+            background: var(--accent);
+            width: 20%;
+            transition: var(--transition);
+        }
+
+        .step-counter {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* Карточка вопроса */
+        .quiz-card {
+            display: none;
+            animation: slideUp 0.6s ease-out forwards;
+        }
+
+        .quiz-card.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.2;
+            margin: 0 0 16px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        /* Варианты ответов */
+        .options-group {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 20px 24px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            background: var(--bg);
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+            background: var(--surface);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: #FFF9F5;
+        }
+
+        /* Состояния после проверки */
+        .option.correct {
+            border-color: var(--success);
+            color: var(--success);
+            background: #F2FAF5;
+        }
+
+        .option.wrong {
+            border-color: var(--error);
+            color: var(--error);
+            background: #FFF5F5;
+        }
+
+        .option.disabled {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* Кнопка */
+        .actions {
+            margin-top: 48px;
+        }
+
+        .btn-main {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-main:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-main:disabled {
+            background: #E0E0E0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Подсказка */
+        .hint-container {
+            margin-top: 24px;
+        }
+
+        .hint-btn {
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .hint-text {
+            display: none;
+            font-size: 14px;
+            color: var(--accent);
+            margin-top: 12px;
+            line-height: 1.5;
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .feedback-area {
+            margin-top: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        /* Финальный экран */
+        .final-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .final-screen h2 {
+            font-size: 42px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="step-counter" id="stepCounter">Задание 1 из 5</span>
+        <div class="progress-track">
+            <div class="progress-fill" id="pFill"></div>
+        </div>
+    </div>
+
+    <div id="quiz-flow">
+        </div>
+
+    <div class="final-screen" id="finalScreen">
+        <h2>Аттестация по теме урока завершена</h2>
+        <p class="description">Если вы ошиблись в двух и более вопросах, повторите материал урока и пройдите тест заново.</p>
+        <button class="btn-main" onclick="location.reload()">Пройти повторно</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            title: "",
+            desc: "В офисе загорелась микроволновка. Прибор находится под напряжением. Какой инструмент обеспечит безопасность сотрудника и тушение очага?",
+            options: [
+                { text: "Углекислотный огнетушитель (ОУ)", correct: true },
+                { text: "Воздушно-пенный огнетушитель (ОВП)", correct: false },
+                { text: "Пожарный кран", correct: false },
+                { text: "Пожарное покрывало", correct: false }
+            ],
+            hint: "Для электроустановок до 10 000 В подходит газ, который не проводит ток."
+        },
+        {
+            title: "",
+            desc: "На открытом складе произошло возгорание сухих досок. Требуется создать изолирующий слой и охладить дерево. Ваше действие?",
+            options: [
+                { text: "Применить огнетушитель ОВП", correct: true },
+                { text: "Использовать только пожарный лом", correct: false },
+                { text: "Применить углекислотный ОУ", correct: false },
+                { text: "Засыпать очаг песком", correct: false }
+            ],
+            hint: "Для тушения материалов класса А (дерево) лучше всего подходит пена, так как она охлаждает зону горения."
+        },
+        {
+            title: "",
+            desc: "Вам нужно заказать шкаф для коридора, где будет размещен пожарный кран и два огнетушителя. Какая маркировка верна?",
+            options: [
+                { text: "ШП-К", correct: false },
+                { text: "ШП-О", correct: false },
+                { text: "ШП-К-О", correct: true },
+                { text: "ШПМИ", correct: false }
+            ],
+            hint: "В классификации шкафов буквы обозначают содержимое: К — кран, О — огнетушитель."
+        },
+        {
+            title: "",
+            desc: "При осмотре пожарного щита вы обнаружили лишний предмет, не относящийся к немеханизированному инструменту. Что это?",
+            options: [
+                { text: "Пожарный багор", correct: false },
+                { text: "Штыковая лопата", correct: false },
+                { text: "Электрическая пила", correct: true },
+                { text: "Конусное ведро", correct: false }
+            ],
+            hint: "Пожарный щит комплектуется только ручным, немеханизированным инструментом."
+        },
+        {
+            title: "",
+            desc: "Вы обнаружили огнетушитель ОП без предохранительной чеки. К какому узлу относится этот элемент безопасности?",
+            options: [
+                { text: "Запорно-пусковое устройство", correct: true },
+                { text: "Сифонная трубка", correct: false },
+                { text: "Аэратор", correct: false },
+                { text: "Источник давления", correct: false }
+            ],
+            hint: "Чека защищает рычаг, который приводит устройство в действие."
+        }
+    ];
+
+    let currentStep = 0;
+
+    function renderQuestion() {
+        const q = questions[currentStep];
+        const container = document.getElementById('quiz-flow');
+        
+        container.innerHTML = `
+            <div class="quiz-card active">
+                <h2>${q.title}</h2>
+                <p class="description">${q.desc}</p>
+                <div class="options-group">
+                    ${q.options.map((opt, i) => `
+                        <div class="option" onclick="selectOption(${i})">
+                            ${opt.text}
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="hint-container">
+                    <button class="hint-btn" onclick="toggleHint()">Показать подсказку</button>
+                    <div class="hint-text" id="hintBox">${q.hint}</div>
+                </div>
+                <div class="feedback-area" id="feedback"></div>
+                <div class="actions">
+                    <button class="btn-main" id="nextBtn" onclick="checkAnswer()" disabled>Проверить</button>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('stepCounter').innerText = `Задание ${currentStep + 1} из ${questions.length}`;
+        document.getElementById('pFill').style.width = ((currentStep + 1) / questions.length * 100) + '%';
+    }
+
+    let selectedIdx = null;
+
+    window.selectOption = function(idx) {
+        const opts = document.querySelectorAll('.option');
+        opts.forEach(o => o.classList.remove('selected'));
+        opts[idx].classList.add('selected');
+        selectedIdx = idx;
+        document.getElementById('nextBtn').disabled = false;
+    };
+
+    window.toggleHint = function() {
+        const h = document.getElementById('hintBox');
+        h.style.display = (h.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.checkAnswer = function() {
+        const btn = document.getElementById('nextBtn');
+        const q = questions[currentStep];
+        const opts = document.querySelectorAll('.option');
+        const fb = document.getElementById('feedback');
+
+        if (btn.innerText === "ДАЛЕЕ" || btn.innerText === "К РЕЗУЛЬТАТАМ") {
+            currentStep++;
+            if (currentStep < questions.length) {
+                renderQuestion();
+            } else {
+                showFinal();
+            }
+            return;
+        }
+
+        opts.forEach((opt, i) => {
+            opt.classList.add('disabled');
+            if (q.options[i].correct) {
+                opt.classList.add('correct');
+            } else if (i === selectedIdx) {
+                opt.classList.add('wrong');
+            }
+        });
+
+        if (q.options[selectedIdx].correct) {
+            fb.style.color = "var(--success)";
+            fb.innerText = "Решение верно.";
+        } else {
+            fb.style.color = "var(--error)";
+            fb.innerText = "К сожалению, неверно.";
+        }
+
+        btn.innerText = (currentStep === questions.length - 1) ? "К РЕЗУЛЬТАТАМ" : "ДАЛЕЕ";
+    };
+
+    function showFinal() {
+        document.getElementById('quiz-flow').style.display = 'none';
+        document.getElementById('stepCounter').style.display = 'none';
+        document.getElementById('finalScreen').style.display = 'block';
+    }
+
+    renderQuestion();
+</script>
+
+</body>
+</html>

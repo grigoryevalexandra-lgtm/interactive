@@ -2,246 +2,189 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интерактив: План эвакуации</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Практикум: Структура плана эвакуации</title>
     <style>
         :root {
-            --orange: #FF6B00;
-            --orange-dim: #FFF5EE;
+            --accent: #FF6B00;
             --bg: #FFFFFF;
             --surface: #F9F9F9;
-            --text: #111111;
+            --text-main: #1A1A1A;
             --text-sec: #666666;
-            --border: #E0E0E0;
+            --border: #EEEEEE;
             --success: #27AE60;
             --error: #EB5757;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
             margin: 0;
-            padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            color: var(--text);
         }
 
-        .main-frame {
-            width: 100%;
-            max-width: 1100px;
-            border: 1px solid var(--border);
-            padding: 32px;
-            box-shadow: var(--shadow);
-        }
+        .container { width: 100%; max-width: 800px; padding: 60px 20px; }
 
-        header {
-            border-left: 4px solid var(--orange);
-            padding-left: 20px;
-            margin-bottom: 35px;
-        }
+        h2 { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 40px; }
+        .description { text-align: center; color: var(--text-sec); margin-bottom: 40px; }
 
-        h1 { font-size: 24px; font-weight: 700; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: -0.01em; }
-        .sub { font-size: 14px; color: var(--text-sec); margin: 0; }
-
-        /* Трехколонная сетка */
-        .board {
+        /* Игровое поле */
+        .game-area {
             display: grid;
-            grid-template-columns: 300px 1fr 1fr;
-            gap: 24px;
-            align-items: start;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
         }
 
-        .col-header {
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--text-sec);
-            margin-bottom: 16px;
-            display: block;
-        }
-
-        /* Контейнеры */
-        .zone {
+        .drop-zone {
             background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 16px;
-            min-height: 440px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            transition: all 0.3s ease;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 300px;
+            transition: 0.3s;
         }
 
-        .pool { background: #fdfdfd; }
+        .drop-zone.over { border-color: var(--accent); background: #FFF9F5; }
 
-        .drop-target {
-            background: #fff;
-            border: 1px dashed var(--border);
-        }
-
-        .drop-target.over {
-            border-color: var(--orange);
-            background: var(--orange-dim);
-        }
-
-        /* Карточки элементов */
-        .card {
-            background: #fff;
-            border: 1px solid var(--border);
-            padding: 14px 18px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: grab;
-            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            user-select: none;
-        }
-
-        .card:hover {
-            border-color: var(--orange);
-            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .card:active { cursor: grabbing; }
-
-        /* Футер */
-        .footer {
-            margin-top: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-        }
-
-        .status { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-
-        .btn-check {
-            background: var(--orange);
-            color: white;
-            border: none;
-            padding: 16px 45px;
-            font-size: 13px;
+        .zone-title {
+            font-size: 14px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        /* Элементы для перетаскивания */
+        .items-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .drag-item {
+            padding: 12px 18px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 14px;
+            user-select: none;
+            transition: 0.2s;
+        }
+
+        .drag-item:active { cursor: grabbing; }
+        .drag-item.correct { border-color: var(--success); color: var(--success); background: #F2FAF5; }
+        .drag-item.wrong { border-color: var(--error); color: var(--error); background: #FFF5F5; }
+
+        .btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 2px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
             transition: 0.3s;
         }
 
-        .btn-check:hover:not(:disabled) { background: #e66000; box-shadow: 0 6px 15px rgba(255, 107, 0, 0.2); }
-        .btn-check:disabled { background: #eee; color: #999; cursor: not-allowed; }
+        .btn:disabled { background: #E0E0E0; }
 
-        /* Результаты */
-        .correct { border: 2px solid var(--success) !important; color: var(--success); background: #f0faf4 !important; }
-        .wrong { border: 2px solid var(--error) !important; color: var(--error); background: #fff5f5 !important; }
-
-        @media (max-width: 900px) {
-            .board { grid-template-columns: 1fr; }
-            .zone { min-height: auto; }
-        }
+        .feedback { text-align: center; margin-top: 20px; font-weight: 500; min-height: 20px; }
     </style>
 </head>
 <body>
 
-<div class="main-frame">
-    <header>
-        <h1>Структура плана эвакуации</h1>
-        <p class="sub">Распределите элементы между графической и текстовой частями плана.</p>
-    </header>
+<div class="container">
+    <h2>Состав плана эвакуации</h2>
+    <p class="description">Перетащите элементы в соответствующие колонки согласно требованиям к планам эвакуации.</p>
 
-    <div class="board">
-        <div class="col">
-            <span class="col-header">Элементы плана эвакуации</span>
-            <div class="zone pool" id="mainPool">
-                <div class="card" draggable="true" data-cat="graph">Пути эвакуации</div>
-                <div class="card" draggable="true" data-cat="text">Способы оповещения</div>
-                <div class="card" draggable="true" data-cat="graph">Эвакуационные выходы</div>
-                <div class="card" draggable="true" data-cat="text">Порядок вызова пожарных</div>
-                <div class="card" draggable="true" data-cat="graph">Места размещения средств защиты</div>
-                <div class="card" draggable="true" data-cat="text">Обязанности и действия людей</div>
-                <div class="card" draggable="true" data-cat="graph">Номер этажа</div>
-                <div class="card" draggable="true" data-cat="text">Включение автоматики вручную</div>
-            </div>
+    <div class="items-pool" id="pool">
+        <div class="drag-item" draggable="true" data-type="graphic">Пути эвакуации</div>
+        <div class="drag-item" draggable="true" data-type="text">Порядок вызова пожарных</div>
+        <div class="drag-item" draggable="true" data-type="graphic">Номер этажа</div>
+        <div class="drag-item" draggable="true" data-type="text">Способы оповещения</div>
+        <div class="drag-item" draggable="true" data-type="graphic">Места размещения огнетушителей</div>
+        <div class="drag-item" draggable="true" data-type="text">Обязанности персонала</div>
+    </div>
+
+    <div class="game-area">
+        <div class="drop-zone" id="graphic" data-target="graphic">
+            <div class="zone-title">Графическая часть</div>
         </div>
-
-        <div class="col">
-            <span class="col-header">Графическая часть</span>
-            <div class="zone drop-target" data-target="graph" id="zoneGraph"></div>
-        </div>
-
-        <div class="col">
-            <span class="col-header">Текстовая часть</span>
-            <div class="zone drop-target" data-target="text" id="zoneText"></div>
+        <div class="drop-zone" id="text" data-target="text">
+            <div class="zone-title">Текстовая часть</div>
         </div>
     </div>
 
-    <div class="footer">
-        <div class="status" id="msg"></div>
-        <button class="btn-check" id="checkBtn" onclick="verify()" disabled>Проверить</button>
-    </div>
+    <button class="btn" id="checkBtn" onclick="checkResults()">Проверить распределение</button>
+    <div class="feedback" id="feedback"></div>
 </div>
 
 <script>
-    let activeItem = null;
-    const cards = document.querySelectorAll('.card');
-    const zones = document.querySelectorAll('.zone');
-    const checkBtn = document.getElementById('checkBtn');
+    const items = document.querySelectorAll('.drag-item');
+    const zones = document.querySelectorAll('.drop-zone');
+    let draggedItem = null;
 
-    cards.forEach(card => {
-        card.addEventListener('dragstart', function() {
-            activeItem = this;
-            this.style.opacity = '0.3';
+    items.forEach(item => {
+        item.addEventListener('dragstart', function() {
+            draggedItem = this;
+            setTimeout(() => this.style.opacity = '0.5', 0);
         });
-        card.addEventListener('dragend', function() {
+
+        item.addEventListener('dragend', function() {
             this.style.opacity = '1';
-            checkBtn.disabled = document.getElementById('mainPool').children.length > 0;
         });
     });
 
     zones.forEach(zone => {
         zone.addEventListener('dragover', e => e.preventDefault());
-        zone.addEventListener('dragenter', function() { if(this.classList.contains('drop-target')) this.classList.add('over'); });
+        zone.addEventListener('dragenter', function() { this.classList.add('over'); });
         zone.addEventListener('dragleave', function() { this.classList.remove('over'); });
         zone.addEventListener('drop', function() {
             this.classList.remove('over');
-            this.appendChild(activeItem);
+            this.appendChild(draggedItem);
         });
     });
 
-    function verify() {
-        const dropZones = document.querySelectorAll('.drop-target');
-        let points = 0;
-        const total = document.querySelectorAll('.card').length;
+    function checkResults() {
+        const zones = document.querySelectorAll('.drop-zone');
+        let total = document.querySelectorAll('.drag-item').length;
+        let correct = 0;
 
-        dropZones.forEach(z => {
-            const target = z.dataset.target;
-            const items = z.querySelectorAll('.card');
-            items.forEach(item => {
-                if (item.dataset.cat === target) {
-                    item.classList.add('correct');
-                    points++;
+        zones.forEach(zone => {
+            const targetType = zone.getAttribute('data-target');
+            const itemsInZone = zone.querySelectorAll('.drag-item');
+            
+            itemsInZone.forEach(item => {
+                if (item.getAttribute('data-type') === targetType) {
+                    item.className = 'drag-item correct';
+                    correct++;
                 } else {
-                    item.classList.add('wrong');
+                    item.className = 'drag-item wrong';
                 }
-                item.draggable = false;
             });
         });
 
-        const msg = document.getElementById('msg');
-        if (points === total) {
-            msg.style.color = 'var(--success)';
-            msg.innerText = 'Отлично! Структура плана верна';
-            checkBtn.style.display = 'none';
+        const fb = document.getElementById('feedback');
+        if (correct === total) {
+            fb.style.color = 'var(--success)';
+            fb.innerText = 'Отлично! Все элементы распределены верно.';
         } else {
-            msg.style.color = 'var(--error)';
-            msg.innerText = `Количество ошибок: ${total - points}`;
+            fb.style.color = 'var(--error)';
+            fb.innerText = `Правильно: ${correct} из ${total}.`;
         }
     }
 </script>

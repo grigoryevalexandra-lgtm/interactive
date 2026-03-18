@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер ITR: Устройство огнетушителя</title>
+    <style>
+        :root {
+            --main-color: #f9a85a; /* Тот самый оранжевый */
+            --success: #4caf50;
+            --error: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #ffffff;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 { margin-bottom: 5px; text-transform: uppercase; font-size: 22px; }
+        .hint { margin-bottom: 25px; color: #555; font-size: 14px; }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            min-width: 300px;
+            min-height: 400px;
+        }
+
+        .main-img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            max-height: 75vh;
+        }
+
+        /* Оранжевые точки */
+        .hotspot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--main-color);
+            border: 3px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 10;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .hotspot.selected {
+            animation: none;
+            box-shadow: 0 0 15px var(--main-color);
+            background: #fff;
+            border-color: var(--main-color);
+        }
+
+        .hotspot.correct { background: var(--success); border-color: #fff; animation: none; }
+        .hotspot.wrong { background: var(--error); border-color: #fff; animation: none; }
+
+        /* Меню выбора (сразу варианты) */
+        .options-menu {
+            position: absolute;
+            z-index: 100;
+            background: white;
+            border: 2px solid var(--main-color);
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            min-width: 180px;
+        }
+
+        .option-btn {
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+            color: #000;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover { background: var(--main-color); font-weight: bold; }
+
+        .controls { margin-top: 30px; display: flex; gap: 15px; }
+
+        button.btn-main {
+            background: var(--main-color);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        button.btn-reset {
+            background: #eee;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        #result-text { margin-top: 20px; font-weight: bold; font-size: 18px; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(249, 168, 90, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(249, 168, 90, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(249, 168, 90, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Устройство огнетушителя</h1>
+    <div class="hint">Нажмите на оранжевые точки и выберите правильное название детали</div>
+
+    <div class="image-container">
+        <img src="extinguisher.png" alt="Картинка не найдена" class="main-img" id="mainImg">
+        
+        <div class="hotspot" style="left: 60%; top: 18%;" data-id="0"></div>
+        <div class="hotspot" style="left: 51%; top: 26%;" data-id="1"></div>
+        <div class="hotspot" style="left: 56%; top: 31%;" data-id="2"></div>
+        <div class="hotspot" style="left: 28%; top: 50%;" data-id="3"></div>
+        <div class="hotspot" style="left: 54%; top: 62%;" data-id="4"></div>
+        <div class="hotspot" style="left: 48%; top: 78%;" data-id="5"></div>
+
+        <div id="ui-layer"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-main" onclick="verify()">Проверить результат</button>
+        <button class="btn-reset" onclick="reset()">Сбросить</button>
+    </div>
+
+    <div id="result-text"></div>
+
+    <script>
+        const config = {
+            options: ["Манометр", "Чека", "Рычаг", "Раструб", "Сифонная трубка", "Заряд углекислоты", "Корпус", "Пломба"],
+            answers: {
+                0: "Рычаг",
+                1: "Чека",
+                2: "Манометр",
+                3: "Раструб",
+                4: "Сифонная трубка",
+                5: "Заряд углекислоты"
+            }
+        };
+
+        let currentData = {};
+
+        document.querySelectorAll('.hotspot').forEach(spot => {
+            spot.onclick = (e) => {
+                const ui = document.getElementById('ui-layer');
+                ui.innerHTML = '';
+                
+                const menu = document.createElement('div');
+                menu.className = 'options-menu';
+                menu.style.left = spot.style.left;
+                menu.style.top = spot.style.top;
+
+                config.options.sort().forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => {
+                        currentData[spot.dataset.id] = opt;
+                        spot.classList.add('selected');
+                        ui.innerHTML = '';
+                    };
+                    menu.appendChild(btn);
+                });
+                ui.appendChild(menu);
+            };
+        });
+
+        function verify() {
+            let score = 0;
+            let total = Object.keys(config.answers).length;
+            document.getElementById('ui-layer').innerHTML = '';
+
+            for(let id in config.answers) {
+                const spot = document.querySelector(`.hotspot[data-id="${id}"]`);
+                spot.classList.remove('selected');
+                if(currentData[id] === config.answers[id]) {
+                    spot.className = 'hotspot correct';
+                    score++;
+                } else {
+                    spot.className = 'hotspot wrong';
+                }
+            }
+
+            const res = document.getElementById('result-text');
+            res.innerText = score === total ? "Идеально! Все детали названы верно." : `Верно ${score} из ${total}.`;
+            res.style.color = score === total ? "var(--success)" : "var(--error)";
+        }
+
+        function reset() {
+            currentData = {};
+            document.querySelectorAll('.hotspot').forEach(h => h.className = 'hotspot');
+            document.getElementById('result-text').innerText = "";
+            document.getElementById('ui-layer').innerHTML = '';
+        }
+
+        document.getElementById('mainImg').onerror = function() {
+            console.error("Браузер не видит файл extinguisher.png");
+        };
+    </script>
+</body>
+</html>

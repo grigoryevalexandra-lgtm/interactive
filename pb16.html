@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Быстроквиз: Пожарный щит</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-orange: #FF6600;
+            --brand-orange-hover: #E65C00;
+            --white: #FFFFFF;
+            --bg: #F3F4F6;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .quiz-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 800px;
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        h2 { color: var(--brand-orange); font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
+        p { color: #6B7280; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            line-height: 0;
+            border-radius: 12px;
+            overflow: visible;
+        }
+
+        .main-img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+        }
+
+        /* Анимированные точки */
+        .dot {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: var(--brand-orange);
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 0 rgba(255, 102, 0, 0.4);
+            transition: all 0.3s ease;
+            /* Анимация пульсации для активных точек */
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 102, 0, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 12px rgba(255, 102, 0, 0); transform: scale(1.1); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 102, 0, 0); transform: scale(1); }
+        }
+
+        /* Состояния после взаимодействия (анимация отключается) */
+        .dot.selected, .dot.correct, .dot.wrong {
+            animation: none;
+            transform: scale(1);
+        }
+
+        .dot.selected { background: #9CA3AF; }
+        .dot.correct { background: var(--success) !important; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .dot.wrong { background: var(--error) !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+
+        .dot.selected::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        #dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            padding: 8px;
+            z-index: 100;
+            width: 220px;
+        }
+
+        .option {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            text-align: left;
+            transition: background 0.2s;
+            color: var(--text-dark);
+        }
+
+        .option:hover { background: #F3F4F6; color: var(--brand-orange); }
+
+        .check-btn {
+            margin-top: 30px;
+            background: var(--brand-orange);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            opacity: 0.4;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+
+        .check-btn.active { opacity: 1; pointer-events: auto; }
+        .check-btn:hover { background: var(--brand-orange-hover); transform: translateY(-2px); }
+
+        #result-text {
+            margin-top: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+
+    <p>Нажмите на оранжевые точки и выберите из списка верное наименование инвентаря.</p>
+
+    <div class="image-container" id="container">
+        <img src="image_a78168.jpg" class="main-img" id="shield-img" alt="Пожарный щит">
+
+        <div class="dot" style="top: 21%; left: 45%;" data-id="0"></div>
+        <div class="dot" style="top: 32%; left: 45%;" data-id="1"></div>
+        <div class="dot" style="top: 45%; left: 40%;" data-id="2"></div>
+        <div class="dot" style="top: 75%; left: 22%;" data-id="3"></div>
+        <div class="dot" style="top: 75%; left: 58%;" data-id="4"></div>
+
+        <div id="dropdown"></div>
+    </div>
+
+    <button class="check-btn" id="check-btn" onclick="checkFinal()">Проверить результат</button>
+    <div id="result-text"></div>
+</div>
+
+<script>
+    const inventory = [
+        "Багор пожарный",
+        "Лом пожарный",
+        "Лопата пожарная",
+        "Ведро конусное",
+        "Огнетушитель"
+    ];
+
+    let userAnswers = {};
+    let activeDotId = null;
+
+    const dropdown = document.getElementById('dropdown');
+    const checkBtn = document.getElementById('check-btn');
+
+    document.querySelectorAll('.dot').forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            activeDotId = dot.dataset.id;
+            dropdown.style.display = 'block';
+            
+            let leftPos = dot.offsetLeft + 35;
+            if (leftPos + 220 > document.getElementById('container').offsetWidth) {
+                leftPos = dot.offsetLeft - 225;
+            }
+            
+            dropdown.style.left = leftPos + 'px';
+            dropdown.style.top = dot.offsetTop + 'px';
+
+            const shuffled = [...inventory].sort(() => Math.random() - 0.5);
+            dropdown.innerHTML = shuffled.map(name => 
+                `<div class="option" onclick="setAnswer('${name}')">${name}</div>`
+            ).join('');
+
+            e.stopPropagation();
+        });
+    });
+
+    function setAnswer(name) {
+        userAnswers[activeDotId] = name;
+        const dot = document.querySelector(`[data-id="${activeDotId}"]`);
+        dot.classList.add('selected');
+        dropdown.style.display = 'none';
+
+        if (Object.keys(userAnswers).length === 5) {
+            checkBtn.classList.add('active');
+        }
+    }
+
+    function checkFinal() {
+        let correctCount = 0;
+        document.querySelectorAll('.dot').forEach(dot => {
+            const id = dot.dataset.id;
+            const isCorrect = userAnswers[id] === inventory[id];
+            
+            dot.classList.remove('selected');
+            if (isCorrect) {
+                dot.classList.add('correct');
+                correctCount++;
+            } else {
+                dot.classList.add('wrong');
+            }
+        });
+
+        const resText = document.getElementById('result-text');
+        resText.style.display = 'block';
+        resText.innerHTML = `Результат: ${correctCount} из 5<br>` + 
+            (correctCount === 5 ? "🔥 Отлично! Вы успешно справились с этим заданием." : "⚠️ Есть ошибки. Попробуйте снова");
+        
+        checkBtn.innerText = "Начать заново";
+        checkBtn.style.opacity = "1";
+        checkBtn.style.pointerEvents = "auto";
+        checkBtn.onclick = () => location.reload();
+    }
+
+    document.addEventListener('click', () => dropdown.style.display = 'none');
+</script>
+
+</body>
+</html>

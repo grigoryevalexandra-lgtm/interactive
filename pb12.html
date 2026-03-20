@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тренажер: Проверка Наряда-Допуска</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .intro { max-width: 800px; text-align: center; margin-bottom: 20px; color: #333; font-family: 'Segoe UI', sans-serif; }
+        
+        /* Стилизация "бумажного" бланка */
+        .document-page {
+            width: 800px;
+            background: white;
+            padding: 50px 60px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            border: 1px solid #ddd;
+            color: #000;
+            line-height: 1.2;
+        }
+
+        .header { text-align: center; font-weight: bold; margin-bottom: 30px; text-decoration: underline; }
+        .doc-section { margin-bottom: 15px; font-size: 14px; position: relative; }
+        .field-label { font-weight: bold; }
+        .field-value { border-bottom: 1px solid #000; display: inline-block; min-width: 200px; padding: 0 5px; color: #000080; font-family: 'Courier New', monospace; }
+
+        /* Оранжевые точки */
+        .hotspot { 
+            position: absolute; 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            z-index: 10; 
+            border: 2px solid #fff; 
+            box-shadow: 0 0 8px rgba(0,0,0,0.4);
+            background-color: rgba(255, 140, 0, 0.9);
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+        .hotspot:hover { transform: translate(-50%, -50%) scale(1.2); }
+        .state-correct { background-color: #28a745 !important; border-color: #fff; }
+        .state-incorrect { background-color: #dc3545 !important; border-color: #fff; }
+
+        /* Подсказка */
+        #tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .h-green { color: #81e699; font-weight: bold; }
+        .h-red { color: #ff8d94; font-weight: bold; }
+
+        #stats { width: 800px; background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; font-family: 'Segoe UI', sans-serif; font-weight: bold; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <p class="intro">Перед вами фрагмент заполненного наряда-допуска на огневые работы. Кликните на оранжевые точки в местах, где нарушены правила заполнения или требования безопасности.</p>
+
+    <div id="stats">
+        <span>Найдено нарушений: <span id="score">0</span> / 3</span>
+        <span id="final-msg" style="color: #28a745;"></span>
+    </div>
+
+    <div class="document-page" id="doc-page">
+        <div id="tooltip"></div>
+        <div class="header">НАРЯД-ДОПУСК на выполнение огневых работ</div>
+        
+        <div class="doc-section">
+            <span class="field-label">3.2 Место проведения работ:</span>
+            <span class="field-value">Площадка ЖК "Авангард", секция А, этаж 4</span>
+            <div class="hotspot" style="top: 10px; left: 650px;" data-id="place" data-error="false"></div>
+        </div>
+
+        <div class="doc-section">
+            <span class="field-label">3.4 Состав исполнителей работ:</span><br>
+            <span class="field-value">1. Петров И.С. (сварщик 5 разр.), 2. Сидоров А.В. (практикант)</span>
+            <div class="hotspot" style="top: 25px; left: 550px;" data-id="crew" data-error="true"></div>
+        </div>
+
+        <div class="doc-section">
+            <span class="field-label">3.5 Характер и содержание работ:</span>
+            <span class="field-value">Сварка арматурных каркасов, подрезка кромок</span>
+            <div class="hotspot" style="top: 10px; left: 500px;" data-id="work" data-error="false"></div>
+        </div>
+
+        <div class="doc-section">
+            <span class="field-label">3.7 Планируемое время проведения работ:</span><br>
+            Начало: <span class="field-value">08:00 20.03.2026</span> Окончание: <span class="field-value">18:00 22.03.2026</span>
+            <div class="hotspot" style="top: 25px; left: 700px;" data-id="dates" data-error="true"></div>
+        </div>
+
+        <div class="doc-section" style="margin-top: 40px;">
+            <div class="field-label">5. МЕРОПРИЯТИЯ ПО ОБЕСПЕЧЕНИЮ БЕЗОПАСНОСТИ:</div>
+        </div>
+
+        <div class="doc-section">
+            <span class="field-label">5.3 Первичные средства пожаротушения:</span><br>
+            <span class="field-value">Ящик с песком (0,5 куб.м.), лопата штыковая</span>
+            <div class="hotspot" style="top: 25px; left: 450px;" data-id="fire" data-error="true"></div>
+        </div>
+
+        <div style="margin-top: 50px; font-size: 12px; font-style: italic;">* Подписи ответственных лиц в оригинале документа обязательны.</div>
+    </div>
+
+<script>
+    const container = document.getElementById('doc-page');
+    const tooltip = document.getElementById('tooltip');
+    const scoreEl = document.getElementById('score');
+    let found = 0;
+
+    const feedback = {
+        'crew': 'Верно! К огневым работам допускаются только лица с квалификационным удостоверением. Практиканты без допуска работать не могут.',
+        'dates': 'Верно! Наряд на огневые работы выдается строго на одну рабочую смену. Срок в 3 дня — грубое нарушение.',
+        'fire': 'Верно! Место работ обязательно должно быть обеспечено исправным переносным огнетушителем. Одного песка недостаточно.',
+        'place': 'Место проведения работ указано конкретно.',
+        'work': 'Содержание работ соответствует регламенту.'
+    };
+
+    container.addEventListener('click', (e) => {
+        const spot = e.target.closest('.hotspot');
+        if (!spot) { tooltip.style.display = 'none'; return; }
+
+        const id = spot.getAttribute('data-id');
+        const isError = spot.getAttribute('data-error') === 'true';
+
+        if (!spot.classList.contains('state-correct') && !spot.classList.contains('state-incorrect')) {
+            if (isError) {
+                spot.classList.add('state-correct');
+                spot.innerHTML = '✓';
+                found++;
+                scoreEl.innerText = found;
+                if (found === 3) document.getElementById('final-msg').innerText = 'ДОКУМЕНТ ПРОВЕРЕН УСПЕШНО!';
+            } else {
+                spot.classList.add('state-incorrect');
+                spot.innerHTML = '×';
+            }
+        }
+
+        tooltip.style.display = 'block';
+        tooltip.style.left = (e.pageX - container.offsetLeft + 20) + 'px';
+        tooltip.style.top = (e.pageY - container.offsetTop - 10) + 'px';
+        
+        const title = isError ? '<span class="h-green">НАРУШЕНИЕ </span>' : '<span class="h-red">ОШИБКИ НЕТ </span>';
+        tooltip.innerHTML = title + feedback[id];
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        if (!e.target.classList.contains('hotspot')) tooltip.style.display = 'none';
+    });
+</script>
+
+</body>
+</html>

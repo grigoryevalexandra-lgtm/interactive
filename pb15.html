@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Быстроквиз по эвакуации</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-orange: #FF6600;
+            --brand-orange-light: #FFF0E6;
+            --text-main: #1A1A1A;
+            --text-secondary: #6B7280;
+            --bg-body: #F3F4F6;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-main);
+        }
+
+        #quiz-card {
+            background: var(--white);
+            width: 95%;
+            max-width: 550px;
+            padding: 40px;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Индикатор прогресса сверху */
+        .progress-container {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+        .progress-step {
+            height: 4px;
+            flex: 1;
+            background: #E5E7EB;
+            border-radius: 2px;
+        }
+        .progress-step.active { background: var(--brand-orange); }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+
+        .timer-line-container {
+            width: 100%;
+            height: 4px;
+            background: #F3F4F6;
+            margin: 20px 0 30px 0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        #timer-line {
+            width: 100%;
+            height: 100%;
+            background: var(--brand-orange);
+            border-radius: 2px;
+        }
+
+        #question-text {
+            font-size: 1.15rem;
+            font-weight: 500;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            min-height: 70px;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: var(--white);
+            border: 1px solid #E5E7EB;
+            padding: 18px 24px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            text-align: left;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--brand-orange);
+            background-color: var(--brand-orange-light);
+            transform: translateY(-1px);
+        }
+
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            color: white;
+            border-color: var(--success);
+        }
+
+        .option-btn.wrong {
+            background-color: var(--error) !important;
+            color: white;
+            border-color: var(--error);
+        }
+
+        #result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-badge {
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: var(--brand-orange);
+            margin: 10px 0;
+        }
+
+        .action-btn {
+            background: var(--brand-orange);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .action-btn:hover {
+            background: #E65C00;
+            box-shadow: 0 10px 15px -3px rgba(255, 102, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div id="quiz-card">
+    <div id="game-screen">
+        <div class="progress-container" id="progress-bar">
+            </div>
+        <h2>Быстроквиз по эвакуации</h2>
+        
+        <div class="timer-line-container">
+            <div id="timer-line"></div>
+        </div>
+
+        <div id="question-text">Загрузка...</div>
+
+        <div class="options-grid" id="options-box"></div>
+    </div>
+
+    <div id="result-screen">
+        <p style="text-transform: uppercase; font-weight: 700; color: var(--text-secondary); margin:0;">Ваш результат</p>
+        <div class="score-badge" id="score-text">0/5</div>
+        <p id="feedback" style="font-weight: 500; margin-bottom: 30px;"></p>
+        <button class="action-btn" onclick="restartQuiz()">Начать заново</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "Раздался сигнал пожарной тревоги, но запаха дыма нет. Твои действия?",
+            o: ["Закончить письмо/отчет (это быстро)", "Подождать, пока коллеги начнут выходить", "Немедленно прекратить работу и идти к выходу"],
+            a: 2
+        },
+        {
+            q: "Коридор начал заполняться едким дымом. Как вы будете пробираться к выходу?",
+            o: ["В полный рост, прикрыв нос ладонью", "Максимально пригнувшись к полу (там чище воздух)", "Сделаю глубокий вдох и побегу напролом"],
+            a: 1
+        },
+        {
+            q: "Вам нужно эвакуироваться с 7-го этажа. Какой путь выберете?",
+            o: ["Лифт — так быстрее всего оказаться на улице", "Незадымляемая лестничная клетка", "Пожарная лестница снаружи здания"],
+            a: 1
+        },
+        {
+            q: "Каким цветом на плане эвакуации обозначены основные пути отхода (по ГОСТ)?",
+            o: ["Ярко-красными сплошными линиями", "Зелеными сплошными линиями со стрелками", "Синими пунктирными линиями"],
+            a: 1
+        },
+        {
+            q: "Вы успешно вышли из здания. Где вы должны находиться теперь?",
+            o: ["Дома (я же эвакуировался!)", "В ближайшем кафе, чтобы прийти в себя", "В установленном месте сбора для переклички"],
+            a: 2
+        }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 100;
+
+    function initProgress() {
+        const bar = document.getElementById('progress-bar');
+        bar.innerHTML = '';
+        questions.forEach(() => {
+            const step = document.createElement('div');
+            step.className = 'progress-step';
+            bar.appendChild(step);
+        });
+    }
+
+    function updateProgress() {
+        const steps = document.querySelectorAll('.progress-step');
+        steps.forEach((s, i) => {
+            s.className = i <= currentIdx ? 'progress-step active' : 'progress-step';
+        });
+    }
+
+    function render() {
+        if (currentIdx >= questions.length) return finish();
+
+        updateProgress();
+        clearInterval(timer);
+        timeLeft = 100;
+        
+        const q = questions[currentIdx];
+        document.getElementById('question-text').innerText = q.q;
+        
+        const box = document.getElementById('options-box');
+        box.innerHTML = '';
+
+        q.o.forEach((text, i) => {
+            const b = document.createElement('button');
+            b.className = 'option-btn';
+            b.innerText = text;
+            b.onclick = () => select(i);
+            box.appendChild(b);
+        });
+
+        timer = setInterval(() => {
+            timeLeft -= 1;
+            const line = document.getElementById('timer-line');
+            line.style.width = timeLeft + '%';
+            
+            // Краснеет, когда времени мало
+            if (timeLeft < 30) line.style.background = '#EF4444';
+            else line.style.background = '#FF6600';
+
+            if (timeLeft <= 0) select(-1);
+        }, 100);
+    }
+
+    function select(idx) {
+        clearInterval(timer);
+        const btns = document.querySelectorAll('.option-btn');
+        const correct = questions[currentIdx].a;
+
+        btns.forEach(b => b.disabled = true);
+
+        if (idx === correct) {
+            btns[idx].classList.add('correct');
+            score++;
+        } else {
+            if (idx !== -1) btns[idx].classList.add('wrong');
+            btns[correct].classList.add('correct');
+        }
+
+        setTimeout(() => {
+            currentIdx++;
+            render();
+        }, 1200);
+    }
+
+    function finish() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('score-text').innerText = `${score}/${questions.length}`;
+        
+        const feedback = score === 5 ? "Вы — эксперт по пожарной эвакуации! 🧡" : 
+                         score >= 3 ? "Хороший результат, но в вопросах пожарной эвакуации не должно быть ни одной ошибки." : 
+                         "Рекомендуем изучить методичку еще раз.";
+        document.getElementById('feedback').innerText = feedback;
+    }
+
+    function restartQuiz() {
+        // Полный сброс всех параметров
+        currentIdx = 0;
+        score = 0;
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+        initProgress();
+        render();
+    }
+
+    // Запуск
+    initProgress();
+    render();
+</script>
+
+</body>
+</html>

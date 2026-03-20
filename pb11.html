@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Экзамен ИТР 2026: Стройгенплан</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; }
+        h1 { color: #1a73e8; margin-bottom: 10px; font-size: 22px; }
+        
+        #exercise-container { 
+    position: relative; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+    background: white; 
+    line-height: 0; 
+    display: block; /* Изменили с inline-block */
+    width: 100%; 
+    max-width: 1000px;
+        }
+        
+        #blueprint-image { 
+    display: block; 
+    width: 100%; /* Картинка теперь тянется или сжимается */
+    height: auto; 
+        }
+
+        /* Оранжевые точки на линиях указателей */
+        .hotspot { 
+            position: absolute; 
+            width: 22px; 
+            height: 22px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            z-index: 10; 
+            border: 2px solid white; 
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            background-color: rgba(255, 140, 0, 0.9);
+            transition: transform 0.2s, background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
+        .hotspot:hover { transform: scale(1.2); }
+
+        /* Состояния после клика */
+        .state-correct { background-color: #28a745 !important; border-color: #1e7e34; }
+        .state-incorrect { background-color: #dc3545 !important; border-color: #bd2130; }
+
+        /* Всплывающая подсказка (Tooltip) */
+        #tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+            display: none;
+            z-index: 1000;
+            max-width: 250px;
+            pointer-events: none; /* Чтобы не мешал кликать */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .tooltip-header { font-weight: bold; margin-bottom: 5px; display: block; }
+        .text-green { color: #81e699; }
+        .text-red { color: #ff8d94; }
+
+        #stats { 
+    width: 100%; 
+    max-width: 1000px; 
+    box-sizing: border-box; /* Чтобы паддинги не раздували ширину */
+    background: white; 
+    padding: 10px; 
+    margin-bottom: 5px; 
+    border-radius: 8px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    font-weight: bold; 
+    color: #444; 
+}
+    </style>
+</head>
+<body>
+
+
+    <div id="stats">
+        <span>Найдено нарушений: <span id="score">0</span> / 5</span>
+        <span id="global-msg"></span>
+    </div>
+
+    <div id="exercise-container">
+        <img src="image_12.png" alt="Стройгенплан" id="blueprint-image">
+
+        <div id="tooltip"></div>
+
+        <div class="hotspot" style="top: 13%; left: 35.5%;" data-id="1" data-error="true"></div> <div class="hotspot" style="top: 45%; left: 45.7%;" data-id="2" data-error="true"></div> <div class="hotspot" style="top: 66%; left: 51.5%;" data-id="3" data-error="true"></div> <div class="hotspot" style="top: 86.5%; left: 13.5%;" data-id="4" data-error="true"></div> <div class="hotspot" style="top: 52%; left: 74%;" data-id="5" data-error="true"></div> <div class="hotspot" style="top: 8%; left: 78%;" data-id="6" data-error="false"></div> <div class="hotspot" style="top: 30%; left: 17%;" data-id="7" data-error="false"></div> <div class="hotspot" style="top: 50%; left: 55%;" data-id="8" data-error="false"></div> <div class="hotspot" style="top: 25%; left: 40%;" data-id="9" data-error="false"></div> <div class="hotspot" style="top: 88%; left: 35%;" data-id="10" data-error="false"></div> </div>
+
+<script>
+    const container = document.getElementById('exercise-container');
+    const tooltip = document.getElementById('tooltip');
+    const scoreEl = document.getElementById('score');
+    const msgEl = document.getElementById('global-msg');
+    let foundCount = 0;
+
+    const feedback = {
+        '1': 'Критическое нарушение! Опасная зона крана перекрывает бытовой городок.',
+        '2': 'Нарушение! Склад материалов блокирует доступ к пожарному гидранту.',
+        '3': 'Нарушение! Кабель электроснабжения лежит на проезжей части без защиты.',
+        '4': 'Нарушение! Отсутствует жесткое ограждение котлована в опасной зоне.',
+        '5': 'Нарушение! Место для курения организовано вплотную к складу ГСМ.',
+        '6': 'Ошибочный выбор. Подъездная дорога спроектирована верно.',
+        '7': 'Ошибочный выбор. Размещение бытовых помещений соответствует нормам.',
+        '8': 'Ошибочный выбор. Это контур строящегося здания, здесь нарушений нет.',
+        '9': 'Ошибочный выбор. Складирование утеплителя выполнено на отведенной площадке.',
+        '10': 'Ошибочный выбор. Размещение техники в котловане не нарушает ТБ.'
+    };
+
+    container.addEventListener('click', (e) => {
+        const spot = e.target.closest('.hotspot');
+        
+        if (!spot) {
+            tooltip.style.display = 'none';
+            return;
+        }
+
+        const id = spot.getAttribute('data-id');
+        const isError = spot.getAttribute('data-error') === 'true';
+
+        // Если еще не кликали
+        if (!spot.classList.contains('state-correct') && !spot.classList.contains('state-incorrect')) {
+            if (isError) {
+                spot.classList.add('state-correct');
+                spot.innerHTML = '✓';
+                foundCount++;
+                scoreEl.innerText = foundCount;
+                if (foundCount === 5) msgEl.innerHTML = '<span class="text-green">ВСЕ ОШИБКИ НАЙДЕНЫ!</span>';
+            } else {
+                spot.classList.add('state-incorrect');
+                spot.innerHTML = '×';
+            }
+        }
+
+        // Показ тултипа
+        tooltip.style.display = 'block';
+        tooltip.style.left = (e.pageX - container.offsetLeft + 15) + 'px';
+        tooltip.style.top = (e.pageY - container.offsetTop + 15) + 'px';
+        
+        const header = isError ? '<span class="tooltip-header text-green">ВЕРНО</span>' : '<span class="tooltip-header text-red">ОШИБКА</span>';
+        tooltip.innerHTML = header + feedback[id];
+    });
+
+    // Закрытие тултипа при движении мыши вне точек (опционально)
+    container.addEventListener('mousemove', (e) => {
+        if (!e.target.classList.contains('hotspot')) {
+            tooltip.style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>

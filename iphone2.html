@@ -2,9 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <title>Widget for ITR</title>
     <style>
         :root {
-            --phone-width: 280px; /* Можно менять размер здесь */
+            /* Увеличили ширину телефона с 280px до 420px */
+            --phone-width: 420px; 
             --accent-color: #000000;
         }
 
@@ -15,14 +17,14 @@
             align-items: center;
             min-height: 100vh;
             background-color: transparent;
-            font-family: 'Inter', sans-serif; /* Подойдет любой чистый шрифт */
+            font-family: 'Inter', sans-serif;
         }
 
         .widget-wrapper {
             display: flex;
             align-items: center;
-            gap: 40px;
-            max-width: 800px;
+            gap: 50px; /* Увеличили расстояние */
+            max-width: 1000px;
             padding: 20px;
         }
 
@@ -31,27 +33,30 @@
             position: relative;
             width: var(--phone-width);
             flex-shrink: 0;
+            z-index: 10;
         }
 
-        /* Картинка-рамка (твоя PNG) */
+        /* Картинка-рамка */
         .phone-frame {
             position: relative;
             width: 100%;
-            z-index: 10;
+            z-index: 5; /* Ниже видео */
             pointer-events: none;
             display: block;
         }
 
-        /* Видео внутри телефона */
+        /* Видео поверх телефона */
         .video-content {
             position: absolute;
-            top: 2.2%;    /* Подгонка под экран */
-            left: 5.5%;   /* Подгонка под экран */
-            width: 89%;   /* Подгонка под экран */
-            height: 95.5%;/* Подгонка под экран */
-            z-index: 5;
+            /* Точная подгонка под БЕЛЫЙ экран ниже челки */
+            top: 4.8%;    
+            left: 8.5%;
+            width: 83%;   
+            height: 90.5%;
+            z-index: 15; /* Выше рамки */
             overflow: hidden;
-            border-radius: 35px; /* Скругление как у iPhone */
+            /* Усилили скругление углов */
+            border-radius: 40px; 
             background: #000;
         }
 
@@ -64,7 +69,7 @@
         /* ТЕКСТ И СТРЕЛКА */
         .info-side {
             position: relative;
-            max-width: 320px;
+            max-width: 350px;
         }
 
         .text-block {
@@ -85,20 +90,23 @@
         /* СТРЕЛКА SVG */
         .arrow-svg {
             position: absolute;
-            left: -80px; /* Позиция между текстом и телефоном */
-            top: 50px;
+            left: -90px;
+            top: 60px;
             width: 80px;
-            transform: scaleX(-1); /* Разворачиваем, если нужно */
+            transform: scaleX(-1);
         }
 
         /* Адаптив для мобилок */
-        @media (max-width: 650px) {
+        @media (max-width: 750px) {
             .widget-wrapper {
-                flex-direction: column;
+                flex-direction: column-reverse; /* Сначала текст, потом телефон */
                 text-align: center;
             }
             .arrow-svg {
-                display: none; /* На мобилках стрелка часто лишняя */
+                display: none;
+            }
+            :root {
+                --phone-width: 300px; /* Уменьшаем на мобильных */
             }
         }
     </style>
@@ -111,7 +119,7 @@
         <img src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/tree.png" class="phone-frame">
         
         <div class="video-content">
-            <video autoplay loop muted playsinline>
+            <video controls preload="metadata">
                 <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/27.mp4" type="video/mp4">
             </video>
         </div>

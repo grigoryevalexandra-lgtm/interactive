@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f9f9f9; /* Светлый фон для контраста */
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-container {
+            display: flex;
+            align-items: center;
+            gap: 60px; /* Большой зазор между телефоном и текстом */
+            max-width: 1100px;
+            padding: 40px;
+        }
+
+        /* КОНТЕЙНЕР ТЕЛЕФОНА — ТЕПЕРЬ ОН БОЛЬШОЙ */
+        .phone-case {
+            position: relative;
+            width: 450px; /* Фиксированная ширина для солидности */
+            height: 900px; /* Соотношение сторон под твою маску */
+            flex-shrink: 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1); /* Премиальная тень */
+            border-radius: 60px;
+        }
+
+        /* Сама картинка-рамка */
+        .phone-frame-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* Рамка всегда сверху */
+            pointer-events: none; /* Пропускает клики к видео! */
+            object-fit: contain;
+        }
+
+        /* ЭКРАН С ВИДЕО */
+        .video-screen {
+            position: absolute;
+            /* Настройки под твою маску tree.png */
+            top: 1.5%; 
+            left: 6%;
+            width: 88%;
+            height: 97%;
+            z-index: 5; /* Видео под рамкой */
+            overflow: hidden;
+            border-radius: 50px;
+            background-color: #000;
+        }
+
+        .video-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Видео заполняет весь экран телефона */
+        }
+
+        /* БЛОК ТЕКСТА */
+        .info-side {
+            position: relative;
+            max-width: 400px;
+        }
+
+        .text-header {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .text-body {
+            font-size: 20px;
+            line-height: 1.4;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        /* СТРЕЛКА */
+        .arrow-icon {
+            position: absolute;
+            left: -100px;
+            top: 80px;
+            width: 90px;
+            transform: scaleX(-1);
+            opacity: 0.8;
+        }
+
+        /* Адаптив для маленьких экранов */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column-reverse;
+                text-align: center;
+                gap: 30px;
+            }
+            .phone-case {
+                width: 300px;
+                height: 600px;
+            }
+            .arrow-icon { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="phone-case">
+        <img src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/tree.png" class="phone-frame-img">
+        
+        <div class="video-screen">
+            <video controls preload="metadata" poster="">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/27.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div class="info-side">
+        <svg class="arrow-icon" viewBox="0 0 74 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1C10 30 30 50 70 55" stroke="black" stroke-width="2" stroke-dasharray="4 4"/>
+            <path d="M60 48L72 55L60 61" stroke="black" stroke-width="2"/>
+        </svg>
+
+        <div class="text-header">АЛЕКСЕЙ СТАРИКОВ</div>
+        <div class="text-body">
+            О ТОМ, ЗАЧЕМ БУХГАЛТЕРЫ,<br>
+            КАДРОВИКИ, ЮРИСТЫ ИДУТ В<br>
+            ACTION DIGITAL SCHOOL
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

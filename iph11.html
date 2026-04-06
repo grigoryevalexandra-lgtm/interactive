@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Фиксируем высоту под экран */
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Запрещаем скролл всему телу */
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: row; /* ТЕЛЕФОН СЛЕВА, ТЕКСТ СПРАВА */
+            flex-wrap: nowrap; /* ЗАПРЕЩАЕМ ПЕРЕНОС ТЕКСТА ПОД ТЕЛЕФОН */
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            max-width: 900px; /* Оптимально для Stepik */
+        }
+
+        /* Твой узкий iPhone */
+        .phone-display {
+            position: relative;
+            width: 250px; 
+            height: 500px; 
+            border: 2px solid #d4af37; /* ИЗМЕНЕНО: Более тонкая золотая рамка */
+            border-radius: 40px;
+            background: #000;
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
+            overflow: hidden;
+            flex-shrink: 0; /* Чтобы телефон не сжимался */
+        }
+
+        .phone-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 18px;
+            background: #000;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+
+        .video-track {
+            display: flex;
+            width: 200%; 
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        video {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Правая часть: Карусель с промптом */
+        .carousel-side {
+            flex: 1;
+            max-width: 400px;
+            background: #fcfcfc;
+            border: 1px solid #eee;
+            border-radius: 25px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .prompt-item {
+            display: none;
+        }
+
+        .prompt-item.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+
+        .header {
+            font-size: 12px;
+            font-weight: 700;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #1a1a1a;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        /* Стрелочки */
+        .nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #d4af37;
+            border-radius: 50%;
+            background: transparent;
+            color: #d4af37;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #d4af37;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="phone-display">
+        <div class="video-track" id="videoTrack">
+            <video id="v0" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/download.mp4" type="video/mp4">
+            </video>
+            <video id="v1" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/16.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div class="carousel-side">
+        <div id="p0" class="prompt-item active">
+            <div class="header">Промпт №1</div>
+            <div class="text">«Я загрузил файл СП 60.13330.2020. Выдели все требования, касающиеся размещения вентиляционных камер. Ответ представь в виде маркированного списка с указанием номеров пунктов».</div>
+        </div>
+        <div id="p1" class="prompt-item">
+            <div class="header">Промпт №2</div>
+            <div class="text">«На основе загруженного СП 30.13330, проверь, допустимо ли прокладывать стояк холодной воды в одной шахте с канализационным стояком. Ответ обоснуй ссылками на пункты».</div>
+        </div>
+
+        <div class="nav">
+            <button class="btn" onclick="move(-1)">&#8592;</button>
+            <button class="btn" onclick="move(1)">&#8594;</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let cur = 0;
+    const track = document.getElementById('videoTrack');
+    const prompts = [document.getElementById('p0'), document.getElementById('p1')];
+    const videos = [document.getElementById('v0'), document.getElementById('v1')];
+
+    function move(dir) {
+        videos[cur].pause();
+        cur = (cur + dir + 2) % 2;
+        
+        track.style.transform = `translateX(-${cur * 50}%)`;
+        
+        prompts.forEach((p, i) => p.classList.toggle('active', i === cur));
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.2/js/iframeResizer.contentWindow.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: #1a1a1a;
+            overflow: visible; 
+        }
+
+        .carousel-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            width: 95%;
+            max-width: 1000px;
+            padding: 20px 0;
+        }
+
+        /* Узкий iPhone слева */
+        .phone-display {
+            position: relative;
+            width: 250px; 
+            height: 520px; 
+            border-radius: 40px;
+            border: 5px solid #d4af37; /* Твоё золото */
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
+            background: #000;
+            overflow: hidden;
+            flex-shrink: 0;
+            order: 1; /* Гарантируем первый порядок */
+        }
+
+        .phone-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 20px;
+            background: #000;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+
+        .video-track {
+            display: flex;
+            width: 200%; 
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .video-track video {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Блок с текстом справа */
+        .controls-side {
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            order: 2; /* Вторым номером */
+        }
+
+        .prompt-card {
+            padding: 15px;
+            border-left: 3px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+        }
+
+        .prompt-card.active {
+            border-left: 3px solid #d4af37;
+            background: rgba(212, 175, 55, 0.05);
+            opacity: 1;
+            transform: translateX(8px);
+        }
+
+        .prompt-card h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #d4af37;
+            margin: 0 0 8px 0;
+        }
+
+        .prompt-card p {
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .click-hint {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #aaa;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 850px) {
+            .carousel-container {
+                flex-direction: column; /* На мобилках телефон будет сверху */
+                gap: 20px;
+            }
+            .phone-display {
+                width: 220px;
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="carousel-container">
+    
+    <div class="phone-display">
+        <div class="video-track" id="videoTrack">
+            <video id="vid0" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/download.mp4" type="video/mp4">
+            </video>
+            <video id="vid1" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/16.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div class="controls-side">
+        <div class="click-hint">ВЫБЕРИТЕ ВАРИАНТ:</div>
+        
+        <div class="prompt-card active" onclick="switchVideo(0)">
+            <h3>Промпт №1</h3>
+            <p>«Я загрузил файл СП 60.13330.2020. Выдели все требования, касающиеся размещения вентиляционных камер. Ответ представь в виде маркированного списка с указанием номеров пунктов».</p>
+        </div>
+
+        <div class="prompt-card" onclick="switchVideo(1)">
+            <h3>Промпт №2</h3>
+            <p>«На основе загруженного СП 30.13330, проверь, допустимо ли прокладывать стояк холодной воды в одной шахте с канализационным стояком. Ответ обоснуй ссылками на пункты».</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const track = document.getElementById('videoTrack');
+    const cards = document.querySelectorAll('.prompt-card');
+    const videos = [document.getElementById('vid0'), document.getElementById('vid1')];
+
+    function switchVideo(index) {
+        track.style.transform = `translateX(-${index * 50}%)`;
+        cards.forEach((card, i) => {
+            if (i === index) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+                videos[i].pause();
+            }
+        });
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.2/js/iframeResizer.contentWindow.min.js"></script>
+
+</body>
+</html>

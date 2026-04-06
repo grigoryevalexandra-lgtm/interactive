@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер: Compact Neon Horizontal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --neon-cyan: #00e5ff;
+            --neon-purple: #9d00ff;
+            --neon-green: #30ff14;
+            --neon-red: #ff1414;
+            --text-dark: #121212;
+            --border-tech: #dce2e8;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 5px; /* Минимальный отступ для iFrame */
+            display: flex;
+            justify-content: center;
+            background-image: radial-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .exercise-container {
+            width: 100%;
+            max-width: 1000px;
+            background: #fff;
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+            padding: 15px; /* Уменьшено */
+            box-sizing: border-box;
+        }
+
+        h2 {
+            font-family: 'Audiowide', cursive;
+            font-size: 16px; /* Компактнее */
+            margin: 0 0 10px 0;
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 229, 255, 0.4);
+        }
+
+        .task-description {
+            font-size: 12px; /* Меньше шрифт */
+            line-height: 1.3;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-left: 4px solid var(--neon-purple);
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+
+        .zone-header {
+            font-size: 9px;
+            font-weight: bold;
+            color: var(--neon-cyan);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        /* КОМПАКТНАЯ ВЫСОТА ЗОН */
+        .drop-zone, .source-zone {
+            height: 240px; /* Значительно уменьшено для горизонтального вида */
+            overflow-y: auto;
+            border: 1px solid var(--border-tech);
+            padding: 8px;
+            background: rgba(0, 229, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .draggable-item {
+            background: #fff;
+            border: 1px solid var(--text-dark);
+            padding: 10px;
+            font-size: 11px; /* Чуть меньше для экономии места */
+            cursor: grab;
+            transition: transform 0.1s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .draggable-item:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+        }
+
+        .dragging {
+            opacity: 0 !important;
+        }
+
+        .item-correct {
+            border: 2px solid var(--neon-green) !important;
+            box-shadow: 0 0 15px var(--neon-green) !important;
+            background: #fafff5 !important;
+        }
+
+        .item-incorrect {
+            border: 2px solid var(--neon-red) !important;
+            box-shadow: 0 0 15px var(--neon-red) !important;
+            background: #fff5f5 !important;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            font-family: 'Audiowide', cursive;
+            padding: 8px 20px;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            background: #fff;
+            border: 2px solid var(--text-dark);
+        }
+
+        .btn-check { background: var(--text-dark); color: #fff; }
+        .btn-check:hover { box-shadow: 0 0 15px var(--neon-cyan); border-color: var(--neon-cyan); }
+
+        #feedback { text-align: center; margin-top: 10px; font-size: 12px; font-weight: bold; min-height: 15px; }
+
+        #answer-key {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid var(--neon-cyan);
+            background: #fff;
+            font-size: 11px;
+        }
+
+        .answer-list { padding-left: 20px; margin: 5px 0 0 0; color: #444; }
+        .answer-list li { margin-bottom: 3px; font-family: 'Roboto Mono', monospace; }
+    </style>
+</head>
+<body>
+
+<div class="exercise-container">
+    <h2>// ПОДГОТОВКА ПИСЬМА-ОБОСНОВАНИЯ //</h2>
+    
+    <div class="task-description">
+        <b>ИНСТРУКЦИЯ:</b> Соберите запрос в левой колонке. Лишние блоки оставьте справа.
+    </div>
+
+    <div class="workspace">
+        <div class="column">
+            <div class="zone-header">[ INPUT_FIELD ]</div>
+            <div class="drop-zone" id="dropZone"></div>
+        </div>
+        <div class="column">
+            <div class="zone-header">[ DATA_STORAGE ]</div>
+            <div class="source-zone" id="sourceZone"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswer()">Проверить</button>
+        <button class="btn-reset" onclick="resetExercise()">Сбросить</button>
+    </div>
+
+    <div id="feedback"></div>
+
+    <div id="answer-key">
+        <b style="color: var(--neon-purple);">Правильная структура:</b>
+        <ol class="answer-list" id="finalList"></ol>
+    </div>
+</div>
+
+<script>
+    const blocks = [
+        { id: 1, text: "Ты – инженер-проектировщик систем вентиляции." },
+        { id: 2, text: "Разрабатывается раздел ОВ для объекта общественного питания." },
+        { id: 3, text: "Подготовь официальный запрос смежному подразделению (технологам)." },
+        { id: 4, text: "Для корректного расчёта воздухообмена в кухне необходимо уточнить параметры оборудования." },
+        { id: 5, text: "Ответ представь в виде структурированного списка вопросов. Стиль – официально-деловой." },
+        { id: 6, text: "Если потребуется дополнительная информация, сначала задай уточняющий вопрос." },
+        { id: 7, text: "Запрос должен быть кратким.", extra: true },
+        { id: 8, text: "Сделай это срочно.", extra: true }
+    ];
+
+    const correctOrder = [1, 2, 3, 4, 5, 6];
+
+    function init() {
+        const sourceZone = document.getElementById('sourceZone');
+        sourceZone.innerHTML = ''; document.getElementById('dropZone').innerHTML = '';
+        const shuffled = [...blocks].sort(() => Math.random() - 0.5);
+        
+        shuffled.forEach(b => {
+            const div = document.createElement('div');
+            div.className = 'draggable-item';
+            div.draggable = true;
+            div.innerText = b.text;
+            div.dataset.id = b.id;
+
+            div.addEventListener('dragstart', (e) => {
+                setTimeout(() => div.classList.add('dragging'), 0);
+            });
+
+            div.addEventListener('dragend', () => {
+                div.classList.remove('dragging');
+            });
+
+            sourceZone.appendChild(div);
+        });
+    }
+
+    [document.getElementById('dropZone'), document.getElementById('sourceZone')].forEach(zone => {
+        zone.addEventListener('dragover', e => {
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            if (!dragging) return;
+            const afterElement = getDragAfterElement(zone, e.clientY);
+            if (afterElement == null) zone.appendChild(dragging);
+            else zone.insertBefore(dragging, afterElement);
+        });
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggables = [...container.querySelectorAll('.draggable-item:not(.dragging)')];
+        return draggables.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) return { offset, element: child };
+            else return closest;
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function checkAnswer() {
+        const items = [...document.getElementById('dropZone').querySelectorAll('.draggable-item')];
+        const feedback = document.getElementById('feedback');
+        let allCorrect = true;
+
+        items.forEach((item, index) => {
+            const id = parseInt(item.dataset.id);
+            if (index < correctOrder.length && id === correctOrder[index]) {
+                item.classList.add('item-correct');
+                item.classList.remove('item-incorrect');
+            } else {
+                item.classList.add('item-incorrect');
+                item.classList.remove('item-correct');
+                allCorrect = false;
+            }
+        });
+
+        if (items.length !== correctOrder.length) allCorrect = false;
+
+        feedback.innerHTML = allCorrect ? 
+            '<span style="color:var(--neon-green)">ГОТОВО: ЛОГИКА ВЕРНА</span>' : 
+            '<span style="color:var(--neon-red)">ОШИБКА: ПОРЯДОК НАРУШЕН</span>';
+
+        const finalList = document.getElementById('finalList');
+        finalList.innerHTML = '';
+        correctOrder.forEach(id => {
+            const b = blocks.find(x => x.id === id);
+            const li = document.createElement('li');
+            li.innerText = b.text;
+            finalList.appendChild(li);
+        });
+        document.getElementById('answer-key').style.display = 'block';
+    }
+
+    function resetExercise() {
+        document.getElementById('feedback').innerHTML = '';
+        document.getElementById('answer-key').style.display = 'none';
+        init();
+    }
+
+    init();
+</script>
+</body>
+</html>

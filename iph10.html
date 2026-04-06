@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Никакого скролла */
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap; /* Жестко в ряд */
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            width: 98%;
+            max-width: 950px; /* Компактная ширина для Stepik */
+        }
+
+        /* Компактный планшет с очень тонкой рамкой */
+        .tablet-frame {
+            position: relative;
+            width: 450px; 
+            height: 315px; 
+            border: 1px solid #d4af37; /* Тончайшая рамка */
+            border-radius: 20px;
+            background: #000;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .video-track {
+            display: flex;
+            width: 200%; 
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        video {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Компактная правая часть */
+        .carousel-side {
+            flex: 1;
+            max-width: 380px;
+            background: #fcfcfc;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .prompt-item {
+            display: none;
+        }
+
+        .prompt-item.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+
+        .header {
+            font-size: 11px;
+            font-weight: 700;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .text {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #1a1a1a;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #d4af37;
+            border-radius: 50%;
+            background: #fff;
+            color: #d4af37;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #d4af37;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="tablet-frame">
+        <div class="video-track" id="videoTrack">
+            <video id="v0" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/17.mp4" type="video/mp4">
+            </video>
+            <video id="v1" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/18.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div class="carousel-side">
+        <div id="p0" class="prompt-item active">
+            <div class="header">Сравнение СП 60.13330</div>
+            <div class="text">«Я загрузил два файла: СП 60.13330.2016 и СП 60.13330.2020. Сравни их в части требований к системам противодымной защиты. Выдели, какие требования ужесточились, какие появились впервые. Результат представь в виде таблицы».</div>
+        </div>
+        
+        <div id="p1" class="prompt-item">
+            <div class="header">Поиск противоречий</div>
+            <div class="text">«Я загрузил текст из СП 7.13130 и СП 60.13330. Найди возможные противоречия в требованиях к огнезадерживающим клапанам. Если противоречий нет, укажи, что документы согласованы».</div>
+        </div>
+
+        <div class="nav">
+            <button class="btn" onclick="move(-1)">&#8592;</button>
+            <button class="btn" onclick="move(1)">&#8594;</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let cur = 0;
+    const track = document.getElementById('videoTrack');
+    const prompts = [document.getElementById('p0'), document.getElementById('p1')];
+    const videos = [document.getElementById('v0'), document.getElementById('v1')];
+
+    function move(dir) {
+        videos[cur].pause();
+        cur = (cur + dir + 2) % 2;
+        track.style.transform = `translateX(-${cur * 50}%)`;
+        prompts.forEach((p, i) => p.classList.toggle('active', i === cur));
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.2/js/iframeResizer.contentWindow.min.js"></script>
+
+</body>
+</html>

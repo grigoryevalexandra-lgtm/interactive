@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            width: 98%;
+            max-width: 1200px;
+        }
+
+        /* Горизонтальный планшет */
+        .tablet-display {
+            position: relative;
+            width: 550px; /* Широкий формат */
+            height: 380px; 
+            border: 6px solid #d4af37; /* Золото */
+            border-radius: 30px;
+            background: #000;
+            box-shadow: 0 20px 45px rgba(212, 175, 55, 0.25);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* Кнопка планшета (декор) */
+        .tablet-display::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 40px;
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+        }
+
+        .video-track {
+            display: flex;
+            width: 200%; 
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        video {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Правая часть: Текст */
+        .carousel-side {
+            flex: 1;
+            max-width: 450px;
+            background: #fcfcfc;
+            border: 1px solid #eee;
+            border-radius: 25px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .prompt-item {
+            display: none;
+        }
+
+        .prompt-item.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); }
+        }
+
+        .header {
+            font-size: 13px;
+            font-weight: 700;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+
+        /* Золотые стрелочки */
+        .nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            width: 46px;
+            height: 46px;
+            border: 1px solid #d4af37;
+            border-radius: 50%;
+            background: #fff;
+            color: #d4af37;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #d4af37;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        /* Отключаем перенос для айфрейма */
+        @media (max-width: 900px) {
+            .main-container { gap: 20px; }
+            .tablet-display { width: 450px; height: 310px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="tablet-display">
+        <div class="video-track" id="videoTrack">
+            <video id="v0" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/17.mp4 " type="video/mp4">
+            </video>
+            <video id="v1" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/18.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div class="carousel-side">
+        <div id="p0" class="prompt-item active">
+            <div class="header">Сценарий сравнения СП</div>
+            <div class="text">«Я загрузил два файла: СП 60.13330.2016 и СП 60.13330.2020. Сравни их в части требований к системам противодымной защиты. Выдели, какие требования ужесточились, какие появились впервые. Результат представь в виде таблицы».</div>
+        </div>
+        
+        <div id="p1" class="prompt-item">
+            <div class="header">Сценарий проверки противоречий</div>
+            <div class="text">«Я загрузил текст из СП 7.13130 и СП 60.13330. Найди возможные противоречия в требованиях к огнезадерживающим клапанам. Если противоречий нет, укажи, что документы согласованы».</div>
+        </div>
+
+        <div class="nav">
+            <button class="btn" onclick="move(-1)">&#8592;</button>
+            <button class="btn" onclick="move(1)">&#8594;</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let cur = 0;
+    const track = document.getElementById('videoTrack');
+    const prompts = [document.getElementById('p0'), document.getElementById('p1')];
+    const videos = [document.getElementById('v0'), document.getElementById('v1')];
+
+    function move(dir) {
+        videos[cur].pause(); // Останавливаем текущее видео
+        cur = (cur + dir + 2) % 2;
+        
+        track.style.transform = `translateX(-${cur * 50}%)`;
+        
+        prompts.forEach((p, i) => p.classList.toggle('active', i === cur));
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.2/js/iframeResizer.contentWindow.min.js"></script>
+
+</body>
+</html>

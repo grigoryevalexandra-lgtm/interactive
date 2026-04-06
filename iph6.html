@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: #1a1a1a;
+            overflow: visible; /* Даем ресайзеру видеть контент */
+        }
+
+        .carousel-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            width: 95%;
+            max-width: 1000px;
+            padding: 20px 0;
+        }
+
+        /* Узкий iPhone слева */
+        .phone-display {
+            position: relative;
+            width: 250px; 
+            height: 520px; 
+            border-radius: 40px;
+            border: 5px solid #d4af37; /* Твоё золото */
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
+            background: #000;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .phone-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 20px;
+            background: #000;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+
+        .video-track {
+            display: flex;
+            width: 200%; 
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .video-track video {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Блок с текстом и стрелочками справа */
+        .content-side {
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .prompt-box {
+            padding: 25px;
+            background: #fcfcfc;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            min-height: 180px;
+            position: relative;
+        }
+
+        .prompt-item {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .prompt-item.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .prompt-item h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #d4af37;
+            margin: 0 0 10px 0;
+        }
+
+        .prompt-item p {
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Те самые стрелочки */
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .arrow-btn {
+            width: 44px;
+            height: 44px;
+            border: 1px solid #d4af37;
+            background: #fff;
+            color: #d4af37;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+            font-size: 20px;
+        }
+
+        .arrow-btn:hover {
+            background: #d4af37;
+            color: #fff;
+        }
+
+        @media (max-width: 850px) {
+            .carousel-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .phone-display { width: 220px; height: 450px; }
+            .nav-controls { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="carousel-container">
+    
+    <div class="phone-display">
+        <div class="video-track" id="videoTrack">
+            <video id="vid0" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/download.mp4" type="video/mp4">
+            </video>
+            <video id="vid1" controls preload="metadata">
+                <source src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/16.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div class="content-side">
+        <div class="prompt-box">
+            <div class="prompt-item active">
+                <h3>Промпт №1</h3>
+                <p>«Я загрузил файл СП 60.13330.2020. Выдели все требования, касающиеся размещения вентиляционных камер. Ответ представь в виде маркированного списка с указанием номеров пунктов».</p>
+            </div>
+            <div class="prompt-item">
+                <h3>Промпт №2</h3>
+                <p>«На основе загруженного СП 30.13330, проверь, допустимо ли прокладывать стояк холодной воды в одной шахте с канализационным стояком. Ответ обоснуй ссылками на пункты».</p>
+            </div>
+
+            <div class="nav-controls">
+                <button class="arrow-btn" onclick="changeSlide(-1)">&#8592;</button>
+                <button class="arrow-btn" onclick="changeSlide(1)">&#8594;</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentSlide = 0;
+    const track = document.getElementById('videoTrack');
+    const prompts = document.querySelectorAll('.prompt-item');
+    const videos = [document.getElementById('vid0'), document.getElementById('vid1')];
+
+    function changeSlide(direction) {
+        // Пауза текущего видео перед переключением
+        videos[currentSlide].pause();
+
+        currentSlide = (currentSlide + direction + prompts.length) % prompts.length;
+
+        // Сдвиг видео
+        track.style.transform = `translateX(-${currentSlide * 50}%)`;
+
+        // Смена активного текста
+        prompts.forEach((p, i) => {
+            p.classList.toggle('active', i === currentSlide);
+        });
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.2/js/iframeResizer.contentWindow.min.js"></script>
+
+</body>
+</html>

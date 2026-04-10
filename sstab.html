@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #fcfcfc; /* Нейтральный фон для презентации виджета */
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: #000;
+        }
+
+        /* КОНТЕЙНЕР ОКНА (КОМПАКТНЫЙ И СКРУГЛЕННЫЙ ДЛЯ IFRAME) */
+        .browser-window {
+            width: 100%; /* Занимает всё место в iframe */
+            max-width: 980px; /* Немного компактнее */
+            height: 550px; /* Чуть плотнее */
+            background: #fff;
+            border-radius: 16px; /* УСИЛЕННОЕ СКРУГЛЕНИЕ */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); /* БОЛЕЕ ДОРОГАЯ, МЯГКАЯ ТЕНЬ */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05); /* Тонкая рамка */
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); /* Плавные переходы */
+            position: relative;
+        }
+
+        /* ЭФФЕКТ ВСПЛЫТИЯ (POPUP) НА ВЕСЬ ЭКРАН С РАЗМЫТИЕМ */
+        .browser-window.fullscreen {
+            position: fixed;
+            top: 2vh; left: 2vw;
+            width: 96vw; height: 96vh;
+            max-width: none;
+            border-radius: 16px;
+            z-index: 9999;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            /* Плавная анимация появления "Popup" */
+            animation: popupAnimation 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            /* Дорогой эффект размытия под окном */
+            backdrop-filter: blur(10px); 
+        }
+
+        @keyframes popupAnimation {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ВЕРХНЯЯ ПАНЕЛЬ СИНЯЯ С ЧЕРНЫМ ШРИФТОМ */
+        .browser-header {
+            height: 44px;
+            background: #3A75FF; /* ВАШ СИНИЙ */
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        /* БЕЛЫЕ ТОЧКИ УПРАВЛЕНИЯ */
+        .dots { display: flex; gap: 7px; }
+        .dot { 
+            width: 10px; height: 10px; 
+            border-radius: 50%; 
+            background: rgba(255,255,255,0.9); /* ЧИСТЫЕ БЕЛЫЕ ТОЧКИ */
+            border: none;
+            transition: 0.2s;
+        }
+        .expand-btn:hover .dot { background: #fff; } /* Выделение при наведении на кнопку развертывания */
+
+        .address-bar {
+            flex-grow: 1;
+            height: 26px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 11px;
+            color: #000; /* ЧЕРНЫЙ ШРИФТ */
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .expand-btn {
+            cursor: pointer;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            color: #000; /* Иконка черная */
+            background: rgba(255,255,255,0.9);
+            border-radius: 7px;
+            transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .expand-btn:hover { background: #fff; transform: translateY(-1px); }
+
+        /* ТАБЛИЦА — СТРОГО ПО ТЕКСТУ ЭКСЕЛЬ */
+        .table-content {
+            flex-grow: 1;
+            overflow: auto;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            color: #000;
+            min-width: 1250px; /* Чтобы все 8 классов влезли без искажений */
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #f2f2f2;
+            z-index: 10;
+            padding: 10px 6px;
+            text-align: center;
+            font-weight: 700;
+            border: 1px solid #ccc;
+        }
+
+        /* ЗАКРЕПЛЕНИЕ ПЕРВОЙ КОЛОНКИ */
+        td:first-child, th:first-child {
+            position: sticky;
+            left: 0;
+            background: #fdfdfd;
+            z-index: 5;
+            text-align: left;
+            border-right: 2px solid #bbb;
+            width: 280px;
+            padding-left: 12px;
+        }
+        th:first-child { z-index: 15; background: #f2f2f2; }
+
+        td {
+            padding: 9px 6px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        /* Разделы — Строго по файлу */
+        .section-header {
+            background: #eee !important;
+            font-weight: 800;
+            text-align: left !important;
+            padding-left: 15px !important;
+        }
+
+        /* Примечания — Строго по файлу */
+        .note-row {
+            font-size: 10px;
+            color: #333;
+            text-align: left !important;
+            background: #fff !important;
+            padding: 8px 15px !important;
+        }
+
+        tr:nth-child(even) { background: #fafafa; }
+
+        /* Стильный скроллбар */
+        .table-content::-webkit-scrollbar { width: 5px; height: 5px; }
+        .table-content::-webkit-scrollbar-thumb { background: #3A75FF; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="browser-window" id="browser">
+    <div class="browser-header">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="address-bar">СРАВНЕНИЕ ПРЕДЕЛЬНЫХ ОТКЛОНЕНИЙ: ГОСТ Р 72509-2026 / СП 71.13330.2017</div>
+        <div class="expand-btn" onclick="toggleFullscreen()" title="Раскрыть на весь экран">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="icon"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+        </div>
+    </div>
+
+    <div class="table-content">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2">Параметр</th>
+                    <th colspan="12">Предельное отклонение (Класс точности), мм</th>
+                </tr>
+                <tr>
+                    <th>1-й кл.</th><th>2-й кл.</th><th></th><th></th><th></th><th>3-й кл.</th><th></th><th>4-й кл.</th><th>5-й кл.</th><th>6-й кл.</th><th>7-й кл.</th><th>8-й кл.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="section-header"><td colspan="13">По ГОСТ Р 72509-2026</td></tr>
+                <tr><td colspan="13" style="text-align:left; font-weight:700;">Отклонение от вертикали, мм, не более:</td></tr>
+                <tr><td>на высоту до 3 м вкл.</td><td>—</td><td>1</td><td>3</td><td>4</td><td>6</td><td>8</td><td></td><td>10</td><td></td><td>12</td><td>14</td><td></td></tr>
+                <tr><td>при высоте от 3 до 6 м вкл.</td><td>—</td><td>2</td><td>4</td><td>6</td><td>8</td><td>10</td><td></td><td>12</td><td></td><td>14</td><td>15</td><td></td></tr>
+                <tr><td>при высоте более 6 м</td><td>—</td><td>4</td><td>6</td><td>8</td><td>10</td><td>12</td><td></td><td>15</td><td></td><td>16</td><td>18</td><td></td></tr>
+
+                <tr class="section-header"><td colspan="13">По СП 71.13330.2017</td></tr>
+                <tr>
+                    <td>Отклонение от вертикали</td>
+                    <td></td>
+                    <td colspan="2">Высококачественная штукатурка</td>
+                    <td colspan="2">Улучшенная штукатурка</td>
+                    <td colspan="2">Простая штукатурка</td>
+                    <td colspan="5" class="note-row">Данные предельные отклонения не соответствуют тем, что были предусмотрены в СП 71</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td colspan="2">Не более 0,5 мм на 1 м, но не более 5 мм на всю высоту помещения</td>
+                    <td colspan="2">Не более 2 мм на 1 м, но не более 10 мм на всю высоту помещения</td>
+                    <td colspan="2">Не более 3 мм на 1 м, но не более 10 мм на всю высоту помещения</td>
+                    <td colspan="5"></td>
+                </tr>
+
+                <tr class="section-header"><td colspan="13">По ГОСТ Р 72509-2026</td></tr>
+                <tr><td colspan="13" style="text-align:left; font-weight:700;">Отклонение откосов от вертикали и горизонтали на всю высоту (длину) откоса, мм, не более, при длине откоса:</td></tr>
+                <tr><td>до 1 м вкл.</td><td>1</td><td>1</td><td></td><td></td><td></td><td>2</td><td></td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+                <tr><td>от 1 до 1,5 м вкл</td><td>1</td><td>2</td><td></td><td></td><td></td><td>3</td><td></td><td>3</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+                <tr><td>от 1,5 до 2 м вкл</td><td>1</td><td>3</td><td></td><td></td><td></td><td>3</td><td></td><td>4</td><td>6</td><td>8</td><td>9</td><td>10</td></tr>
+                <tr><td>от 2 до 3 м вкл</td><td>1</td><td>3</td><td></td><td></td><td></td><td>4</td><td></td><td>6</td><td>8</td><td>10</td><td>12</td><td>14</td></tr>
+                <tr><td>от 3 до 6 м вкл</td><td>2</td><td>4</td><td></td><td></td><td></td><td>6</td><td></td><td>8</td><td>10</td><td>12</td><td>14</td><td>15</td></tr>
+                <tr><td>более 6 м</td><td>4</td><td>6</td><td></td><td></td><td></td><td>8</td><td></td><td>10</td><td>12</td><td>15</td><td>16</td><td>18</td></tr>
+
+                <tr class="section-header"><td colspan="13">По СП 71.13330.2017</td></tr>
+                <tr>
+                    <td>Отклонение оконных и дверных откосов, пилястр, столбов и т.п. от вертикали и горизонтали</td>
+                    <td colspan="3">Высококачественная штукатурка</td>
+                    <td colspan="3">Улучшенная штукатурка</td>
+                    <td colspan="2">Простая штукатурка</td>
+                    <td colspan="4" class="note-row">Данные предельные отклонения не соответствуют тем, что предусматривали в СП 71</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="3">На площади 4 м2 не более 2 мм на 1 м, но не более 5 мм на весь элемент</td>
+                    <td colspan="3">На площади 4 м2 не более 4 мм на 1 м, но не более 10 мм на весь элемент</td>
+                    <td colspan="2">Не более 4 мм на 1 м, но не более 10 мм на весь элемент</td>
+                    <td colspan="4"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleFullscreen() {
+        const browser = document.getElementById('browser');
+        const icon = document.getElementById('icon');
+        browser.classList.toggle('fullscreen');
+        
+        if (browser.classList.contains('fullscreen')) {
+            // Иконка "Свернуть"
+            icon.innerHTML = '<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/>';
+        } else {
+            // Иконка "Раскрыть"
+            icon.innerHTML = '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>';
+        }
+    }
+</script>
+
+</body>
+</html>

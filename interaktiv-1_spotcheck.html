@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Мини-задание: что здесь проверить перед отправкой</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  /* -- chat demo -- */
+  .chat{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .chat .ch{display:flex;align-items:center;gap:9px;background:var(--card);border-bottom:1px solid var(--line);padding:9px 13px;font-size:13px;font-weight:700}
+  .chat .ch .gi{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#1f9d57,#2bb56a);color:#fff;display:grid;place-items:center;font-size:12px}
+  .chat .body{padding:13px;background:#fff}
+  .sys{font-size:11.5px;color:var(--muted);background:var(--card2);border-radius:7px;padding:5px 9px;margin-bottom:9px;display:inline-block}
+  .bub{font-size:13.5px;border-radius:11px;padding:9px 12px;margin:7px 0;max-width:94%;white-space:pre-wrap}
+  .bub.u{background:var(--blue);color:#fff;margin-left:auto}.bub.a{background:var(--card);border:1px solid var(--line)}
+  .chat .ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:11px 13px;border-top:1px solid var(--line);background:var(--card)}
+  /* -- spotcheck -- */
+  .spotcheck{border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin-top:14px;background:#fff}
+  .spotcheck .sqh{font-weight:800;font-size:14.5px;margin-bottom:8px}
+  .spotopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:8px}
+  .spotopt{cursor:pointer;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;font-family:inherit;color:var(--ink);transition:.15s}
+  .spotopt:hover{border-color:var(--ink)}
+  .spotopt.ok{border-color:var(--green);background:#eef8f1}
+  .spotopt.err{border-color:var(--brand);background:#fdf0ef}
+  .spotopt:disabled{cursor:default;opacity:.9}
+  .spotfb{margin-top:10px}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">3 · Демо</p>
+  <h2>Собранный промпт → смоделированный ответ ИИ</h2>
+  <p class="muted">Вот как выглядит результат для варианта Б, собранный по промпту A3. В ответе <b>намеренно спрятана одна неточность</b> — найдите её в задании ниже, прежде чем читать реальный документ целиком.</p>
+
+  <div class="chat">
+    <div class="ch"><span class="gi">G</span> GigaChat · веб-чат <span style="flex:1"></span><span class="muted" style="font-size:11px;font-weight:600">промпт A3 + письмо № 311</span></div>
+    <div class="body">
+      <span class="sys">⚙️ Роль: инженер ПТО · документ: письмо техзаказчика № 311</span>
+      <div class="bub u">Ты — инженер ПТО. Контекст: письмо техзаказчика № 311 с тремя требованиями (скорректированный график, реестр актов, еженедельный фотоотчёт). Задача: подготовь ответ с конкретными мероприятиями и датами по каждому пункту. Формат: официальный ответ + таблица «требование → действие → срок».
+Текст письма: [вставлено полностью]</div>
+      <div class="bub a" id="demoAnswer">Уважаемые коллеги!
+
+В ответ на письмо № 311 от 24.06.2026 сообщаем о принятых мерах по замечаниям, выявленным по итогам выездной проверки.
+
+Ниже — сводная таблица по каждому пункту:
+
+требование → действие → срок
+1. Скорректированный график по секции 2 → готовим график с мероприятиями по наверстыванию отставания (перевод второй бригады, дополнительный кран на захватку) → до 01.07.2026
+2. Реестр актов за июнь с документами входного контроля → приводим исполнительную документацию в соответствие, формируем реестр → до 01.07.2026
+3. Еженедельный фотоотчёт по установленной форме → организуем еженедельную фотофиксацию хода работ → с 30.06.2026
+
+Готовы предоставить дополнительные документы по запросу.
+
+С уважением, инженер ПТО ООО «СтройМонолит»</div>
+    </div>
+    <div class="ctrls"><span class="muted" style="font-size:12px">Ответ смоделирован для урока</span></div>
+  </div>
+
+  <div class="spotcheck">
+    <div class="sqh">🔍 Мини-задание: что здесь проверить перед отправкой?</div>
+    <p class="muted" style="margin:0 0 6px">В ответе ИИ одна дата не совпадает с требованием из письма. Найдите расхождение.</p>
+    <div class="spotopts" data-spot>
+      <button class="spotopt" data-fb="Срок по фотоотчёту в ответе указан верно — с 30.06.2026, как и требовал техзаказчик. Неточность не здесь.">Пункт 3: фотоотчёт «с 30.06.2026» — а в письме требовали с 01.07.2026</button>
+      <button class="spotopt" data-correct data-fb="Именно так. Письмо требует скорректированный график до 30.06.2026, а ИИ в ответе поставил срок 01.07.2026 — на день позже требования техзаказчика. Формально такой ответ не закрывает пункт 1 в срок. Это как раз то, что «черновик ИИ» не проверяет сам — проверяете вы, сверяя каждую дату с документом-источником.">Пункт 1: срок графика в ответе «до 01.07.2026» — а в письме требовали до 30.06.2026</button>
+      <button class="spotopt" data-fb="Реестр актов действительно нужен до 01.07.2026 — здесь ИИ дату не перепутал. Ищите неточность в другом пункте.">Пункт 2: срок реестра актов в ответе «до 01.07.2026» — а в письме требовали до 26.06.2026</button>
+    </div>
+    <div class="spotfb"></div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var wrap=document.querySelector('[data-spot]');if(!wrap)return;
+  var fb=document.querySelector('.spotcheck .spotfb');
+  wrap.querySelectorAll('.spotopt').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var ok=btn.hasAttribute('data-correct');
+      wrap.querySelectorAll('.spotopt').forEach(function(b){
+        b.disabled=true;
+        if(b.hasAttribute('data-correct'))b.classList.add('ok');
+      });
+      if(!ok)btn.classList.add('err');
+      fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'')+'</div>';
+    });
+  });
+})();
+</script>
+</body>
+</html>

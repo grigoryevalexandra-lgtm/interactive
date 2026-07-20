@@ -4,17 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 2. Мини-квиз</title>
+<title>Интерактив 2. Проверь себя: что скопирует ИИ из этого образца</title>
 <style>
-  :root{--bg:#ffffff;--card:#faf8f5;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  :root{--bg:#ffffff;--card:#faf8f5;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--green:#1f9d57;--brand:#e2231a;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
   html,body{overflow-x:hidden;margin:0}
   body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
-  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
   p{margin:0 0 12px}.muted{color:var(--muted)}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
   .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
   .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
   .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  /* ── Квиз ── */
   .quiz .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:15px;font-weight:700;margin:0 0 12px}
   .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
   .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14px;font-family:inherit;color:var(--ink);transition:.15s}
@@ -27,25 +28,36 @@
 <body>
 <div style="max-width:900px;margin:0 auto;padding:16px">
 
-  <p class="stp">4 · Проверь себя</p>
-  <h2>Мини-квиз</h2>
-  <p class="muted">Два вопроса по материалу урока — кликните вариант, получите мгновенную обратную связь.</p>
+  <p class="stp">6 · Проверь себя</p>
+  <h2>Что скопирует ИИ из этого образца?</h2>
+  <p class="muted">Три коротких вопроса по материалу урока — кликните вариант, получите обратную связь.</p>
 
   <div class="quiz" data-quiz>
-    <p class="qq">1. ИИ берёт ответ про марку бетона из базы данных сводов правил (СП)?</p>
+    <p class="qq">Вопрос 1. Вы приложили образец ответа на замечание № 4 (про класс бетона) и попросили составить ответ на новое замечание про огнестойкость. Что попадёт в новый документ из образца?</p>
     <div class="opts">
-      <button class="opt" data-correct data-fb="Именно так: ИИ не хранит и не ищет факт в базе СП. Он предсказывает наиболее вероятное продолжение фразы на основе обучения — и это продолжение может как совпасть с нормативом, так и разойтись с ним.">Нет — он предсказывает вероятное продолжение текста, а не ищет факт в базе</button>
-      <button class="opt" data-fb="Ловушка: если бы ИИ был базой данных, он не мог бы «уверенно ошибаться» — а он может, и в тренажёре выше вы сами выбирали слова по вероятности, а не искали их в справочнике.">Да — внутри модели есть база СП, откуда она берёт точные цифры</button>
+      <button class="opt" data-fb="Содержание образца (факт про класс бетона B25) — это данные конкретного замечания № 4, они не имеют отношения к новому замечанию про огнестойкость и не должны туда переноситься.">Факт про класс бетона B25 W6 F150</button>
+      <button class="opt" data-correct data-fb="Именно так: структура «замечание принято → что сделано → чем оформлено → просьба снять» и тон официального ответа переносятся на любое новое замечание, включая огнестойкость.">Структура и тон: «замечание принято → что сделано → чем оформлено → просьба снять замечание»</button>
+      <button class="opt" data-fb="Норматив СП привязан к конкретному замечанию (класс бетона), а не к форме ответа — для нового замечания про огнестойкость нужна своя нормативная ссылка (СП 2.13130).">Ссылка на норматив СП 63.13330</button>
     </div>
     <div class="qfb"></div>
   </div>
 
-  <div class="quiz" data-quiz style="margin-top:18px">
-    <p class="qq">2. Почему ИИ иногда уверенно ошибается — вместо того чтобы сказать «не знаю»?</p>
+  <div class="quiz" data-quiz style="margin-top:20px">
+    <p class="qq">Вопрос 2. Сколько образцов обычно нужно приложить, чтобы ИИ уверенно скопировал стиль документа?</p>
     <div class="opts">
-      <button class="opt" data-fb="Не совсем: скорость тут ни при чём — дело не в спешке, а в самом устройстве модели. Она не проверяет факт, она предсказывает следующее вероятное слово, и додуманное слово ничем не «звучит» иначе, чем реальное.">Потому что она торопится и не успевает всё проверить</button>
-      <button class="opt" data-correct data-fb="Верно: модель не отличает «додуманное» от «проверенного» — она просто продолжает текст самым вероятным образом. Уверенный тон — это стиль текста, а не признак достоверности факта. Поэтому проверка фактов остаётся на вас.">Потому что она предсказывает вероятное продолжение, а не проверяет факт — додуманное и реальное звучат для неё одинаково уверенно</button>
-      <button class="opt" data-fb="Ловушка: дело не в «плохом» обучении, а в самой природе языковой модели — она устроена как машина продолжения текста, и это относится к любой такой модели, включая самые новые.">Потому что модель обучена на плохих данных и её пока не доработали</button>
+      <button class="opt" data-correct data-fb="Верно. Одного-двух образцов достаточно, чтобы ИИ считал структуру, тон и обороты — больше не улучшает результат.">1–2 образца</button>
+      <button class="opt" data-fb="Один образец обычно уже даёт устойчивый результат — не обязательно ждать «идеального» набора из пяти документов, это лишняя работа.">Не меньше 5 образцов, иначе результат нестабилен</button>
+      <button class="opt" data-fb="Без единого образца ИИ ориентируется на «средний» стиль из обучающих данных — не на стиль вашей компании. Именно поэтому урок и называется «примеры сильнее слов».">Ни одного — достаточно точного словесного описания стиля</button>
+    </div>
+    <div class="qfb"></div>
+  </div>
+
+  <div class="quiz" data-quiz style="margin-top:20px">
+    <p class="qq">Вопрос 3. В КП-1 указано «опалубка — в цене», в образце сравнения КП. Что должно произойти при переносе КП-3, где опалубка вынесена отдельной строкой?</p>
+    <div class="opts">
+      <button class="opt" data-fb="Это скрыло бы важное отличие КП-3 (заниженная цена за счёт вынесенной опалубки) — задача few-shot переноса не «подогнать» данные под образец, а честно отразить их в единой форме.">Подогнать под формулировку образца и тоже написать «в цене»</button>
+      <button class="opt" data-correct data-fb="Точно: форма (структура таблицы, формулировки) копируется из образца, а фактические данные — реальные, даже если они не совпадают по сути с образцом. Именно так вскрывается, что КП-3 дешевле только на бумаге.">Использовать ту же структуру строки, но указать факт как есть — «опалубка отдельно (+)»</button>
+      <button class="opt" data-fb="Пропуск строки скрывает риск от читателя таблицы — сметчик должен увидеть все отклонения, а не только удобные.">Пропустить эту строку, раз она не совпадает с образцом</button>
     </div>
     <div class="qfb"></div>
   </div>

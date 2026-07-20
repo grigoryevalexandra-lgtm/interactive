@@ -4,20 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 2. Живой чат → самопроверка → практика (обезличивание данных)</title>
+<title>Интерактив 2. Живой чат, самопроверка и практика на своей задаче</title>
 <style>
   :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--r:16px;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *{box-sizing:border-box}
   html,body{overflow-x:hidden}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
   h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
   p{margin:0 0 12px}.muted{color:var(--muted)}
   .sec{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-bottom:18px}
   .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
   .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
   .btn:hover{filter:brightness(.95)}.btn:disabled{opacity:.45;cursor:not-allowed}
-  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
-  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .btn.dark{background:var(--ink)}
+  .review label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
+  .review textarea,.review input{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;resize:vertical}
+  .review textarea:focus,.review input:focus{outline:none;border-color:var(--blue)}
   .livechat{display:flex;flex-direction:column;gap:12px}
   .livechat .lcbtns{display:flex;gap:10px;flex-wrap:wrap}
   .livechat .lcbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:var(--rs);padding:11px 16px;font-size:14px;font-weight:700;color:var(--ink);transition:.15s}
@@ -28,9 +31,13 @@
   .livechat .lcgate input{width:18px;height:18px;flex:0 0 auto;margin:2px 0 0;accent-color:var(--green)}
   .lcstatus{font-size:13px;font-weight:700;color:var(--muted)}
   .lcstatus.ready{color:var(--green)}
-  .review label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
-  .review textarea,.review input{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;resize:vertical}
-  .review textarea:focus,.review input:focus{outline:none;border-color:var(--blue)}
+  .locked{position:relative;opacity:.4;pointer-events:none;user-select:none;filter:grayscale(.3);transition:opacity .2s,filter .2s}
+  .locked .lockbadge{display:none}
+  .lockwrap{position:relative}
+  .lockwrap .lockbadge{display:none;position:absolute;top:14px;right:14px;background:var(--ink);color:#fff;font-size:11.5px;font-weight:800;border-radius:999px;padding:5px 12px;align-items:center;gap:6px;z-index:2}
+  .lockwrap.is-locked .lockbadge{display:inline-flex}
+  .transfer-note{border:1.5px dashed var(--purple);background:#faf6ff;border-radius:12px;padding:12px 14px;font-size:13px;color:#5b3a94;margin-top:12px}
+  .transfer-note .tnlabel{display:flex;align-items:center;gap:7px;font-weight:800;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase;color:var(--purple);margin-bottom:5px}
   .selfcheck{list-style:none;padding:0;margin:8px 0 0}
   .selfcheck li{border-bottom:1px solid var(--line)}
   .selfcheck li:last-child{border-bottom:none}
@@ -39,30 +46,25 @@
   .scbar{height:9px;border-radius:6px;background:var(--card2);overflow:hidden;margin-top:14px}
   .scbar i{display:block;height:100%;width:0;background:var(--green);border-radius:6px;transition:.35s}
   .scmsg{font-size:13px;font-weight:700;margin-top:7px;color:var(--muted)}
-  .lockwrap{position:relative}
-  .locked{position:relative;opacity:.4;pointer-events:none;user-select:none;filter:grayscale(.3);transition:opacity .2s,filter .2s}
-  .locked .lockbadge{display:none}
-  .lockwrap .lockbadge{display:none;position:absolute;top:14px;right:14px;background:var(--ink);color:#fff;font-size:11.5px;font-weight:800;border-radius:999px;padding:5px 12px;align-items:center;gap:6px;z-index:2}
-  .lockwrap.is-locked .lockbadge{display:inline-flex}
-  .transfer-note{border:1.5px dashed var(--purple);background:#faf6ff;border-radius:12px;padding:12px 14px;font-size:13px;color:#5b3a94;margin-top:12px}
-  .transfer-note .tnlabel{display:flex;align-items:center;gap:7px;font-weight:800;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase;color:var(--purple);margin-bottom:5px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
 </style>
 </head>
 <body>
 <div style="max-width:900px;margin:0 auto;padding:16px">
 
-  <!-- ═══ LIVE-CHAT ═══ -->
+  <!-- ══ LIVE-CHAT ══ -->
   <section class="sec" id="livechat">
-    <p class="stp">1 · Сделай в живом чате</p>
+    <p class="stp">5 · Сделай в живом чате</p>
     <h2>Сделай в живом чате</h2>
-    <p class="lcinstruction">Возьмите свой рабочий фрагмент текста (заметку, кусок переписки, черновик письма — что угодно из вашей реальной работы), обезличьте его по правилам из урока (ФИО → роль, суммы → X, названия компаний → «Подрядчик-1») и отправьте ИИ на реферирование — попросите его коротко пересказать суть в 3–4 предложениях. Затем вставьте результат в поле под кнопками.</p>
+    <p class="lcinstruction">Скопируйте промпт, который вы собрали в блоке «Конструктор запроса» (кнопка «📋 Скопировать»), и выполните его в реальном чат-боте — например, в одном из ниже. Затем вставьте свой результат в поле под кнопками.</p>
     <div class="lcbtns">
       <a class="lcbtn" href="https://giga.chat" target="_blank" rel="noopener"><span class="dotc" style="background:var(--blue)"></span> GigaChat</a>
       <a class="lcbtn" href="https://alice.yandex.ru" target="_blank" rel="noopener"><span class="dotc" style="background:var(--purple)"></span> Алиса / YandexGPT</a>
     </div>
     <div class="review">
       <label>Вставь сюда свой результат</label>
-      <textarea id="lcResult" rows="5" placeholder="Вставьте сюда реферат, который вернул чат-бот по вашему обезличенному тексту…"></textarea>
+      <textarea id="lcResult" rows="5" placeholder="Вставьте сюда ответ, который вернул чат-бот…"></textarea>
     </div>
     <div class="lcgate">
       <input type="checkbox" id="lcConfirm">
@@ -75,33 +77,33 @@
     </div>
   </section>
 
-  <!-- ═══ SELFCHECK ═══ -->
+  <!-- ══ SELFCHECK ══ -->
   <div class="lockwrap" id="selfcheckWrap">
     <section class="sec locked" id="selfcheck">
       <span class="lockbadge">🔒 Сначала блок «Сделай в живом чате»</span>
-      <p class="stp">2 · Самопроверка</p>
+      <p class="stp">7 · Самопроверка</p>
       <h2>Перед сдачей отметьте</h2>
       <ul class="selfcheck" id="scList">
-        <li><label><input type="checkbox"> Я проверил(а) свой текст по правилу «трёх нельзя» перед отправкой в ИИ.</label></li>
-        <li><label><input type="checkbox"> В отправленном тексте нет ФИО, телефонов, СНИЛС и других ПДн.</label></li>
-        <li><label><input type="checkbox"> В отправленном тексте нет точных сумм, наценок и названий компаний — только роли и обезличенные обозначения.</label></li>
-        <li><label><input type="checkbox"> Файл или текст был из доверенного источника — либо я работал(а) с ним в изолированном режиме.</label></li>
+        <li><label><input type="checkbox"> В промпте явно задана роль — от чьего лица отвечает ИИ.</label></li>
+        <li><label><input type="checkbox"> Указан контекст — какой документ и какие данные приложены.</label></li>
+        <li><label><input type="checkbox"> Задача сформулирована одним чётким действием.</label></li>
+        <li><label><input type="checkbox"> Указан формат ответа — и результат в живом чате пришёл именно в нём.</label></li>
       </ul>
       <div class="scbar"><i id="scBar"></i></div>
       <div class="scmsg" id="scMsg">0 из 4 — пройдитесь по списку</div>
     </section>
   </div>
 
-  <!-- ═══ CURATOR / PRACTICE ═══ -->
+  <!-- ══ CURATOR / FINAL ══ -->
   <div class="lockwrap" id="practiceWrap">
     <section class="sec locked" id="practice">
       <span class="lockbadge">🔒 Сначала блок «Сделай в живом чате»</span>
-      <p class="stp">3 · Практика и проверка</p>
+      <p class="stp">8 · Практика и проверка</p>
       <h2>Сделайте на своей задаче</h2>
-      <p class="muted">Возьмите реальный документ со своего объекта (ведомость, смету, переписку) и потренируйтесь его обезличивать по правилу «ФИО → роль, суммы → X, компании → «Подрядчик-N»». Пришлите куратору обезличенную версию — без реальных имён, телефонов и коммерческих цифр.</p>
+      <p class="muted">Возьмите одно реальное письмо или задачу со своего объекта и соберите запрос по формуле роль + контекст + задача + формат. Перед отправкой куратору уберите реальные цены, реквизиты и персональные данные — это коммерческая тайна и ФЗ-152.</p>
       <div class="review">
-        <label>Что получилось — вставьте обезличенный фрагмент</label>
-        <textarea id="sRes" rows="4" placeholder="Обезличенный текст, который вы подготовили"></textarea>
+        <label>Что получилось — вставьте результат от ИИ</label>
+        <textarea id="sRes" rows="4" placeholder="Результат, который выдал ИИ"></textarea>
         <label>Ваш e-mail для ответа куратора</label>
         <input id="sEmail" type="email" placeholder="you@example.ru">
         <div style="margin-top:12px"><button class="btn" id="sendRev">⬇ Скачать моё задание .txt</button>
@@ -109,9 +111,9 @@
       </div>
       <div class="transfer-note">
         <div class="tnlabel">⚙ Для переноса в платформу Актион</div>
-        Здесь платформа подключает отправку куратору — проверка №1 (см. паспорта шагов). В демо-комплекте вместо реальной отправки — локальное скачивание .txt с текстом задания, ничего никуда не отправляется.
+        Здесь платформа подключает отправку куратору — проверка №1. В демо-комплекте вместо реальной отправки — локальное скачивание .txt с текстом задания, ничего никуда не отправляется.
       </div>
-      <div class="note green" style="margin-top:18px">⬆️ <b>Ассистент закрепил навык «безопасность данных».</b> Что забрать: правило «трёх нельзя» — ПДн, коммерческая тайна, политика работодателя; обезличивание за 2 минуты не убивает пользу ИИ; чужие файлы — только в изолированном режиме с проверкой результата.</div>
+      <div class="note green" style="margin-top:18px">⬆️ <b>Ассистент прокачан до Уровня 1 «Роль и контекст».</b> Что забрать: ИИ отвечает по формуле роль + контекст + задача + формат; без роли и формата получаете отписку, а не черновик; конструктор запроса — рабочий шаблон, которым можно пользоваться каждый день.</div>
     </section>
   </div>
 
@@ -119,13 +121,13 @@
 <script>
 /* ── BLOCK: LIVE-CHAT — гейт итогов урока ── */
 (function(){
-  var result=document.getElementById('lcResult'),confirmEl=document.getElementById('lcConfirm');
-  if(!result||!confirmEl)return;
+  var result=document.getElementById('lcResult'),confirm=document.getElementById('lcConfirm');
+  if(!result||!confirm)return;
   var status=document.getElementById('lcStatus');
   var lockTargets=[document.getElementById('selfcheck'),document.getElementById('practice')];
   var lockWraps=[document.getElementById('selfcheckWrap'),document.getElementById('practiceWrap')];
   function upd(){
-    var ready=result.value.trim().length>0 && confirmEl.checked;
+    var ready=result.value.trim().length>0 && confirm.checked;
     lockTargets.forEach(function(el){if(el)el.classList.toggle('locked',!ready);});
     lockWraps.forEach(function(w){if(w)w.classList.toggle('is-locked',!ready);});
     if(status){
@@ -134,7 +136,7 @@
     }
   }
   result.addEventListener('input',upd);
-  confirmEl.addEventListener('change',upd);
+  confirm.addEventListener('change',upd);
   upd();
 })();
 
@@ -160,11 +162,11 @@
         email=document.getElementById('sEmail').value.trim(),
         m=document.getElementById('revMsg');
     if(!res){m.textContent='Вставьте результат';return;}
-    var raw='Шаг 3 (Безопасность данных) — задание на проверку\n\nРезультат:\n'+res+'\n\nОтвет на e-mail: '+email;
+    var raw='Шаг 4 (Первый осмысленный запрос) — задание на проверку\n\nРезультат:\n'+res+'\n\nОтвет на e-mail: '+email;
     var blob=new Blob([raw],{type:'text/plain;charset=utf-8'});
     var url=URL.createObjectURL(blob);
     var a=document.createElement('a');
-    a.href=url;a.download='zadanie-shag-03.txt';
+    a.href=url;a.download='zadanie-shag-04.txt';
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     setTimeout(function(){URL.revokeObjectURL(url);},1000);
     m.textContent='Файл скачан ✓';

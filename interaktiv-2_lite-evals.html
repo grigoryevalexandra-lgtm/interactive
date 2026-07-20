@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 2. Промпт стал лучше? Сравните две версии</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .chat{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .chat .ch{display:flex;align-items:center;gap:9px;background:var(--card);border-bottom:1px solid var(--line);padding:9px 13px;font-size:13px;font-weight:700}
+  .chat .ch .gi{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#1f9d57,#2bb56a);color:#fff;display:grid;place-items:center;font-size:12px}
+  .chat .body{padding:13px;background:#fff}
+  .sys{font-size:11.5px;color:var(--muted);background:var(--card2);border-radius:7px;padding:5px 9px;margin-bottom:9px;display:inline-block}
+  .bub{font-size:13.5px;border-radius:11px;padding:9px 12px;margin:7px 0;max-width:94%;white-space:pre-wrap}
+  .bub.u{background:var(--blue);color:#fff;margin-left:auto}.bub.a{background:var(--card);border:1px solid var(--line)}
+  .chat .ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:11px 13px;border-top:1px solid var(--line);background:var(--card)}
+  .cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:14px}
+  .pcard{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card)}
+  .pcard.badp{border-color:#f3c7c3}.pcard.goodp{border-color:#cdebd8}
+  .pcard .ph{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;margin-bottom:10px}
+  .pcard.badp .ph{color:#e2231a}.pcard.goodp .ph{color:#157a41}
+  .copy{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word}
+  .pcard .copy{background:#fff}
+  .evalrow{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .evalrow:last-child{border-bottom:none}
+  .evalrow .elabel{flex:0 0 150px;font-weight:700;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.02em}
+  .evalrow select{flex:1;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 10px;font-size:13.5px;font-family:inherit}
+  .evalrow select:focus{outline:none;border-color:var(--blue)}
+  .evalverdict{margin-top:14px;font-size:13.5px}
+  .checks{list-style:none;padding:0;margin:8px 0 0}
+  .checks li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;border-bottom:1px solid var(--line)}
+  .checks li:last-child{border-bottom:none}.checks li:before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:800}
+  @media(max-width:420px){.evalrow{flex-direction:column;align-items:stretch}.evalrow .elabel{flex:none}}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">5 · Мини-тренажёр</p>
+  <h2>Промпт стал лучше? Сравните две версии</h2>
+  <p class="muted">Ниже — две версии промпта на одну и ту же задачу (сводка объёмов за период, промпт C3) и два демо-ответа ИИ по каждой из них. Оцените каждый ответ по 4 критериям, затем выберите, какая версия промпта лучше и почему.</p>
+
+  <div class="cols2">
+    <div class="pcard badp">
+      <div class="ph">✕ Версия 1 (черновая)</div>
+      <div class="copy">Собери сводку объёмов за июнь.</div>
+      <h3 style="margin-top:14px">Демо-ответ ИИ</h3>
+      <div class="chat">
+        <div class="ch"><span class="gi">G</span> GigaChat · веб-чат</div>
+        <div class="body">
+          <div class="bub a">За июнь выполнены основные объёмы по монолитным работам. Бетонирование шло в целом по графику, отдельные захватки — с небольшим отставанием. Армирование выполнено в срок. Рекомендуется усилить контроль на отстающих участках.</div>
+        </div>
+        <div class="ctrls"><span class="muted" style="font-size:12px">Ответ смоделирован для урока (пример, ответ смоделирован)</span></div>
+      </div>
+    </div>
+    <div class="pcard goodp">
+      <div class="ph">✓ Версия 2 (шаблон C3)</div>
+      <div class="copy">Ты — инженер ПТО. Контекст: график производства работ с фактической готовностью. Задача: собери сводку выполненных объёмов за июнь и выдели позиции с отставанием от плана. Формат: таблица + короткий вывод «риски и что предпринять».
+График: [вставьте]</div>
+      <h3 style="margin-top:14px">Демо-ответ ИИ</h3>
+      <div class="chat">
+        <div class="ch"><span class="gi">G</span> GigaChat · веб-чат</div>
+        <div class="body">
+          <span class="sys">📎 приложен: график производства работ, секция 2</span>
+          <div class="bub a">Таблица:
+Захватка 2-Б, бетонирование плиты +12,000 — план 25.06, факт 28.06 (задержка 3 дня, причина — устранение замечаний по предписанию № 57)
+Захватка 2-А, армирование — план 20.06, факт 20.06 (в срок)
+Захватка 3-А, бетонирование — план 30.06, факт — не начато (отставание)
+
+Риски и что предпринять: захватка 3-А — риск срыва графика следующей недели, требуется усилить бригаду; захватка 2-Б — задержка закрыта после устранения предписания, риска нет.</div>
+        </div>
+        <div class="ctrls"><span class="muted" style="font-size:12px">Ответ смоделирован для урока (пример, ответ смоделирован)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:20px">Оцените по чек-листу из 4 критериев</h3>
+  <div class="evalrow">
+    <span class="elabel">Полнота</span>
+    <select data-crit="polnota">
+      <option value="">— выберите версию —</option>
+      <option value="v1">Лучше версия 1</option>
+      <option value="v2" data-right>Лучше версия 2</option>
+      <option value="eq">Одинаково</option>
+    </select>
+  </div>
+  <div class="evalrow">
+    <span class="elabel">Точность</span>
+    <select data-crit="tochnost">
+      <option value="">— выберите версию —</option>
+      <option value="v1">Лучше версия 1</option>
+      <option value="v2" data-right>Лучше версия 2</option>
+      <option value="eq">Одинаково</option>
+    </select>
+  </div>
+  <div class="evalrow">
+    <span class="elabel">Формат</span>
+    <select data-crit="format">
+      <option value="">— выберите версию —</option>
+      <option value="v1">Лучше версия 1</option>
+      <option value="v2" data-right>Лучше версия 2</option>
+      <option value="eq">Одинаково</option>
+    </select>
+  </div>
+  <div class="evalrow">
+    <span class="elabel">Отсутствие выдумок</span>
+    <select data-crit="vydumki">
+      <option value="">— выберите версию —</option>
+      <option value="v1">Лучше версия 1</option>
+      <option value="v2" data-right>Лучше версия 2</option>
+      <option value="eq">Одинаково</option>
+    </select>
+  </div>
+  <div class="evalverdict note" id="evalVerdict">Оцените все 4 критерия — появится разбор.</div>
+
+</div>
+<script>
+(function(){
+  var selects=document.querySelectorAll('[data-crit]');if(!selects.length)return;
+  var verdict=document.getElementById('evalVerdict');
+  var critLabels={
+    polnota:'Полнота',
+    tochnost:'Точность',
+    format:'Формат',
+    vydumki:'Отсутствие выдумок'
+  };
+  var reasons={
+    polnota:'версия 2 покрывает три захватки с датами план/факт и причиной задержки, версия 1 говорит общими словами «в целом по графику».',
+    tochnost:'версия 2 опирается на приложенный график (📎) и даёт проверяемые даты, версия 1 — общие оценочные фразы без цифр.',
+    format:'версия 2 задаёт формат явно («таблица + вывод»), поэтому результат структурный; версия 1 без формата — сплошной текст.',
+    vydumki:'версия 2 привязана к приложенному документу и грунтовке, версия 1 без документа рискует додумать «в целом неплохо» без опоры на факты.'
+  };
+  function upd(){
+    var allSet=true, v2Count=0, total=0;
+    selects.forEach(function(s){
+      total++;
+      if(!s.value){allSet=false;}
+      else if(s.value==='v2')v2Count++;
+    });
+    if(!allSet){
+      verdict.className='evalverdict note';
+      verdict.textContent='Оцените все 4 критерия — появится разбор.';
+      return;
+    }
+    var lines=['<b>Разбор по критериям:</b><ul class="checks" style="margin-top:8px">'];
+    selects.forEach(function(s){
+      var crit=s.getAttribute('data-crit');
+      var mark=(s.value==='v2')?'✅':'⚠️';
+      lines.push('<li>'+mark+' <b>'+critLabels[crit]+':</b> '+reasons[crit]+'</li>');
+    });
+    lines.push('</ul>');
+    verdict.className='evalverdict note '+(v2Count===total?'green':'');
+    var head=(v2Count===total)
+      ? '✅ По всем 4 критериям сильнее версия 2 (шаблон C3).'
+      : '⚠️ По большинству критериев сильнее версия 2 (шаблон C3) — она задаёт роль, формат, документ-источник и грунтовку явно. Разберите пункты, где выбрали иначе.';
+    verdict.innerHTML=head+lines.join('');
+  }
+  selects.forEach(function(s){s.addEventListener('change',upd);});
+})();
+</script>
+</body>
+</html>

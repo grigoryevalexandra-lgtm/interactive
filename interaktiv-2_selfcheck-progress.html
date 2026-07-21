@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 2. Перед сдачей недели отметьте</title>
+<title>Интерактив 2. Чек-лист готовности перед Шагом 1</title>
 <style>
   :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--green:#1f9d57;--card2:#f3efe9;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
@@ -24,18 +24,15 @@
 <body>
 <div style="max-width:900px;margin:0 auto;padding:16px">
 
-  <p class="stp">5 · Самопроверка недели</p>
-  <h2>Перед сдачей недели отметьте</h2>
+  <p class="stp">6 · Чек-лист готовности</p>
+  <h2>Перед тем как перейти к Шагу 1</h2>
   <ul class="selfcheck" id="scList">
-    <li><label><input type="checkbox"> Промпт взят из библиотеки (Шаг 13), а не написан заново с нуля.</label></li>
-    <li><label><input type="checkbox"> К промпту приложен документ-источник (письмо № 311), а не пересказан по памяти.</label></li>
-    <li><label><input type="checkbox"> Использован образец стиля / few-shot там, где он есть (Шаг 9).</label></li>
-    <li><label><input type="checkbox"> Все сроки в ответе сверены с графиком производства работ (документ 01).</label></li>
-    <li><label><input type="checkbox"> Даты, которые нельзя подтвердить документом, помечены <code>[уточнить]</code>, а не вписаны как факт.</label></li>
-    <li><label><input type="checkbox"> Финальный текст вычитан и готов к подписи ответственного лица — не отправлен «как есть» от ИИ.</label></li>
+    <li><label><input type="checkbox"> Я зарегистрирован(а) хотя бы в одном ИИ-чате (GigaChat или Алиса/YandexGPT).</label></li>
+    <li><label><input type="checkbox"> Я знаю правило «трёх нельзя»: ПДн, коммерческая тайна, запреты работодателя.</label></li>
+    <li><label><input type="checkbox"> Я сделал(а) первый запрос и получил(а) осмысленный ответ.</label></li>
   </ul>
   <div class="scbar"><i id="scBar"></i></div>
-  <div class="scmsg" id="scMsg">0 из 6 — пройдитесь по списку</div>
+  <div class="scmsg" id="scMsg">0 из 3 — пройдитесь по списку</div>
 
 </div>
 <script>
@@ -45,7 +42,7 @@
   function upd(){
     var n=0;boxes.forEach(function(b){if(b.checked)n++;});
     bar.style.width=(100*n/boxes.length)+'%';
-    msg.textContent=(n===boxes.length)?'✅ Все '+n+' пунктов — неделя закрыта, можно отправлять куратору':(n+' из '+boxes.length+' — пройдитесь по списку');
+    msg.textContent=(n===boxes.length)?'✅ Все '+n+' пунктов — можно переходить к Шагу 1':(n+' из '+boxes.length+' — пройдитесь по списку');
     msg.style.color=(n===boxes.length)?'var(--green)':'var(--muted)';
   }
   boxes.forEach(function(b){b.addEventListener('change',upd);});

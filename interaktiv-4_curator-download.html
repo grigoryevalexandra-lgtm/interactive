@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 4. Сделайте на своей задаче</title>
+<title>Интерактив 4. Финал недели 3</title>
 <style>
   :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--card:#faf8f5;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
@@ -15,6 +15,9 @@
   h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
   .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
   .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .checks{list-style:none;padding:0;margin:8px 0 0}
+  .checks li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;border-bottom:1px solid var(--line)}
+  .checks li:last-child{border-bottom:none}.checks li:before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:800}
   .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
   .btn:hover{filter:brightness(.95)}.btn:disabled{opacity:.45;cursor:not-allowed}
   .review label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
@@ -28,11 +31,16 @@
 <div style="max-width:900px;margin:0 auto;padding:16px">
 
   <p class="stp">8 · Практика и проверка</p>
-  <h2>Сделайте на своей задаче</h2>
-  <p class="muted">Возьмите реальное (или учебное) фото со своего объекта, без лиц и читаемых номеров машин, и составьте подпись по формуле «что / где / когда / статус» через промпт D2. Обезличьте всё остальное: без реальных ФИО и коммерческой тайны.</p>
+  <h2>Финал недели 3</h2>
+  <p class="muted">Неделя 3 «Данные и медиа» закрыта: от безопасности данных и рабочих документов — до диктовки, фото/видео с объекта и ИИ-графики. Итоговый чек-лист недели — ниже.</p>
+  <ul class="checks">
+    <li><b>Данные:</b> отличаете, какие документы можно грузить в ИИ, а какие — коммерческая тайна (ФЗ-152).</li>
+    <li><b>Медиа:</b> голос на стройке (диктовка, планёрки) и фото/видео с объекта — рабочие форматы для ИИ-обработки.</li>
+    <li><b>Графика:</b> от первого рендера по ТЭП до оживлённой сцены под конкретную задачу — с проверкой на артефакты и обязательным дисклеймером.</li>
+  </ul>
   <div class="review">
-    <label>Что получилось — вставьте результат от ИИ</label>
-    <textarea id="sRes" rows="4" placeholder="Подпись к фото, которую выдал ИИ"></textarea>
+    <label>Что получилось — вставьте итоговый результат (рендер/промпт/описание)</label>
+    <textarea id="sRes" rows="4" placeholder="Итоговая версия рендера с людьми и средой, промпт и краткое описание"></textarea>
     <label>Ваш e-mail для ответа куратора</label>
     <input id="sEmail" type="email" placeholder="you@example.ru">
     <div style="margin-top:12px"><button class="btn" id="sendRev">⬇ Скачать моё задание .txt</button>
@@ -40,9 +48,9 @@
   </div>
   <div class="transfer-note">
     <div class="tnlabel">⚙ Для переноса в платформу Актион</div>
-    Здесь платформа подключает отправку куратору — проверка №N (см. паспорта шагов). В демо-комплекте вместо реальной отправки — локальное скачивание .txt с текстом задания, ничего никуда не отправляется.
+    Здесь платформа подключает отправку куратору — <b>проверка №3</b>. В демо-комплекте вместо реальной отправки — локальное скачивание .txt с текстом задания, ничего никуда не отправляется.
   </div>
-  <div class="note green" style="margin-top:18px">⬆️ <b>Ассистент закрепил навык «фото и видео с объекта».</b> Что забрать: подпись к фото по формуле что/где/когда/статус — секунды вместо часа; ИИ описывает, а не классифицирует дефекты — заключение всегда за инженером; видео пока идёт через голос → текст → выжимка, а не напрямую; лица и номера машин — не для загрузки и не для публикации.</div>
+  <div class="note green" style="margin-top:18px">⬆️ <b>Ассистент закрепил навык «картинка под задачу».</b> Что забрать: живая сцена убеждает лучше «сухого» рендера; один визуал адаптируется под три документа сменой формата и акцента; каждый рендер — через чек-лист артефактов и дисклеймер перед использованием.</div>
 
 </div>
 <script>
@@ -53,11 +61,11 @@
         email=document.getElementById('sEmail').value.trim(),
         m=document.getElementById('revMsg');
     if(!res){m.textContent='Вставьте результат';return;}
-    var raw='Шаг 19 (Фото и видео с объекта) — задание на проверку\n\nРезультат:\n'+res+'\n\nОтвет на e-mail: '+email;
+    var raw='Шаг 21 (ИИ-графика 2: картинка под задачу) — задание на проверку · проверка №3 (финал недели 3)\n\nРезультат:\n'+res+'\n\nОтвет на e-mail: '+email;
     var blob=new Blob([raw],{type:'text/plain;charset=utf-8'});
     var url=URL.createObjectURL(blob);
     var a=document.createElement('a');
-    a.href=url;a.download='zadanie-shag-19.txt';
+    a.href=url;a.download='zadanie-shag-21.txt';
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     setTimeout(function(){URL.revokeObjectURL(url);},1000);
     m.textContent='Файл скачан ✓';

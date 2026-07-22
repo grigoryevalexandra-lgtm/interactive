@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 2. Маленькое: 5 КП на монолит — чат-симулятор и просмотр бланков</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--r:16px;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .chat{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .chat .ch{display:flex;align-items:center;gap:9px;background:var(--card);border-bottom:1px solid var(--line);padding:9px 13px;font-size:13px;font-weight:700}
+  .chat .ch .gi{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#1f9d57,#2bb56a);color:#fff;display:grid;place-items:center;font-size:12px}
+  .chat .body{padding:13px;background:#fff;min-height:70px}
+  .sys{font-size:11.5px;color:var(--muted);background:var(--card2);border-radius:7px;padding:5px 9px;margin-bottom:9px;display:inline-block}
+  .bub{font-size:13.5px;border-radius:11px;padding:9px 12px;margin:7px 0;max-width:94%;white-space:pre-wrap}
+  .bub.u{background:var(--blue);color:#fff;margin-left:auto}.bub.a{background:var(--card);border:1px solid var(--line)}
+  .att{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);border-radius:7px;padding:3px 9px;font-size:12px;margin-top:6px;cursor:pointer;color:#fff}
+  .att:hover{background:rgba(255,255,255,.32)}
+  .ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:11px 13px;border-top:1px solid var(--line);background:var(--card)}
+  .typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin:0 1px;animation:bl 1s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes bl{0%,80%,100%{opacity:.2}40%{opacity:1}}
+  .tw{overflow-x:auto;margin-top:6px}
+  table.cmp{border-collapse:collapse;width:100%;font-size:12.5px;min-width:520px}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  table.cmp th{background:var(--card);font-weight:800;font-size:11.5px;text-transform:uppercase;color:var(--muted)}
+  td.bad{background:#fde4e2;color:#8f1410;font-weight:700}td.good{background:#eef8f1}
+  .dl{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+  .docinline{display:none;margin-top:12px;background:#eef0f3;border:1px solid var(--line);border-radius:14px;max-width:100%;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .docinline.open{display:block}
+  .docinline .dih{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:14px;background:#fff;flex-wrap:wrap}
+  .docinline .dih .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .docinline .dih button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-weight:700;font-size:12.5px}
+  .docinline .dih button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .docinline .dibody{padding:18px;overflow-x:auto;max-width:100%}
+  .docinline .dibody pre{margin:0;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;font-size:12.5px;color:#2a2722;line-height:1.55;background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px}
+  .docinline .dibody .doc{overflow-x:auto}
+  .doc{font-family:'Times New Roman',Georgia,serif;color:#111;background:#fff;font-size:13px;line-height:1.45;padding:30px 32px;box-shadow:0 2px 10px rgba(0,0,0,.12);margin:0 auto;width:100%}
+  .doc .dhead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+  .doc .dco{font-weight:700;font-size:16px}
+  .doc .dreq{font-size:10.5px;color:#333;text-align:right;max-width:55%;line-height:1.35}
+  .doc hr{border:none;border-top:2px solid #111;margin:8px 0 14px}
+  .doc .dtitle{text-align:center;font-weight:700;font-size:15px;margin:6px 0}
+  .doc .dsub{text-align:center;font-size:11px;color:#444;margin-bottom:10px}
+  .doc .dto{font-size:12px;margin:6px 0 12px}
+  .doc table.dt{border-collapse:collapse;width:100%;font-size:11px;margin:8px 0}
+  .doc table.dt th,.doc table.dt td{border:1px solid #111;padding:4px 6px;vertical-align:top}
+  .doc table.dt th{background:#e9e9e9;text-align:center;font-weight:700}
+  .doc table.dt td.r{text-align:right;white-space:nowrap}.doc table.dt td.c{text-align:center}
+  .doc .dterms{font-size:12px;margin:10px 0}
+  .doc .dsign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:30px;position:relative;min-height:90px}
+  .doc .sig{font-size:11.5px}.doc .sig .ln{display:inline-block;border-bottom:1px solid #111;width:150px;margin:0 6px}
+  .doc .stamp{width:104px;height:104px;border:2px solid #2b59b5;color:#2b59b5;border-radius:50%;display:grid;place-items:center;font-size:7.5px;text-align:center;transform:rotate(-11deg);opacity:.55;position:absolute;right:60px;bottom:-12px;padding:8px;line-height:1.25}
+  .doc .dnote{font-size:10.5px;color:#a30000;margin-top:8px}
+  #renderHolder{position:fixed;left:-10000px;top:0;width:760px;background:#fff}
+  @media(max-width:600px){table.cmp{min-width:0}}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h3>Один предмет закупки, пять предложений</h3>
+  <p class="muted">Закупаем монолитные работы для ЖК «Уютный дом на Матвеева», секция 2 (бетон B25, объём 2 010 м³). Пять КП от подрядчиков. Откройте бланки (👁) — это настоящие коммерческие предложения с реквизитами и подписью.</p>
+  <div class="chat">
+    <div class="ch"><span class="gi">G</span> GigaChat · веб-чат <span style="flex:1"></span><span class="muted" style="font-size:11px;font-weight:600">режим «Инкогнито»</span></div>
+    <div class="body" id="chatSmall">
+      <span class="sys">⚙️ Роль: инженер-сметчик · формат: сравнительная таблица</span>
+      <div class="bub u">Сравни 5 КП на монолитные работы по ТЗ. Сведи в сравнительную таблицу: цена за м³ (с НДС/без), опалубка, армирование, реальная цена «в деле», срок, аванс, гарантия, соответствие ТЗ.
+        <span class="att" onclick="previewDoc('kp1','docinline-1')">📎 КП-1</span>
+        <span class="att" onclick="previewDoc('kp2','docinline-1')">📎 КП-2</span>
+        <span class="att" onclick="previewDoc('kp3','docinline-1')">📎 КП-3</span>
+        <span class="att" onclick="previewDoc('kp4','docinline-1')">📎 КП-4</span>
+        <span class="att" onclick="previewDoc('kp5','docinline-1')">📎 КП-5</span></div>
+    </div>
+    <div class="ctrls"><button class="btn sm" id="runSmall">▶ Отправить в GigaChat</button>
+      <span class="muted" style="font-size:12px">Ответ смоделирован для урока</span></div>
+  </div>
+  <div class="dl">
+    <button class="prevbtn" onclick="previewDoc('tz','docinline-1')">👁 ТЗ (бланк)</button>
+    <button class="prevbtn" onclick="previewDoc('kp1','docinline-1')">👁 КП-1</button>
+    <button class="prevbtn" onclick="previewDoc('kp2','docinline-1')">👁 КП-2</button>
+    <button class="prevbtn" onclick="previewDoc('kp3','docinline-1')">👁 КП-3</button>
+    <button class="prevbtn" onclick="previewDoc('kp4','docinline-1')">👁 КП-4</button>
+    <button class="prevbtn" onclick="previewDoc('kp5','docinline-1')">👁 КП-5</button>
+  </div>
+  <div class="docinline" id="docinline-1"></div>
+  <div class="note green" id="smallVerdict" style="display:none">💡 <b>Дешевле ≠ лучше — а здесь и не дешевле.</b> Ценник 12 300 ₽/м³ у КП-3 выглядит выгодным, но: <b>опалубка вынесена за смету</b>, аванс 50%, гарантия 2 года, опыт 1 объект. КП-5 прячет <b>стоимость армирования отдельной строкой</b> — итог нельзя сравнивать «в лоб». При сведении к единой базе (все работы «в деле») дешевизна КП-3 исчезает. Обоснованный выбор — <b>КП-2</b> (17 500 ₽/м³, всё в цене, опыт 9 объектов) или <b>КП-1</b>.</div>
+
+</div>
+<div id="renderHolder"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+/* ===== ДОКУМЕНТЫ-БЛАНКИ (ТЗ + КП-1..5) ===== */
+function stamp(t){return `<div class="stamp">${t}</div>`;}
+const DOCS={
+  tz:{title:'Техническое задание (бланк)', file:'ТЗ_Монолит', kind:'pdf', html:`
+    <div class="doc"><div class="dhead"><div class="dco">ООО СЗ «Уютный дом»</div>
+      <div class="dreq">ИНН 5024140012 · КПП 502401001<br>ЖК «Уютный дом на Матвеева», 1-я очередь, секция 2<br>отдел закупок · zakupki@uyutdom.ru</div></div><hr>
+    <div class="dtitle">ТЕХНИЧЕСКОЕ ЗАДАНИЕ</div>
+    <div class="dsub">на выполнение монолитных работ (каркас эт. 4–9) · раздел 02-01-01 · НДС 22%</div>
+    <div class="dto">Объём: бетон B25 — 2 010 м³ (по проекту). Место: ЖК «Уютный дом на Матвеева», секция 2. Основание: ВОР № 02-01-01.</div>
+    <table class="dt"><tr><th>№</th><th>Характеристика</th><th>Требование</th><th>Норматив</th></tr>
+    <tr><td class="c">1</td><td>Класс бетона</td><td>B25 W6</td><td>ГОСТ 26633</td></tr>
+    <tr><td class="c">2</td><td>Опалубка</td><td><b>в составе работ</b> (устройство/демонтаж)</td><td>СП 70.13330</td></tr>
+    <tr><td class="c">3</td><td>Армирование</td><td><b>в составе работ</b>, арматура А500С / А240</td><td>СП 63.13330</td></tr>
+    <tr><td class="c">4</td><td>Освидетельствование</td><td>АОСР на скрытые работы</td><td>приказ Минстроя № 344/пр</td></tr>
+    <tr><td class="c">5</td><td>Документы качества</td><td>паспорта бетона, сертификаты арматуры</td><td>входной контроль</td></tr>
+    <tr><td class="c">6</td><td>Аванс</td><td>не более 30 %</td><td>проект договора</td></tr>
+    <tr><td class="c">7</td><td>Срок выполнения</td><td>не более 90 календарных дней</td><td>график ПР</td></tr>
+    <tr><td class="c">8</td><td>Гарантия</td><td>не менее 5 лет</td><td>ст. 755–756 ГК РФ</td></tr></table>
+    <div class="dsign"><div class="sig">Составил: инженер ПТО <span class="ln"></span> / Петров И.С. /</div></div></div>`},
+  kp1:{title:'Коммерческое предложение КП-1', file:'КП-1_СтройМонолит', kind:'pdf', html:`
+    <div class="doc"><div class="dhead"><div class="dco">ООО «СтройМонолит»</div>
+      <div class="dreq">ИНН 5024039824 · КПП 502401001 · ОГРН 1135024000123<br>Московская обл., г. Красногорск, ул. Заводская, 12<br>тел. (495) 720-18-34 · info@stroymonolit.ru</div></div><hr>
+    <div class="dtitle">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ № 47 от 12.06.2026</div>
+    <div class="dto">Кому: ООО СЗ «Уютный дом». Предмет: монолитные работы, секция 2.</div>
+    <table class="dt"><tr><th>№</th><th>Наименование</th><th>Ед.</th><th>Кол-во</th><th>Цена б/НДС</th><th>НДС 22%</th><th>Цена с НДС</th><th>Сумма, ₽</th></tr>
+    <tr><td class="c">1</td><td>Монолитные работы «в деле» (бетон B25, опалубка, армирование)</td><td class="c">м³</td><td class="r">2 010</td><td class="r">15 492</td><td class="r">3 408</td><td class="r">18 900</td><td class="r">37 989 000</td></tr></table>
+    <div class="dterms"><b>Условия:</b> опалубка и армирование <b>в цене</b>; аванс — 30 %; срок — 80 дней; гарантия — 5 лет; опыт — 6 аналогичных объектов; документы: паспорта бетона + сертификаты арматуры. Срок действия КП — 30 дней.</div>
+    <div class="dsign"><div class="sig">Генеральный директор <span class="ln"></span> / Иванов А.В. /</div>${stamp('ООО «СтройМонолит» • ИНН 5024039824 • г. Красногорск')}</div></div>`},
+  kp2:{title:'Коммерческое предложение КП-2', file:'КП-2_БетонГрупп', kind:'pdf', html:`
+    <div class="doc"><div class="dhead"><div class="dco">ООО «БетонГрупп»</div>
+      <div class="dreq">ИНН 7708996532 · КПП 770801001 · ОГРН 1187746000456<br>г. Москва, Каширское ш., д. 3, корп. 1<br>тел. (499) 503-27-11 · sales@betongroup.ru</div></div><hr>
+    <div class="dtitle">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ № 2026/06/183 от 11.06.2026</div>
+    <div class="dto">Кому: ООО СЗ «Уютный дом». Предмет: монолитные работы, секция 2.</div>
+    <table class="dt"><tr><th>№</th><th>Наименование</th><th>Ед.</th><th>Кол-во</th><th>Цена б/НДС</th><th>НДС 22%</th><th>Цена с НДС</th><th>Сумма, ₽</th></tr>
+    <tr><td class="c">1</td><td>Монолитные работы «в деле» (бетон B25, опалубка, армирование)</td><td class="c">м³</td><td class="r">2 010</td><td class="r">14 344</td><td class="r">3 156</td><td class="r">17 500</td><td class="r">35 175 000</td></tr></table>
+    <div class="dterms"><b>Условия:</b> опалубка и армирование <b>в цене</b>; аванс — 20 %; срок — 95 дней; гарантия — 5 лет; опыт — 9 аналогичных объектов; документы: паспорта + сертификаты + протоколы испытаний. Срок действия КП — 30 дней.</div>
+    <div class="dsign"><div class="sig">Менеджер <span class="ln"></span> / Петрова Е.С. /</div>${stamp('ООО «БетонГрупп» • ИНН 7708996532 • г. Москва')}</div></div>`},
+  kp3:{title:'Коммерческое предложение КП-3', file:'КП-3_МонолитСервис', kind:'pdf', html:`
+    <div class="doc"><div class="dhead"><div class="dco">ООО «МонолитСервис»</div>
+      <div class="dreq">ИНН 5036123456 · КПП 503601001 · ОГРН 1195036000789<br>Московская обл., г. Подольск, ул. Рабочая, 14<br>тел. +7 906 700-10-20 · monolit-service@yandex.ru</div></div><hr>
+    <div class="dtitle">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ № 204 от 10.06.2026</div>
+    <div class="dto">Кому: ООО СЗ «Уютный дом». Предмет: монолитные работы, секция 2.</div>
+    <table class="dt"><tr><th>№</th><th>Наименование</th><th>Ед.</th><th>Кол-во</th><th>Цена б/НДС</th><th>НДС 22%</th><th>Цена с НДС</th><th>Сумма, ₽</th></tr>
+    <tr><td class="c">1</td><td>Бетонирование конструкций B25 (<b>без опалубки</b>)</td><td class="c">м³</td><td class="r">2 010</td><td class="r">10 082</td><td class="r">2 218</td><td class="r">12 300</td><td class="r">24 723 000</td></tr></table>
+    <div class="dterms"><b>Условия:</b> <b>опалубка вынесена за смету</b> (согласуется отдельно); армирование в цене; аванс — <b>50 %</b>; срок — 70 дней; гарантия — <b>2 года</b>; опыт — <b>1 объект</b>; документы: паспорт бетона. Срок действия КП — 14 дней.</div>
+    <div class="dnote">Опалубочные работы в предложение не включены — оцениваются отдельным договором.</div>
+    <div class="dsign"><div class="sig">Директор <span class="ln"></span> / Орлов В.Н. /</div>${stamp('ООО «МонолитСервис» • ИНН 5036123456 • г. Подольск')}</div></div>`},
+  kp4:{title:'Коммерческое предложение КП-4', file:'КП-4_ПрофКаркас', kind:'pdf', html:`
+    <div class="doc"><div class="dhead"><div class="dco">ООО «ПрофКаркас»</div>
+      <div class="dreq">ИНН 7701234567 · КПП 770101001 · ОГРН 1157746000321<br>г. Москва, ул. Складочная, 6<br>тел. (495) 120-30-40 · office@profkarkas.ru</div></div><hr>
+    <div class="dtitle">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ № А-318 от 11.06.2026</div>
+    <div class="dto">Кому: ООО СЗ «Уютный дом». Предмет: монолитные работы, секция 2.</div>
+    <table class="dt"><tr><th>№</th><th>Наименование</th><th>Ед.</th><th>Кол-во</th><th>Цена б/НДС</th><th>НДС 22%</th><th>Цена с НДС</th><th>Сумма, ₽</th></tr>
+    <tr><td class="c">1</td><td>Монолитные работы «в деле» (бетон B25, опалубка, армирование)</td><td class="c">м³</td><td class="r">2 010</td><td class="r">15 902</td><td class="r">3 498</td><td class="r">19 400</td><td class="r">39 894 000</td></tr></table>
+    <div class="dterms"><b>Условия:</b> опалубка и армирование <b>в цене</b>; аванс — 25 %; срок — 85 дней; гарантия — 5 лет; опыт — 7 аналогичных объектов; документы: полный комплект. Срок действия КП — 30 дней.</div>
+    <div class="dsign"><div class="sig">Генеральный директор <span class="ln"></span> / Сидоров П.А. /</div>${stamp('ООО «ПрофКаркас» • ИНН 7701234567 • г. Москва')}</div></div>`},
+  kp5:{title:'Коммерческое предложение КП-5', file:'КП-5_ГорСтрой', kind:'pdf', html:`
+    <div class="doc"><div class="dhead"><div class="dco">ООО «ГорСтрой»</div>
+      <div class="dreq">ИНН 7709876543 · КПП 770901001 · ОГРН 1167746000654<br>г. Москва, Варшавское ш., 42<br>тел. (495) 988-77-66 · info@gorstroy.ru</div></div><hr>
+    <div class="dtitle">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ № 512 от 11.06.2026</div>
+    <div class="dto">Кому: ООО СЗ «Уютный дом». Предмет: монолитные работы, секция 2.</div>
+    <table class="dt"><tr><th>№</th><th>Наименование</th><th>Ед.</th><th>Кол-во</th><th>Цена б/НДС</th><th>НДС 22%</th><th>Цена с НДС</th><th>Сумма, ₽</th></tr>
+    <tr><td class="c">1</td><td>Бетонирование + опалубка B25 (<b>без армирования</b>)</td><td class="c">м³</td><td class="r">14 918</td><td class="r">14 918</td><td class="r">3 282</td><td class="r">18 200</td><td class="r">36 582 000</td></tr>
+    <tr><td class="c">2</td><td>Армирование (арматура А500С/А240, работа) — <b>отдельной строкой</b></td><td class="c">т</td><td class="r">100,6</td><td class="r">—</td><td class="r">—</td><td class="r">по факту</td><td class="r">согл. отдельно</td></tr></table>
+    <div class="dterms"><b>Условия:</b> опалубка в цене; <b>армирование — отдельной строкой</b> (не входит в цену за м³, итог нельзя сравнивать «в лоб»); аванс — 30 %; срок — 90 дней; гарантия — 5 лет; опыт — 5 объектов. Срок действия КП — 30 дней.</div>
+    <div class="dnote">Стоимость армирования вынесена отдельно — при сравнении привести к единой базе.</div>
+    <div class="dsign"><div class="sig">Менеджер по продажам <span class="ln"></span> / Зайцева О.И. /</div>${stamp('ООО «ГорСтрой» • ИНН 7709876543 • г. Москва')}</div></div>`}
+};
+function getDocHtml(key){return DOCS[key].html;}
+
+/* ===== СКАЧИВАНИЕ ===== */
+function dl(name,text,mime){mime=mime||'text/plain';const bom=mime.indexOf('csv')>=0?'﻿':'';
+  const b=new Blob([bom+text],{type:mime+';charset=utf-8'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},100);}
+
+/* ===== ПРЕДПРОСМОТР ВСТРОЕННЫЙ ===== */
+let inlineOpenKey={};
+function renderInline(containerId,titleHtml,bodyHtml,actsHtml,toggleKey){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  if(inlineOpenKey[containerId]===toggleKey){
+    box.classList.remove('open');
+    box.innerHTML='';
+    inlineOpenKey[containerId]=null;
+    return;
+  }
+  box.innerHTML='<div class="dih"><span>'+titleHtml+'</span><span class="acts">'+actsHtml+'<button onclick="collapseInline(\''+containerId+'\')">Свернуть ▲</button></span></div><div class="dibody">'+bodyHtml+'</div>';
+  box.classList.add('open');
+  inlineOpenKey[containerId]=toggleKey;
+  box.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function collapseInline(containerId){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  box.classList.remove('open');
+  box.innerHTML='';
+  inlineOpenKey[containerId]=null;
+}
+function previewDoc(key,containerId){
+  containerId=containerId||'docinline-1';
+  const d=DOCS[key]; const html = getDocHtml(key);
+  const act = '<button class="pri" onclick="pdfDoc(\''+key+'\')">📄 Скачать PDF</button>';
+  renderInline(containerId, d.title, html, act, 'doc:'+key);
+}
+
+/* ===== PDF из бланка ===== */
+async function pdfDoc(key){
+  const d=DOCS[key]; const html=getDocHtml(key);
+  if(!window.jspdf || !window.html2canvas){
+    const full='<!doctype html><meta charset="utf-8"><style>'+docCss()+'</style>'+html;
+    dl(d.file+'.html', full, 'text/html'); return;
+  }
+  const holder=document.getElementById('renderHolder');
+  holder.innerHTML='<div style="width:760px;background:#fff">'+html+'</div>';
+  const node=holder.firstChild;
+  try{
+    const canvas=await html2canvas(node,{scale:2,backgroundColor:'#ffffff',windowWidth:760});
+    const {jsPDF}=window.jspdf; const pdf=new jsPDF('p','mm','a4');
+    const pw=210, ph=297, m=8, iw=pw-2*m;
+    const ratio=iw/canvas.width; const ihFull=canvas.height*ratio;
+    if(ihFull<=ph-2*m){
+      pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',m,m,iw,ihFull);
+    } else {
+      const pagePxH=Math.floor((ph-2*m)/ratio); let y=0;
+      while(y<canvas.height){
+        const slice=document.createElement('canvas'); slice.width=canvas.width;
+        slice.height=Math.min(pagePxH,canvas.height-y);
+        slice.getContext('2d').drawImage(canvas,0,y,canvas.width,slice.height,0,0,canvas.width,slice.height);
+        const ih=slice.height*ratio;
+        pdf.addImage(slice.toDataURL('image/jpeg',0.95),'JPEG',m,m,iw,ih);
+        y+=slice.height; if(y<canvas.height) pdf.addPage();
+      }
+    }
+    pdf.save(d.file+'.pdf');
+  }catch(e){ const full='<!doctype html><meta charset="utf-8"><style>'+docCss()+'</style>'+html; dl(d.file+'.html', full,'text/html'); }
+  finally{ holder.innerHTML=''; }
+}
+function docCss(){return ".doc{font-family:'Times New Roman',Georgia,serif;color:#111;background:#fff;font-size:13px;line-height:1.45;padding:30px 32px;width:760px;margin:0 auto}.doc .dhead{display:flex;justify-content:space-between;gap:16px}.doc .dco{font-weight:700;font-size:16px}.doc .dreq{font-size:10.5px;color:#333;text-align:right;max-width:55%}.doc hr{border:none;border-top:2px solid #111;margin:8px 0 14px}.doc .dtitle{text-align:center;font-weight:700;font-size:15px;margin:6px 0}.doc .dsub{text-align:center;font-size:11px;color:#444;margin-bottom:10px}.doc .dto{font-size:12px;margin:6px 0 12px}.doc table.dt{border-collapse:collapse;width:100%;font-size:11px;margin:8px 0}.doc table.dt th,.doc table.dt td{border:1px solid #111;padding:4px 6px}.doc table.dt th{background:#e9e9e9;text-align:center}.doc table.dt td.r{text-align:right}.doc table.dt td.c{text-align:center}.doc .dterms{font-size:12px;margin:10px 0}.doc .dsign{margin-top:30px}.doc .sig .ln{display:inline-block;border-bottom:1px solid #111;width:150px;margin:0 6px}.doc .dnote{font-size:10.5px;color:#a30000}";}
+
+/* ===== ЧАТ маленький ===== */
+document.getElementById('runSmall').addEventListener('click',function(){this.disabled=true;this.textContent='…';
+  const body=document.getElementById('chatSmall');const t=document.createElement('div');t.className='bub a typing';t.innerHTML='<span></span><span></span><span></span>';body.appendChild(t);
+  setTimeout(()=>{t.remove();const a=document.createElement('div');a.className='bub a';
+    a.innerHTML=`Свёл 5 КП по ТЗ (монолит B25, 2 010 м³):
+<div class="tw"><table class="cmp">
+<tr><th>Параметр</th><th>КП-1</th><th>КП-2</th><th>КП-3</th><th>КП-4</th><th>КП-5</th></tr>
+<tr><td>Цена за м³, ₽</td><td>18 900</td><td>17 500</td><td class="bad">12 300</td><td>19 400</td><td>18 200</td></tr>
+<tr><td>Опалубка</td><td class="good">в цене</td><td class="good">в цене</td><td class="bad">отдельно ✗</td><td class="good">в цене</td><td class="good">в цене</td></tr>
+<tr><td>Армирование</td><td class="good">в цене</td><td class="good">в цене</td><td class="good">в цене</td><td class="good">в цене</td><td class="bad">отдельно ✗</td></tr>
+<tr><td>Срок, дн</td><td>80</td><td>95</td><td class="good">70</td><td>85</td><td>90</td></tr>
+<tr><td>Аванс</td><td>30%</td><td class="good">20%</td><td class="bad">50%</td><td>25%</td><td>30%</td></tr>
+<tr><td>Гарантия</td><td class="good">5 лет</td><td class="good">5 лет</td><td class="bad">2 года</td><td class="good">5 лет</td><td class="good">5 лет</td></tr>
+<tr><td>Опыт (аналоги)</td><td>6</td><td class="good">9</td><td class="bad">1</td><td>7</td><td>5</td></tr>
+<tr><td>Соответствие ТЗ</td><td class="good">✓</td><td class="good">✓</td><td class="bad">✗</td><td class="good">✓</td><td class="bad">неполно</td></tr></table></div>Вывод: КП-3 выглядит дешёвым (12 300 ₽/м³), но опалубка вынесена за смету, аванс 50%, гарантия 2 года, опыт 1 объект — при сведении «в деле» дешевизна исчезает. КП-5 прячет армирование отдельной строкой — итог нельзя сравнивать «в лоб». Предпочтителен <b>КП-2</b> (всё в цене, аванс 20%, опыт 9). <span class="muted">Итоги проверьте сами.</span>`;
+    body.appendChild(a);document.getElementById('smallVerdict').style.display='block';
+  },900);
+});
+</script>
+</body>
+</html>

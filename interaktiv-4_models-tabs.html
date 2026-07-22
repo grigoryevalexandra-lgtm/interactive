@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 4. Три модели: кто как разбирает данные</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .mtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .mtab{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-weight:700;font-size:13.5px;color:var(--muted);background:#fff}
+  .mtab.on{border-color:var(--ink);color:var(--ink);background:var(--card)}
+  .mcard{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card)}
+  .mcard .can{font-size:14px;margin:6px 0 10px}
+  .mrow{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .mrow:last-child{border-bottom:none}.mrow .k{color:var(--muted)}
+  .g{color:var(--green);font-weight:800}.y{color:#b9890b;font-weight:800}.r{color:var(--brand);font-weight:800}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h3>Одна задача — кто как разбирает данные</h3>
+  <p class="muted">Главное отличие — не «бренд», а способность модели разложить задачу на шаги. При правильной постановке («рассуждай по шагам», «посчитай») некоторые модели разбирают данные многошагово и точнее.</p>
+  <div class="mtabs" id="mtabs"><div class="mtab on" data-k="giga">GigaChat</div><div class="mtab" data-k="ds">DeepSeek</div><div class="mtab" data-k="gpt">ChatGPT</div></div>
+  <div class="mcard" id="mcard"></div>
+  <div class="note">Вывод: дело не в бренде, а в том, <b>умеет ли модель (и просите ли вы её) разбирать данные пошагово</b>. Для рабочих данных РФ-компании при этом безопаснее GigaChat — данные остаются в России.</div>
+
+</div>
+<script>
+const MODELS={
+  giga:{t:'GigaChat (Сбер)',can:'Отвечает за один проход. Сложную таблицу разбирает лучше, если <b>сами разложите задачу на шаги</b> в промпте: «1) перечисли позиции, 2) сравни, 3) пометь отклонения». Понимает НДС и российскую специфику.',rows:[['Многошаговый разбор','<span class="y">по вашему промпту-цепочке</span>'],['Доступ в РФ','<span class="g">без VPN, по Сбер ID, бесплатно</span>'],['Данные','<span class="g">серверы в России</span>']]},
+  ds:{t:'DeepSeek',can:'Есть режим рассуждений (R1): по просьбе «<b>рассуждай по шагам и проверь итоги</b>» сам раскладывает разбор на этапы и перепроверяет себя — на многошаговых таблицах заметно точнее. Большой объём за раз.',rows:[['Многошаговый разбор','<span class="g">да, режим рассуждений (R1)</span>'],['Доступ в РФ','<span class="y">чаще да, бывают перебои; бесплатно</span>'],['Данные','<span class="r">серверы в Китае — не для реальных цен/ПДн</span>']]},
+  gpt:{t:'ChatGPT',can:'Может не «угадывать», а <b>реально посчитать</b>: по просьбе «проанализируй данные / посчитай» выполняет код (Python) над таблицей по шагам — суммы и НДС считаются точно. Сильнее всех на числах.',rows:[['Многошаговый разбор','<span class="g">да, выполняет код по шагам (платно)</span>'],['Доступ в РФ','<span class="r">нужен VPN и иностранный номер/карта</span>'],['Данные','<span class="r">серверы в США</span>']]}
+};
+function renderModel(k){const m=MODELS[k];document.getElementById('mcard').innerHTML=`<div style="font-weight:800;font-size:15px">${m.t}</div><div class="can">${m.can}</div>`+m.rows.map(r=>`<div class="mrow"><span class="k">${r[0]}</span><span>${r[1]}</span></div>`).join('');}
+document.querySelectorAll('#mtabs .mtab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('#mtabs .mtab').forEach(x=>x.classList.remove('on'));t.classList.add('on');renderModel(t.dataset.k);}));
+renderModel('giga');
+</script>
+</body>
+</html>

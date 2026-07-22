@@ -6,10 +6,10 @@
 <meta name="robots" content="noindex">
 <title>Интерактив 1. Сделай в живом чате</title>
 <style>
-  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
   html,body{overflow-x:hidden;margin:0}
-  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
   p{margin:0 0 12px}
   h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
   .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
@@ -35,40 +35,43 @@
 
   <p class="stp">6 · Сделай в живом чате</p>
   <h2>Сделай в живом чате</h2>
-  <p class="lcinstruction">Сфотографируйте свой документ (акт, ведомость, накладную — без персональных данных!) или скачайте скан АОСР № 142 / ВОР из материалов урока. Распознайте его в реальном чат-боте по промпту C1 — например, в одном из ниже. Затем вставьте результат в поле под кнопками.</p>
+  <p class="lcinstruction">Сгенерируйте рендер своего объекта (или учебного варианта) по структуре промпта из этого урока: объект + ракурс + стиль + материалы + свет + время суток. Используйте один из RU-инструментов ниже. Затем вставьте свой промпт и опишите результат в поле под кнопками.</p>
   <div class="livechat">
     <div class="lcbtns">
-      <a class="lcbtn" href="https://giga.chat" target="_blank" rel="noopener"><span class="dotc" style="background:var(--blue)"></span> GigaChat</a>
-      <a class="lcbtn" href="https://alice.yandex.ru" target="_blank" rel="noopener"><span class="dotc" style="background:var(--purple)"></span> Алиса / YandexGPT</a>
+      <a class="lcbtn" href="https://fusionbrain.ai" target="_blank" rel="noopener"><span class="dotc" style="background:var(--blue)"></span> Kandinsky (Fusion Brain)</a>
+      <a class="lcbtn" href="https://shedevrum.ai" target="_blank" rel="noopener"><span class="dotc" style="background:var(--purple)"></span> Шедеврум</a>
     </div>
     <div class="review">
-      <label>Вставь сюда свой результат</label>
-      <textarea id="lcResult" rows="5" placeholder="Вставьте сюда таблицу с распознанными данными, которую вернул чат-бот…"></textarea>
+      <label>Вставьте сюда свой промпт</label>
+      <textarea id="lcPrompt" rows="4" placeholder="Ваш промпт: объект + ракурс + стиль + материалы + свет + время суток…"></textarea>
+      <label>Опишите результат</label>
+      <textarea id="lcResult" rows="4" placeholder="Что получилось? Совпала ли типология с задуманным объектом, что пришлось бы исправить в промпте…"></textarea>
     </div>
     <div class="lcgate">
       <input type="checkbox" id="lcConfirm">
-      <label for="lcConfirm">Я получил ответ на свой запрос</label>
+      <label for="lcConfirm">Я сгенерировал(а) рендер и получил(а) результат</label>
     </div>
-    <p class="lcstatus" id="lcStatus">Итоги урока откроются после того, как вы вставите результат и отметите чекбокс.</p>
+    <p class="lcstatus" id="lcStatus">Итоги урока откроются после того, как вы вставите промпт, результат и отметите чекбокс.</p>
     <div class="transfer-note">
       <div class="tnlabel">⚙ Для переноса в платформу Актион</div>
-      Демо-гейт реализован локальным JS (без сохранения данных). На платформе эта блокировка должна опираться на реальное событие взаимодействия участника с чатом (или просто на заполненное поле + чекбокс, как здесь) — ничего никуда не отправляется и в демо-версии.
+      Демо-гейт реализован локальным JS (без сохранения данных). На платформе эта блокировка должна опираться на реальное событие взаимодействия участника с чатом (или просто на заполненные поля + чекбокс, как здесь) — ничего никуда не отправляется и в демо-версии.
     </div>
   </div>
 
 </div>
 <script>
 (function(){
-  var result=document.getElementById('lcResult'),confirmEl=document.getElementById('lcConfirm');
+  var promptEl=document.getElementById('lcPrompt'),result=document.getElementById('lcResult'),confirmEl=document.getElementById('lcConfirm');
   if(!result||!confirmEl)return;
   var status=document.getElementById('lcStatus');
   function upd(){
-    var ready=result.value.trim().length>0 && confirmEl.checked;
+    var ready=(promptEl?promptEl.value.trim().length>0:true) && result.value.trim().length>0 && confirmEl.checked;
     if(status){
-      status.textContent=ready?'✅ Итоги урока открыты.':'Итоги урока откроются после того, как вы вставите результат и отметите чекбокс.';
+      status.textContent=ready?'✅ Итоги урока открыты.':'Итоги урока откроются после того, как вы вставите промпт, результат и отметите чекбокс.';
       status.classList.toggle('ready',ready);
     }
   }
+  if(promptEl)promptEl.addEventListener('input',upd);
   result.addEventListener('input',upd);
   confirmEl.addEventListener('change',upd);
   upd();

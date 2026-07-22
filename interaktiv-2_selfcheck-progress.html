@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 2. Чек-лист готовности перед Шагом 1</title>
+<title>Интерактив 2. Перед сдачей отметьте</title>
 <style>
   :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--green:#1f9d57;--card2:#f3efe9;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
@@ -24,15 +24,16 @@
 <body>
 <div style="max-width:900px;margin:0 auto;padding:16px">
 
-  <p class="stp">6 · Чек-лист готовности</p>
-  <h2>Перед тем как перейти к Шагу 1</h2>
+  <p class="stp">7 · Самопроверка</p>
+  <h2>Перед сдачей отметьте</h2>
   <ul class="selfcheck" id="scList">
-    <li><label><input type="checkbox"> Я зарегистрирован(а) хотя бы в одном ИИ-чате (GigaChat или Алиса/YandexGPT).</label></li>
-    <li><label><input type="checkbox"> Я знаю правило «трёх нельзя»: ПДн, коммерческая тайна, запреты работодателя.</label></li>
-    <li><label><input type="checkbox"> Я сделал(а) первый запрос и получил(а) осмысленный ответ.</label></li>
+    <li><label><input type="checkbox"> В промпте явно указан формат результата — таблица с нужными столбцами.</label></li>
+    <li><label><input type="checkbox"> Я сверил(а) каждую цифру из ответа ИИ с оригиналом скана, а не принял(а) на веру.</label></li>
+    <li><label><input type="checkbox"> Проверил(а) на типовые ловушки OCR: 8/В, 0/О, сдвиг значений в таблице.</label></li>
+    <li><label><input type="checkbox"> Критичное число (масса/объём) сверено с другим документом кейса — расхождений нет.</label></li>
   </ul>
   <div class="scbar"><i id="scBar"></i></div>
-  <div class="scmsg" id="scMsg">0 из 3 — пройдитесь по списку</div>
+  <div class="scmsg" id="scMsg">0 из 4 — пройдитесь по списку</div>
 
 </div>
 <script>
@@ -42,7 +43,7 @@
   function upd(){
     var n=0;boxes.forEach(function(b){if(b.checked)n++;});
     bar.style.width=(100*n/boxes.length)+'%';
-    msg.textContent=(n===boxes.length)?'✅ Все '+n+' пунктов — можно переходить к Шагу 1':(n+' из '+boxes.length+' — пройдитесь по списку');
+    msg.textContent=(n===boxes.length)?'✅ Все '+n+' пунктов — можно отправлять куратору':(n+' из '+boxes.length+' — пройдитесь по списку');
     msg.style.color=(n===boxes.length)?'var(--green)':'var(--muted)';
   }
   boxes.forEach(function(b){b.addEventListener('change',upd);});

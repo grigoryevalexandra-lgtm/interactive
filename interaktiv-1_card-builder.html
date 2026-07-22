@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Конструктор карточки ИИ-набора</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--purple:#9b5de5;--r:16px;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .dl{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+  .cardbuilder{display:flex;flex-direction:column;gap:14px}
+  .cbfield label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin:0 0 5px}
+  .cbfield .cbhint{font-size:12px;color:var(--muted);margin-bottom:6px}
+  .cbfield textarea{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:inherit;resize:vertical}
+  .cbfield textarea:focus{outline:none;border-color:var(--blue)}
+  .cbnum{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:800;margin-right:7px}
+  #cbOutputWrap{display:none;margin-top:6px}
+  #cbOutput{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12.5px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word;max-height:420px;overflow-y:auto}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h2>Соберите свою карточку ИИ-набора</h2>
+  <p class="muted">Заполните пять полей своими данными — по образцу из раздела 2. Затем нажмите «Собрать карточку»: ниже появится готовый текст, который можно скопировать или скачать.</p>
+
+  <div class="cardbuilder">
+    <div class="cbfield">
+      <label><span class="cbnum">1</span>Инструменты (основной / резервный)</label>
+      <div class="cbhint">Например: GigaChat — основной, для писем и ответов; YandexGPT — резервный, для таблиц.</div>
+      <textarea id="cb1" rows="3" placeholder="Основной: … — для …&#10;Резервный: … — для …"></textarea>
+    </div>
+    <div class="cbfield">
+      <label><span class="cbnum">2</span>Библиотека промптов (мои A/B/C/D/E + личные шаблоны)</label>
+      <div class="cbhint">Опирайтесь на группы своего промпт-пака: коммуникации, документы, данные, контроль, рутина.</div>
+      <textarea id="cb2" rows="4" placeholder="A — …&#10;B — …&#10;C — …&#10;D — …&#10;E — …&#10;+ личный шаблон: …"></textarea>
+    </div>
+    <div class="cbfield">
+      <label><span class="cbnum">3</span>Мои красные линии</label>
+      <div class="cbhint">Что вы никогда не отдаёте ИИ: ПДн, коммерческая тайна, юр. значимые решения, итоговые сметные цифры.</div>
+      <textarea id="cb3" rows="3" placeholder="Не загружаю: …&#10;Не доверяю ИИ: …"></textarea>
+    </div>
+    <div class="cbfield">
+      <label><span class="cbnum">4</span>Мои контрольные точки</label>
+      <div class="cbhint">Что вы всегда проверяете перед тем, как использовать результат ИИ.</div>
+      <textarea id="cb4" rows="3" placeholder="Всегда проверяю: …"></textarea>
+    </div>
+    <div class="cbfield">
+      <label><span class="cbnum">5</span>Моя недельная рутина</label>
+      <div class="cbhint">Из Шага 25 — где по дням/событиям встроен ИИ в ваш рабочий цикл.</div>
+      <textarea id="cb5" rows="3" placeholder="Понедельник: …&#10;По итогам планёрки: …&#10;Пятница: …"></textarea>
+    </div>
+  </div>
+
+  <div class="dl">
+    <button class="btn" id="cbBuildBtn">🧩 Собрать карточку</button>
+  </div>
+
+  <div id="cbOutputWrap">
+    <h3>Ваша карточка ИИ-набора</h3>
+    <div id="cbOutput"></div>
+    <div class="dl">
+      <button class="prevbtn" id="cbCopyBtn">📋 Скопировать</button>
+      <button class="prevbtn" id="cbDownloadBtn">⬇ Скачать .txt</button>
+      <span class="muted" id="cbMsg" style="font-size:12px;align-self:center"></span>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var buildBtn=document.getElementById('cbBuildBtn');if(!buildBtn)return;
+  var fields=['cb1','cb2','cb3','cb4','cb5'];
+  var labels=[
+    '① ИНСТРУМЕНТЫ (основной / резервный)',
+    '② БИБЛИОТЕКА ПРОМПТОВ (мои A/B/C/D/E + личные шаблоны)',
+    '③ МОИ КРАСНЫЕ ЛИНИИ',
+    '④ МОИ КОНТРОЛЬНЫЕ ТОЧКИ',
+    '⑤ МОЯ НЕДЕЛЬНАЯ РУТИНА'
+  ];
+  var outWrap=document.getElementById('cbOutputWrap'),out=document.getElementById('cbOutput'),
+      copyBtn=document.getElementById('cbCopyBtn'),dlBtn=document.getElementById('cbDownloadBtn'),msg=document.getElementById('cbMsg');
+
+  function buildText(){
+    var lines=['МОЙ ПЕРСОНАЛЬНЫЙ ИИ-НАБОР','Курс «30 шагов: рабочий ИИ-инструмент для строителя» · Шаг 28',''];
+    var anyFilled=false;
+    fields.forEach(function(id,i){
+      var v=document.getElementById(id).value.trim();
+      lines.push(labels[i]);
+      lines.push(v?v:'(не заполнено)');
+      lines.push('');
+      if(v)anyFilled=true;
+    });
+    return {text:lines.join('\n'), anyFilled:anyFilled};
+  }
+
+  buildBtn.addEventListener('click',function(){
+    var r=buildText();
+    if(!r.anyFilled){
+      out.textContent='Заполните хотя бы одно поле выше, чтобы собрать карточку.';
+    }else{
+      out.textContent=r.text;
+    }
+    outWrap.style.display='block';
+    msg.textContent='';
+  });
+
+  copyBtn.addEventListener('click',function(){
+    var v=out.textContent.trim();
+    if(!v){msg.textContent='Сначала соберите карточку';return;}
+    navigator.clipboard.writeText(v).then(function(){msg.textContent='Скопировано ✓';setTimeout(function(){msg.textContent='';},2500);})
+      .catch(function(){msg.textContent='Выделите и скопируйте вручную';});
+  });
+
+  dlBtn.addEventListener('click',function(){
+    var v=out.textContent.trim();
+    if(!v){msg.textContent='Сначала соберите карточку';return;}
+    var blob=new Blob([v],{type:'text/plain;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;a.download='moy-ii-nabor.txt';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    msg.textContent='Файл скачан ✓';
+  });
+})();
+</script>
+</body>
+</html>

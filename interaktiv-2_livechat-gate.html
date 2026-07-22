@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 2. Сделай в живом чате: сверка норматива с первоисточником</title>
+<title>Интерактив 2. Сделай в живом чате: сегодняшняя задача из плана недели</title>
 <style>
   :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
@@ -33,20 +33,20 @@
 <body>
 <div style="max-width:900px;margin:0 auto;padding:16px">
 
-  <p class="stp">7 · Сделай в живом чате</p>
+  <p class="stp">6 · Сделай в живом чате</p>
   <h2>Сделай в живом чате</h2>
-  <p class="lcinstruction">Спросите ИИ про норматив по своей реальной задаче (например: «какой СП регулирует ...», «в каком документе искать требования к ...») — в одном из чат-ботов ниже. Затем найдите первоисточник (ФАУ ФЦС, Техэксперт) и отметьте, что совпало, а что нет. Вставьте свою сверку в поле под кнопками.</p>
+  <p class="lcinstruction">Возьмите сегодняшнюю задачу из своего плана недели (раздел 4) и соответствующий промпт из пака. Выполните его в реальном чат-боте — например, в одном из ниже. Затем вставьте результат в поле под кнопками.</p>
   <div class="lcbtns">
     <a class="lcbtn" href="https://giga.chat" target="_blank" rel="noopener"><span class="dotc" style="background:var(--blue)"></span> GigaChat</a>
     <a class="lcbtn" href="https://alice.yandex.ru" target="_blank" rel="noopener"><span class="dotc" style="background:var(--purple)"></span> Алиса / YandexGPT</a>
   </div>
   <div class="review">
-    <label>Вставь сюда свою сверку: ответ ИИ → что сказал первоисточник → совпало/нет</label>
-    <textarea id="lcResult" rows="5" placeholder="Например: ИИ сослался на СП … п. …; в первоисточнике (ФАУ ФЦС) пункт звучит иначе / подтвердился; вывод…"></textarea>
+    <label>Вставь сюда свой результат</label>
+    <textarea id="lcResult" rows="5" placeholder="Вставьте сюда ответ, который вернул чат-бот на сегодняшнюю задачу из вашего плана…"></textarea>
   </div>
   <div class="lcgate">
     <input type="checkbox" id="lcConfirm">
-    <label for="lcConfirm">Я сверил(а) ответ ИИ с первоисточником</label>
+    <label for="lcConfirm">Я получил ответ на свой запрос</label>
   </div>
   <p class="lcstatus" id="lcStatus">Итоги урока откроются после того, как вы вставите результат и отметите чекбокс.</p>
   <div class="transfer-note">

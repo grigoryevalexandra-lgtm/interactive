@@ -4,25 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 1. Что именно копирует ИИ</title>
+<title>Интерактив 1. Одна мысль — один экран</title>
 <style>
-  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
   html,body{overflow-x:hidden;margin:0}
   body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
-  p{margin:0 0 12px}.muted{color:var(--muted)}
+  p{margin:0 0 12px}
   h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
   h3{font-size:16px;margin:18px 0 8px;font-weight:800}
   .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
   .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
   .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
-  .checks{list-style:none;padding:0;margin:8px 0 0}
-  .checks li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;border-bottom:1px solid var(--line)}
-  .checks li:last-child{border-bottom:none}.checks li:before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:800}
-  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:10px;padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
   .btn:hover{filter:brightness(.95)}.btn:disabled{opacity:.45;cursor:not-allowed}
   .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{border-color:var(--ink)}
-  /* ── Экраны «одна мысль» с прогрессом ── */
   .progress{display:flex;gap:6px;margin:4px 0 18px}
   .progress .dot{flex:1;height:5px;border-radius:4px;background:var(--card2)}
   .progress .dot.on{background:var(--blue)}
@@ -31,31 +27,23 @@
 </style>
 </head>
 <body>
-<div style="max-width:900px;margin:0 auto;padding:16px">
+<div style="max-width:900px;margin:0 auto;padding:16px" id="screens">
 
-  <p class="stp">2 · Без образца и с образцом</p>
-  <h2>Что именно копирует ИИ</h2>
+  <p class="stp">2 · По шагам</p>
+  <h2>Одна мысль — один экран</h2>
   <div class="progress" id="scrProgress"></div>
-  <div id="screens">
   <div class="screen on">
-    <h3>Экран 1: без образца — ИИ угадывает</h3>
-    <p>Вы просите «сведи КП в таблицу» или «напиши ответ на замечание экспертизы» — без примера. ИИ ориентируется на «средний» стиль из обучающих данных: обезличенные формулировки, случайная структура колонок, обороты, которых у вас в компании никто не использует. Результат читаемый, но чужой.</p>
+    <h3>Экран 1: полдня в Excel против трёх запросов</h3>
+    <p>Сводка объёмов, процент выполнения, сверка ВОР со сметой — задачи, где 90% времени уходит не на анализ, а на механику: набрать формулу, скопировать диапазон, свести вручную. ИИ забирает именно эту механику.</p>
   </div>
   <div class="screen">
-    <h3>Экран 2: с образцом — ИИ копирует форму</h3>
-    <p>Вы прикладываете один реальный документ — например, строку сравнения КП-1 или готовый ответ на замечание № 4 — и просите «сделай так же, но для новых данных». ИИ считывает форму образца и переносит её на новое содержание.</p>
+    <h3>Экран 2: три приёма — от формулы до структуры</h3>
+    <p>Формула словами закрывает разовую задачу «посчитай мне вот это». Разбор выгрузки — когда данных много и глазами их не проверить. Структурированный вывод — когда результат должен лечь в Excel без правок формата.</p>
   </div>
   <div class="screen">
-    <h3>Экран 3: что именно копируется</h3>
-    <p>Из образца в новый документ переходит четыре вещи:</p>
-    <ul class="checks">
-      <li><b>Структура</b> — порядок пунктов, состав колонок таблицы, разбивка на абзацы.</li>
-      <li><b>Тон</b> — официальный/нейтральный/технический регистр речи.</li>
-      <li><b>Обороты</b> — типовые фразы («Замечание принято...», «Просим снять замечание»).</li>
-      <li><b>Оформление</b> — как оформлены даты, ссылки на нормативы, подписи.</li>
-    </ul>
-    <div class="note green">✅ Содержание образца в новый документ не переносится — переносится только его форма.</div>
-  </div>
+    <h3>Экран 3: что не отдаём ИИ</h3>
+    <p>ИИ может «дорисовать» несуществующие строки, чтобы сумма выглядела красиво — итоги всегда пересчитывайте сами. А денежные итоги сметы — точка, где решает только профильное ПО (ГРАНД-Смета и аналоги), не чат.</p>
+    <div class="note green">✅ Формула словами → разбор выгрузки → схема результата заранее. Три приёма закрывают почти всю рутину с таблицами ПТО.</div>
   </div>
   <div class="snav">
     <button class="btn ghost" id="scrPrev">← Назад</button>

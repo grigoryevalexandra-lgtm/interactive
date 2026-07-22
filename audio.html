@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аудиоплеер: Планёрка</title>
+    <style>
+        /* CSS стили */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .audio-player {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px 24px;
+            width: 320px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .track-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .track-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .track-artist {
+            font-size: 0.9em;
+            color: #777777;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .play-btn {
+            background: #007aff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.1s ease, background 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .play-btn:hover {
+            background: #0062cc;
+        }
+
+        .play-btn:active {
+            transform: scale(0.94);
+        }
+
+        .play-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            font-size: 0.8em;
+            color: #555555;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #seek-bar {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: #e4e4e4;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #seek-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #007aff;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        #seek-bar::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        #seek-bar::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border: none;
+            border-radius: 50%;
+            background: #007aff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="audio-player">
+    <!-- Ваша ссылка на аудиофайл с GitHub добавлена сюда -->
+    <audio id="audio" src="https://github.com/grigoryevalexandra-lgtm/interactive/raw/refs/heads/main/%D0%9F%D0%BB%D0%B0%D0%BD%D1%91%D1%80%D0%BA%D0%B0_%D0%B0%D1%83%D0%B4%D0%B8%D0%BE_26-06.mp3" preload="metadata"></audio>
+    
+    <div class="track-info">
+        <div class="track-title">Планёрка 26-06</div>
+        <div class="track-artist">Запись аудио</div>
+    </div>
+    
+    <div class="controls">
+        <button id="play-pause" class="play-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        
+        <div class="progress-container">
+            <span id="current-time">0:00</span>
+            <input type="range" id="seek-bar" value="0" max="100">
+            <span id="duration">0:00</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript логика
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play-pause');
+    const seekBar = document.getElementById('seek-bar');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+
+    const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+    const pauseIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+
+    let isPlaying = false;
+
+    playBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            audio.pause();
+            playBtn.innerHTML = playIcon;
+        } else {
+            audio.play();
+            playBtn.innerHTML = pauseIcon;
+        }
+        isPlaying = !isPlaying;
+    });
+
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return "0:00";
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    // Загружаем длительность трека
+    audio.addEventListener('loadedmetadata', () => {
+        durationEl.textContent = formatTime(audio.duration);
+    });
+
+    // На случай, если метаданные не успеют загрузиться сразу
+    audio.addEventListener('canplay', () => {
+        durationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+        if (audio.duration) {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            seekBar.value = progressPercent;
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+        }
+    });
+
+    seekBar.addEventListener('input', () => {
+        const seekTo = (seekBar.value / 100) * audio.duration;
+        audio.currentTime = seekTo;
+    });
+
+    audio.addEventListener('ended', () => {
+        isPlaying = false;
+        playBtn.innerHTML = playIcon;
+        seekBar.value = 0;
+        currentTimeEl.textContent = "0:00";
+    });
+</script>
+
+</body>
+</html>

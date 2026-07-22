@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Интерактив 2. Сделай в живом чате</title>
+<title>Интерактив 2. Сделай в живом чате: сверка норматива с первоисточником</title>
 <style>
-  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
   *,*:before,*:after{box-sizing:border-box}
   html,body{overflow-x:hidden;margin:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
   p{margin:0 0 12px}
-  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
   .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
   .livechat{display:flex;flex-direction:column;gap:12px}
   .livechat .lcbtns{display:flex;gap:10px;flex-wrap:wrap}
   .livechat .lcbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:var(--rs);padding:11px 16px;font-size:14px;font-weight:700;color:var(--ink);text-decoration:none;transition:.15s}
@@ -33,27 +33,25 @@
 <body>
 <div style="max-width:900px;margin:0 auto;padding:16px">
 
-  <p class="stp">6 · Сделай в живом чате</p>
+  <p class="stp">7 · Сделай в живом чате</p>
   <h2>Сделай в живом чате</h2>
-  <p class="lcinstruction">Возьмите рендер, который вы сделали на Шаге 20 (первый рендер фасада «Уютного дома» по описанию ТЭП), и доработайте его: добавьте людей и среду по промпту из блока 2, подготовьте версию под слайд презентации по логике блока 3. Выполните в реальном инструменте — например, в одном из ниже. Затем вставьте промпт и опишите результат в поле под кнопками.</p>
-  <div class="livechat">
-    <div class="lcbtns">
-      <a class="lcbtn" href="https://fusionbrain.ai" target="_blank" rel="noopener"><span class="dotc" style="background:var(--blue)"></span> Kandinsky (Fusion Brain)</a>
-      <a class="lcbtn" href="https://shedevrum.ai" target="_blank" rel="noopener"><span class="dotc" style="background:var(--purple)"></span> Шедеврум</a>
-    </div>
-    <div class="review">
-      <label>Вставь сюда свой промпт и опиши результат</label>
-      <textarea id="lcResult" rows="5" placeholder="Промпт, который вы использовали, и краткое описание того, что получилось (какие люди/среда добавлены, под какую задачу подготовили версию)…"></textarea>
-    </div>
-    <div class="lcgate">
-      <input type="checkbox" id="lcConfirm">
-      <label for="lcConfirm">Я получил результат от инструмента</label>
-    </div>
-    <p class="lcstatus" id="lcStatus">Итоги урока откроются после того, как вы вставите результат и отметите чекбокс.</p>
-    <div class="transfer-note">
-      <div class="tnlabel">⚙ Для переноса в платформу Актион</div>
-      Демо-гейт реализован локальным JS (без сохранения данных). На платформе эта блокировка должна опираться на реальное событие взаимодействия участника с чатом (или просто на заполненное поле + чекбокс, как здесь) — ничего никуда не отправляется и в демо-версии.
-    </div>
+  <p class="lcinstruction">Спросите ИИ про норматив по своей реальной задаче (например: «какой СП регулирует ...», «в каком документе искать требования к ...») — в одном из чат-ботов ниже. Затем найдите первоисточник (ФАУ ФЦС, Техэксперт) и отметьте, что совпало, а что нет. Вставьте свою сверку в поле под кнопками.</p>
+  <div class="lcbtns">
+    <a class="lcbtn" href="https://giga.chat" target="_blank" rel="noopener"><span class="dotc" style="background:var(--blue)"></span> GigaChat</a>
+    <a class="lcbtn" href="https://alice.yandex.ru" target="_blank" rel="noopener"><span class="dotc" style="background:var(--purple)"></span> Алиса / YandexGPT</a>
+  </div>
+  <div class="review">
+    <label>Вставь сюда свою сверку: ответ ИИ → что сказал первоисточник → совпало/нет</label>
+    <textarea id="lcResult" rows="5" placeholder="Например: ИИ сослался на СП … п. …; в первоисточнике (ФАУ ФЦС) пункт звучит иначе / подтвердился; вывод…"></textarea>
+  </div>
+  <div class="lcgate">
+    <input type="checkbox" id="lcConfirm">
+    <label for="lcConfirm">Я сверил(а) ответ ИИ с первоисточником</label>
+  </div>
+  <p class="lcstatus" id="lcStatus">Итоги урока откроются после того, как вы вставите результат и отметите чекбокс.</p>
+  <div class="transfer-note">
+    <div class="tnlabel">⚙ Для переноса в платформу Актион</div>
+    Демо-гейт реализован локальным JS (без сохранения данных). На платформе эта блокировка должна опираться на реальное событие взаимодействия участника с чатом (или просто на заполненное поле + чекбокс, как здесь) — ничего никуда не отправляется и в демо-версии.
   </div>
 
 </div>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 2. Планёрка → автопротокол</title>
+<style>
+  :root{
+    --bg:#ffffff; --card:#faf8f5; --card2:#f3efe9; --ink:#1a1814; --muted:#6f7280;
+    --line:#e9e4dc; --brand:#e2231a; --blue:#237cf9; --green:#1f9d57; --yellow:#f5b500; --purple:#9b5de5;
+    --r:16px; --rs:10px; --font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:15.5px;margin:16px 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .why{background:var(--card);border-left:4px solid var(--blue);border-radius:12px;padding:13px 15px;font-size:14.5px;margin:14px 0}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:12px 18px;font-size:14.5px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .btn.dark{background:var(--ink)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:16px}
+  .note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .out{background:#eef8f1;border:1px solid #cdebd8;border-radius:12px;padding:16px 18px;margin-top:18px}
+  .out .ot{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--green);font-weight:800;margin-bottom:6px}
+  .raw{font-size:13.5px;line-height:1.6;color:#4a463f;white-space:pre-wrap}
+  .copy{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:15px;font-size:13.5px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word}
+  .promptnote{font-size:12px;color:var(--muted);margin:8px 0 0}
+  .midbtn{display:flex;justify-content:center;margin:14px 0}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h2>Из 40 минут разговора — в протокол за 3 минуты</h2>
+  <div class="why">Еженедельная планёрка — это 40 минут разговора, из которых половина ценности теряется: кто что пообещал, до какого числа, кто отвечает. Дальше — рутина: сесть и вручную вычленить поручения из памяти или из диктофонной записи. ИИ делает это по расшифровке за пару минут, если её просто вставить в чат.</div>
+
+  <h3>Расшифровка планёрки (сырой транскрипт)</h3>
+  <p class="muted">Реальная еженедельная планёрка по объекту ЖК «Уютный дом на Матвеева», 1-я очередь — участники: руководитель проекта (РП), прораб секции 2 (Иванов И.И.), ПТО, стройконтроль, снабжение. Раскройте блок, чтобы увидеть расшифровку целиком.</p>
+  <details>
+    <summary style="cursor:pointer;font-weight:700;font-size:13.5px;color:var(--blue);margin:8px 0">📄 Показать транскрипт планёрки (файл 06)</summary>
+    <div class="raw" style="margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px">
+РП: Так, начинаем. По монолиту 4–9 этажи — что по факту, отстаём?<br><br>
+Прораб: Отстаём, да. На сегодня двадцать два процента, по графику должны под тридцать. Не хватало людей на прошлой неделе, двое на больничном. Догоним, если дадут второй кран на захватку.<br><br>
+РП: Снабжение, что по второму крану?<br><br>
+Снабжение: Кран можем подать с понедельника, но нужна заявка сегодня до обеда и согласование по технике безопасности.<br><br>
+Стройконтроль: По безопасности — пока не закрыто предписание пятьдесят семь по защитному слою, бетонирование захватки два-Б не разрешаю. И до сих пор нет входного контроля по арматуре, партия от восемнадцатого.<br><br>
+ПТО: Документы по входному контролю поднимем сегодня, я с лабораторией свяжусь.<br><br>
+РП: Хорошо. Прораб — переделать защитный слой и предъявить повторно до субботы. Снабжение — заявку на кран сегодня. ПТО — входной контроль до завтра. Стройконтроль — как закроем, сразу даёшь добро на бетон. По фасаду подрядчик выходит первого августа, подтверждаем.<br><br>
+Снабжение: По газобетону — приедет послезавтра, две машины.<br><br>
+РП: Принято. Всё, по местам.
+    </div>
+  </details>
+
+  <h3 style="margin-top:20px">Промпт для автопротокола</h3>
+  <p class="muted">Вставьте транскрипт вместо «…» и отправьте в ИИ-чат — на выходе таблица поручений, а не пересказ разговора.</p>
+  <div class="copy" id="promptE1">Ты — инженер ПТО. Задача: из приложенной расшифровки планёрки сделай протокол: решения и поручения. Формат: таблица «поручение → ответственный → срок». Ничего не придумывай — только из текста.
+Транскрипт: «…»</div>
+  <p class="promptnote">Это промпт E1 из твоего промпт-пака ПТО («Протокол планёрки из транскрипта»).</p>
+  <div style="margin-top:12px"><button class="btn dark" id="copyBtnE1">📋 Скопировать промпт</button>
+  <span class="muted" id="copyMsgE1" style="margin-left:12px;font-size:13px"></span></div>
+
+  <div class="midbtn"><button class="btn" id="protocolBtn">🤖 Собрать протокол</button></div>
+  <div id="protocolOut"></div>
+
+  <div class="note red" style="font-weight:700">🔴 Запись планёрки на диктофон или в приложение — только с согласия всех участников, предупредите вслух перед началом записи. RU-инструменты записи и расшифровки совещаний: Таймлист, МТС Линк, SaluteSpeech.</div>
+
+</div>
+<script>
+document.getElementById('copyBtnE1').addEventListener('click',()=>{
+  navigator.clipboard.writeText(document.getElementById('promptE1').textContent).then(()=>{
+    document.getElementById('copyMsgE1').textContent='Скопировано ✓';
+    setTimeout(()=>document.getElementById('copyMsgE1').textContent='',2500);
+  }).catch(()=>{document.getElementById('copyMsgE1').textContent='Выделите и скопируйте вручную';});
+});
+document.getElementById('protocolBtn').addEventListener('click',()=>{
+  const out=document.getElementById('protocolOut');
+  out.innerHTML=`
+    <div class="out">
+      <div class="ot">Протокол планёрки — 26.06.2026</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px">
+        <thead><tr style="text-align:left;border-bottom:1px solid var(--line)">
+          <th style="padding:6px 8px 6px 0">Поручение</th><th style="padding:6px 8px">Ответственный</th><th style="padding:6px 0 6px 8px">Срок</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px dashed var(--line)"><td style="padding:7px 8px 7px 0">Переделать защитный слой и предъявить повторно (устранить предписание № 57)</td><td style="padding:7px 8px">Прораб (Иванов И.И.)</td><td style="padding:7px 0 7px 8px">до 28.06</td></tr>
+          <tr style="border-bottom:1px dashed var(--line)"><td style="padding:7px 8px 7px 0">Подать заявку на второй кран</td><td style="padding:7px 8px">Снабжение</td><td style="padding:7px 0 7px 8px">сегодня до обеда</td></tr>
+          <tr style="border-bottom:1px dashed var(--line)"><td style="padding:7px 8px 7px 0">Поднять документы входного контроля по арматуре (партия от 18-го)</td><td style="padding:7px 8px">ПТО</td><td style="padding:7px 0 7px 8px">до 27.06</td></tr>
+          <tr><td style="padding:7px 8px 7px 0">Дать разрешение на бетонирование захватки 2-Б после устранения предписания № 57</td><td style="padding:7px 8px">Стройконтроль</td><td style="padding:7px 0 7px 8px">по факту устранения</td></tr>
+        </tbody>
+      </table>
+      <div style="border-top:1px dashed var(--line);padding-top:8px;margin-top:10px;font-style:italic;color:var(--muted);font-size:12.5px">⚠️ ответ смоделирован — демо работы</div>
+    </div>`;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Контрдемо: чего в документе нет</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--green:#1f9d57;--brand:#e2231a;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .qbuilder{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fff}
+  .qbuilder .qh{font-weight:800;font-size:14px;margin-bottom:4px}
+  .qbuilder .qtext{font-size:13.5px;color:var(--muted);margin-bottom:10px}
+  .qbuilder label.vlabel{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.03em}
+  .qbuilder select{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit}
+  .qbuilder select:focus{outline:none;border-color:#237cf9}
+  .vfb{margin-top:9px;font-size:13px;border-radius:9px;padding:9px 12px;display:none}
+  .vfb.show{display:block}
+  .vfb.ok{background:#eef8f1;color:#157a41;border:1px solid #cdebd8}
+  .vfb.err{background:#fdf0ef;color:#a3201a;border:1px solid #f3c7c3}
+  .vfb.warn{background:#fdf6e3;color:#7a5b16;border:1px solid #f3e3b3}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">4 · Контрдемо</p>
+  <h2>Вопрос, которого в регламенте нет</h2>
+  <p>Проверим ассистента на честность: зададим вопрос, ответа на который в загруженных регламентах Р-01–Р-03 нет вовсе — например, про размер штрафа за просрочку устранения нарушения. Выберите, каким должен быть правильный ответ ИИ, и сравните с ловушкой — уверенным, но выдуманным ответом.</p>
+
+  <div class="qbuilder">
+    <div class="qh">Вопрос пользователя</div>
+    <div class="qtext">«Какой штраф предусмотрен за нарушение срока устранения замечаний по предписанию?» — этого пункта в регламентах Р-01–Р-03 нет.</div>
+    <label class="vlabel">Как должен ответить ассистент с «знаниями»</label>
+    <select id="counterSelect" data-field="behavior">
+      <option value="">— выберите вариант ответа —</option>
+      <option value="correct">«В приложенном документе размер штрафа не указан. По регламентам Р-01–Р-03 такой информации нет»</option>
+      <option value="hallucinate">«Согласно регламенту, штраф составляет 0,1% от стоимости работ за каждый день просрочки» (пункт не назван)</option>
+      <option value="vague">«Обычно за такие нарушения предусмотрены штрафные санкции, детали лучше уточнить у юриста»</option>
+    </select>
+    <div class="vfb" id="counterFb"></div>
+  </div>
+
+  <div class="note red" style="margin-top:8px">⚠️ <b>Связь с Шагом 2 (галлюцинации):</b> вариант с конкретной цифрой звучит убедительнее всего — и именно поэтому опаснее всего. У «голого чата» без документа не было источника вообще, и это было заметно. У ассистента со «знаниями» есть настоящий документ рядом — из-за этого ложный ответ выглядит достовернее, хотя источника под ним по-прежнему нет. Проверка «а где именно это написано» нужна всегда, даже когда документ приложен.</div>
+
+</div>
+<script>
+(function(){
+  var sel=document.getElementById('counterSelect');if(!sel)return;
+  var fb=document.getElementById('counterFb');
+  sel.addEventListener('change',function(){
+    var v=sel.value;
+    fb.className='vfb';
+    if(!v){fb.classList.remove('show');return;}
+    fb.classList.add('show');
+    if(v==='correct'){
+      fb.classList.add('ok');
+      fb.innerHTML='✅ Верно. Честное «в документе нет» — единственно правильное поведение, когда источника для ответа не существует.';
+    }else if(v==='hallucinate'){
+      fb.classList.add('err');
+      fb.innerHTML='❌ Это галлюцинация: конкретная цифра звучит убедительно, но в регламентах Р-01–Р-03 такого пункта нет. Самый опасный вариант — его труднее всего заметить без проверки по первоисточнику.';
+    }else{
+      fb.classList.add('warn');
+      fb.innerHTML='⚠️ Уклончиво: формулировка не выдаёт ложный факт, но и не даёт честного ответа «в документе нет» — участник может решить, что информация где-то в документе всё же есть.';
+    }
+  });
+})();
+</script>
+</body>
+</html>

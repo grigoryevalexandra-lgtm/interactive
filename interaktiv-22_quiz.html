@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 2. Мини-тренажёр</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .quiz .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:15px;font-weight:700;margin:0 0 12px}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:#1f9d57;background:#eef8f1}
+  .opt.err{border-color:#e2231a;background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.9}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">Проверь себя</p>
+  <h2>Мини-тренажёр</h2>
+  <p class="muted">Кликните вариант — получите мгновенную обратную связь.</p>
+  <div class="quiz" data-quiz>
+    <p class="qq">Ассистенту со «знаниями» задали вопрос, ответа на который в загруженном документе нет. Что должен сделать ассистент?</p>
+    <div class="opts">
+      <button class="opt" data-fb="Опасный вариант: ответ выглядит правдоподобно, но источника нет — это и есть галлюцинация, только более убедительная из-за рядом лежащего документа.">Ответить по общим знаниям модели, не уточняя источник</button>
+      <button class="opt" data-correct data-fb="Верно: прямой честный ответ «в документе нет» — то самое требование, которое мы закладываем в промпт заранее (Шаг 2 + Шаг 22).">Прямо сказать «в документе нет», не придумывая ответ</button>
+      <button class="opt" data-fb="Тоже уход от честного ответа — расплывчатая формулировка маскирует то, что ответа в источнике попросту нет.">Дать общую расплывчатую формулировку без ссылки на документ</button>
+    </div>
+    <div class="qfb"></div>
+  </div>
+
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-quiz]').forEach(function(q){
+    var fb=q.querySelector('.qfb');
+    q.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        q.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

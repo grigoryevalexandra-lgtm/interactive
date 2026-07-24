@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Чек-лист самопроверки — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--card2:#f3efe9;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--purple:#9b5de5;--rs:10px;--r:16px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .tw{overflow-x:auto;margin-top:6px}
+  table.doctbl{border-collapse:collapse;width:100%;font-size:12px;min-width:420px}
+  table.doctbl th,table.doctbl td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  table.doctbl th{background:var(--card);font-weight:800;font-size:11px}
+  td.hl{background:#fde4e2;color:#8f1410;font-weight:700}
+  td.gap{background:#fdf6e3;color:#7a5b16;font-weight:700}
+  .selfcheck{list-style:none;padding:0;margin:8px 0 0}
+  .selfcheck li{border-bottom:1px solid var(--line)}.selfcheck li:last-child{border-bottom:none}
+  .selfcheck label{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:14.5px;cursor:pointer;margin:0}
+  .selfcheck input{width:18px;height:18px;flex:0 0 auto;margin:3px 0 0;accent-color:var(--green)}
+  .scbar{height:9px;border-radius:6px;background:var(--card2);overflow:hidden;margin-top:14px}
+  .scbar i{display:block;height:100%;width:0;background:var(--green);border-radius:6px;transition:.35s}
+  .scmsg{font-size:13px;font-weight:700;margin-top:7px;color:var(--muted)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <p class="stp">8 · Финал · Самопроверка</p>
+    <h2>Чек-лист: неделя инженера ОТ пройдена</h2>
+    <ul class="selfcheck" id="scList">
+<li><label><input type="checkbox"/> Программу первичного инструктажа я собрал как конкретизацию утверждённых 6 пунктов под профессию, не пропустив и не выдумав ни одного пункта</label></li>
+<li><label><input type="checkbox"/> В наряде-допуске № 12 я сам заметил пробел — отсутствие контроля освещённости — и отметил, что применимость нормы (883н) нужно свериться по первоисточнику, а не поверил названному номеру на слово</label></li>
+<li><label><input type="checkbox"/> Я не открыл (и не разрешил открыть) наряд-допуск, пока предписание № 57 по той же захватке не снято документально — вывод «условно нельзя», а не «наверное, можно»</label></li>
+<li><label><input type="checkbox"/> Из ведомости персонала бригады в чат-бот ушли только табельный номер, должность и роль — ФИО, СНИЛС, дата рождения и телефон остались вне публичного ИИ</label></li>
+<li><label><input type="checkbox"/> В недельной сводке я написал «наряд не открыт» и «данных нет — требует проверки» там, где это правда, а не подменил это красивой формулировкой «всё штатно»</label></li>
+<li><label><input type="checkbox"/> Один эпизод я повторил в живом чате на своём материале и сверил результат с документом; помню красную линию — ИИ не допускает к работам, наряд-допуск утверждает ответственное лицо, ПДн и медданные — никогда в публичный сервис</label></li>
+</ul>
+    <div class="scbar"><i id="scBar"></i></div>
+    <div class="scmsg" id="scMsg">0 из 6 — пройдитесь по списку</div>
+  </section>
+</div>
+<script>
+(function(){
+  var list=document.getElementById('scList');if(!list)return;
+  var boxes=list.querySelectorAll('input[type=checkbox]'),bar=document.getElementById('scBar'),msg=document.getElementById('scMsg');
+  function upd(){
+    var n=0;boxes.forEach(function(b){if(b.checked)n++;});
+    bar.style.width=(100*n/boxes.length)+'%';
+    msg.textContent=(n===boxes.length)?'✅ Все '+n+' пунктов — мини-финал пройден':(n+' из '+boxes.length+' — пройдитесь по списку');
+    msg.style.color=(n===boxes.length)?'var(--green)':'var(--muted)';
+  }
+  boxes.forEach(function(b){b.addEventListener('change',upd);});
+  upd();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Мой ИИ-набор ГИПа — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--card2:#f3efe9;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--purple:#9b5de5;--rs:10px;--r:16px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .tw{overflow-x:auto;margin-top:6px}
+  table.doctbl{border-collapse:collapse;width:100%;font-size:12px;min-width:420px}
+  table.doctbl th,table.doctbl td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  table.doctbl th{background:var(--card);font-weight:800;font-size:11px}
+  td.hl{background:#fde4e2;color:#8f1410;font-weight:700}
+  td.gap{background:#fdf6e3;color:#7a5b16;font-weight:700}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .btn.dark{background:var(--ink)}
+  .kit{display:flex;flex-direction:column;gap:12px}
+  .kititem{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px}
+  .kititem .kh{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px;margin-bottom:8px;flex-wrap:wrap}
+  .kititem .kcode{font-size:10.5px;font-weight:800;color:#fff;background:var(--ink);border-radius:5px;padding:2px 7px}
+  .kititem .kday{font-size:11.5px;color:var(--muted);margin-left:auto}
+  .kititem .kprompt{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px;font-size:12px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word}
+  .kititem .kbtn{margin-top:9px}
+  .promptlink{font-size:12.5px;color:var(--muted);margin:9px 0 0}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <p class="stp">7 · Финал · Мой ИИ-набор ГИПа</p>
+    <h2>Пять промптов недели — ваш рабочий инструмент</h2>
+    <p class="muted">Это итог пилотного среза: пять промптов из промпт-пака ГИП, по одному на каждый эпизод недели. Копируйте и используйте на своих задачах. Не забывайте прикладывать документ и грунтовку против выдумок: «используй только данные из документа; чего нет — не выдумывай, помечай <i>[уточнить]</i>».</p>
+    <div class="kit">
+<div class="kititem">
+<div class="kh"><span class="kcode">A2</span> Реферирование таблицы замечаний ГГЭ до списка «что исправить» <span class="kday">День 1</span></div>
+<div class="kprompt" id="p1">Ты — ГИП. Задача: сократи приложенную таблицу замечаний экспертизы до списка «что исправить» — по каждому пункту: раздел, суть в одном предложении, норматив-основание. Расставь приоритет (высокий/средний) по влиянию на безопасность и сроки экспертизы. Формат: нумерованный список, до 10 слов на пункт замечания + пометка приоритета.
+Таблица замечаний: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p1">📋 Скопировать A2</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">A3</span> Письмо смежному разделу с запросом недостающих данных <span class="kday">День 2</span></div>
+<div class="kprompt" id="p2">Ты — ГИП. Контекст: замечание ГГЭ № 2 — не подтверждена нормативная инсоляция для квартир секции 1, ориентированных на север (СанПиН 1.2.3685-21, СП 54.13330). Задача: составь письмо разделу АР с запросом расчёта инсоляции и обоснованием, почему это нужно для снятия замечания. Формат: короткое деловое письмо, 5–7 предложений.</div>
+<button class="btn sm dark kbtn" data-copy="p2">📋 Скопировать A3</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">A1</span> Ответ на замечание экспертизы (несогласованность в РД) <span class="kday">День 3</span></div>
+<div class="kprompt" id="p3">Ты — ГИП на жилом доме. Контекст: замечание № 4 ГГЭ — несоответствие класса бетона на чертеже КЖ-05 (B25) и в спецификации (B20). По факту в общих данных листа КЖ-01 и в расчёте указан класс B25 — расхождение только в тексте спецификации. Задача: составь официальный ответ проектировщика по образцу («замечание принято / не принято», что именно исправлено, лист изменений). Используй ТОЛЬКО класс бетона, который подтверждён в приложенном документе — не выбирай между B25 и B20 сам, если это не следует из документа. Формат: краткий официальный ответ + строка «лист изменений № _ от __».
+Замечание и фрагмент РД: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p3">📋 Скопировать A1</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">D2</span> Протокол совещания смежников по замечаниям экспертизы <span class="kday">День 4</span></div>
+<div class="kprompt" id="p4">Ты — ГИП. Задача: из приложенной расшифровки/заметок совещания с разделами КР, АР, ПБ выдели по каждому замечанию ГГЭ: кто отвечает, какое решение приняли, срок. Формат: таблица «замечание № → раздел → решение → ответственный → срок». Ничего не придумывай — только из текста встречи.
+Заметки совещания: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p4">📋 Скопировать D2</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">B2</span> Проверка комплектности РД по перечню обязательных позиций <span class="kday">День 5</span></div>
+<div class="kprompt" id="p5">Ты — ГИП. Контекст: приложены спецификация раздела КЖ и перечень обязательных позиций комплекта. Задача: сверь спецификацию ТОЛЬКО с этим перечнем: что есть, чего нет, что под вопросом. Если позиции нет в перечне — не считай её отсутствующей и не добавляй от себя. Формат: таблица «позиция перечня → есть / нет / требует проверки → комментарий».
+Перечень обязательных позиций: [вставьте свой чек-лист]
+Спецификация: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p5">📋 Скопировать B2</button>
+</div>
+</div>
+    <p class="promptlink" id="kitMsg" style="min-height:16px"></p>
+  </section>
+</div>
+<script>
+(function(){
+  var msg=document.getElementById('kitMsg');
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var el=document.getElementById(btn.getAttribute('data-copy'));if(!el)return;
+      navigator.clipboard.writeText(el.textContent).then(function(){
+        if(msg){msg.textContent='Промпт скопирован ✓';setTimeout(function(){msg.textContent='';},2500);}
+      }).catch(function(){if(msg)msg.textContent='Выделите и скопируйте вручную';});
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

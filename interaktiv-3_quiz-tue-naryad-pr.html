@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>День 2 — найди пробел в наряде-допуске № 12 — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--card2:#f3efe9;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--purple:#9b5de5;--rs:10px;--r:16px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:13.5px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:var(--green);background:#eef8f1}
+  .opt.err{border-color:var(--brand);background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.9}
+  .opt small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+  .qfb{margin-top:6px}
+  .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14.5px;font-weight:700;margin:0 0 6px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <h3>Что проверить лично перед началом работ</h3>
+    <p class="muted">В тексте — четыре меры. Работы стартуют рано утром в конце июня. Прежде чем открыть демо-ответ, отметьте сами: какой пункт, обязательный именно для раннего старта на высоте, в наряде не упомянут?</p>
+    <div data-quiz="">
+<p class="qq">Какой меры не хватает в наряде-допуске № 12 для утреннего старта бетонирования на высоте?</p>
+<div class="opts">
+<button class="opt" data-fb="Эта мера в наряде уже есть — «применение страховочных привязей с креплением к анкерным точкам». Пробел не здесь.">Страховочные привязи с креплением к анкерным точкам</button>
+<button class="opt" data-correct="" data-fb="Верно. Контроль освещённости рабочей зоны в тексте не упомянут вообще, а работы на высоте стартуют рано утром — естественного света может не хватать. Это пробел для проверки ответственным, не готовое решение.">Контроль освещённости рабочей зоны</button>
+<button class="opt" data-fb="Эта мера в наряде уже есть — «проверка подмостей и опалубки до начала работ». Пробел не здесь.">Проверка подмостей и опалубки до начала работ</button>
+</div>
+<div class="qfb"></div>
+</div>
+  </section>
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-quiz]').forEach(function(q){
+    var fb=q.querySelector('.qfb');
+    q.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        q.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        if(fb)fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

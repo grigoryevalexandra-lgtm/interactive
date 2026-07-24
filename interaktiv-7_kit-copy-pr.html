@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Мой ИИ-набор прораба — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--card2:#f3efe9;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--purple:#9b5de5;--rs:10px;--r:16px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .btn.dark{background:var(--ink)}
+  .kit{display:flex;flex-direction:column;gap:12px}
+  .kititem{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px}
+  .kititem .kh{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px;margin-bottom:8px;flex-wrap:wrap}
+  .kititem .kcode{font-size:10.5px;font-weight:800;color:#fff;background:var(--ink);border-radius:5px;padding:2px 7px}
+  .kititem .kday{font-size:11.5px;color:var(--muted);margin-left:auto}
+  .kititem .kprompt{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px;font-size:12px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word}
+  .kititem .kbtn{margin-top:9px}
+  .promptlink{font-size:12.5px;color:var(--muted);margin:9px 0 0}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <p class="stp">7 · Финал · Мой ИИ-набор прораба</p>
+    <h2>Шесть промптов недели — ваш рабочий инструмент</h2>
+    <p class="muted">Это итог пилотного среза: промпты из промпт-пака прораба, по одному-два на каждый эпизод недели. Копируйте и используйте на своих задачах. Не забывайте прикладывать документ и грунтовку против выдумок: «используй только данные из документа; чего нет — не выдумывай, помечай <i>[уточнить]</i>».</p>
+    <div class="kit">
+<div class="kititem">
+<div class="kh"><span class="kcode">E2</span> Протокол планёрки — поручения прораба <span class="kday">День 1</span></div>
+<div class="kprompt" id="p1">Ты — прораб секции 2. Задача: из приложенного транскрипта планёрки выдели протокол: решения и поручения. Формат: таблица «поручение → ответственный → срок». Ничего не придумывай — только из текста.
+Транскрипт: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p1">📋 Скопировать E2</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">A2</span> Ответ на замечание по хранению материалов <span class="kday">День 2</span></div>
+<div class="kprompt" id="p2">Ты — прораб секции 2. Контекст: предписание № 57 п. 3 требует немедленно обеспечить надлежащее хранение арматуры (сейчас — на грунте без подкладок, следы коррозии, фото Ф-02). Задача: составь короткий ответ представителю стройконтроля о принятых мерах (подкладки, навес) и сроке исполнения «немедленно» — когда фактически выполнено. Формат: короткое официальное уведомление, 4–5 предложений.
+Что сделано и когда: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p2">📋 Скопировать A2</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">D1</span> Проверка наряда-допуска перед началом работ <span class="kday">День 2</span></div>
+<div class="kprompt" id="p3">Ты — прораб секции 2. Контекст: наряд-допуск № 12 на бетонирование плиты перекрытия на высоте (отм. +12,000, захватка 2-Б), бригада 4 чел., срок действия 28.06–30.06.2026. Задача: проверь по тексту наряда, все ли обязательные меры безопасности для работ на высоте перечислены (ограждение, страховочные привязи, проверка подмостей/опалубки, погодные ограничения). Не утверждай наряд сам — только перечисли, что есть в тексте и что стоит уточнить у инженера ОТ. Формат: список «мера → есть в наряде? → комментарий». Финальное решение — за ответственным лицом.
+Наряд-допуск: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p3">📋 Скопировать D1</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">C1</span> Свод выполненных объёмов за неделю из ОЖР <span class="kday">День 3</span></div>
+<div class="kprompt" id="p4">Ты — прораб секции 2. Контекст: приложены черновые записи ОЖР за неделю (19–26 июня). Задача: собери сводку выполненных объёмов по дням (армирование, бетонирование, простои) и посчитай итог по армированию (м²) и по бетону (м³) за неделю — только по названным в записях цифрам. Формат: таблица «дата → работа → объём» + строка «итого».
+Записи ОЖР: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p4">📋 Скопировать C1</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">C2</span> Сверка факта по графику для доклада на планёрке <span class="kday">День 4</span></div>
+<div class="kprompt" id="p5">Ты — прораб секции 2. Контекст: график производства работ, срез на 28.06.2026 — позиция «Монолит каркаса эт. 4–9» план ~30%, факт 22%. Задача: подготовь короткие тезисы для доклада на планёрке: величина отставания, вероятная причина (нехватка людей, простой из-за бетона), что нужно для наверстывания (второй кран). Формат: 4 тезиса, разговорным языком.
+График и вводные: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p5">📋 Скопировать C2</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">E1</span> Недельный отчёт руководителю проекта <span class="kday">День 5</span></div>
+<div class="kprompt" id="p6">Ты — прораб секции 2. Задача: преобразуй приложенные черновые записи ОЖР за неделю в краткий отчёт руководителю проекта: что сделано, простои и их причины, проблемы/риски. Используй только факты из записей, ничего не добавляй от себя. Формат: 3 блока (сделано / простои / проблемы), до 120 слов.
+Записи ОЖР за неделю: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p6">📋 Скопировать E1</button>
+</div>
+</div>
+    <p class="promptlink" id="kitMsg" style="min-height:16px"></p>
+  </section>
+</div>
+<script>
+(function(){
+  var msg=document.getElementById('kitMsg');
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var el=document.getElementById(btn.getAttribute('data-copy'));if(!el)return;
+      navigator.clipboard.writeText(el.textContent).then(function(){
+        if(msg){msg.textContent='Промпт скопирован ✓';setTimeout(function(){msg.textContent='';},2500);}
+      }).catch(function(){if(msg)msg.textContent='Выделите и скопируйте вручную';});
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

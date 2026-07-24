@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>День 5 — недельная сводка по ОТ — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--card2:#f3efe9;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--purple:#9b5de5;--rs:10px;--r:16px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .tw{overflow-x:auto;margin-top:6px}
+  table.doctbl{border-collapse:collapse;width:100%;font-size:12px;min-width:420px}
+  table.doctbl th,table.doctbl td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  table.doctbl th{background:var(--card);font-weight:800;font-size:11px}
+  td.hl{background:#fde4e2;color:#8f1410;font-weight:700}
+  td.gap{background:#fdf6e3;color:#7a5b16;font-weight:700}
+  .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:13.5px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:var(--green);background:#eef8f1}
+  .opt.err{border-color:var(--brand);background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.9}
+  .opt small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+  .qfb{margin-top:6px}
+  .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14.5px;font-weight:700;margin:0 0 6px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <h3>Сводка — это то, что подтверждено, а не то, что хотелось бы написать</h3>
+    <p class="muted">Прежде чем принять черновик сводки, проверьте: не появилось ли в нём утверждение, которого нет в документах недели.</p>
+    <div class="opts" data-choice="">
+<button class="opt" data-fb="Формулировка «допуски открыты, нарушений нет» не подтверждена документами: наряд-допуск № 12 всю неделю оставался неоткрытым из-за предписания № 57, а данных о нарушениях СИЗ в кейсе просто нет — это не то же самое, что «нарушений не было».">
+<b>Вариант A.</b> «За неделю проведён инструктаж, все допуски открыты, нарушений СИЗ не зафиксировано» — короткая позитивная сводка для руководителя.
+              <small>Утверждает то, что не подтверждено документами недели</small>
+</button>
+<button class="opt" data-correct="" data-fb="Верно. Сводка честно разделяет подтверждённые факты (1 инструктаж, 1 наряд-допуск проверен и доработан) и открытые вопросы (наряд не открыт из-за предписания, данных о нарушениях СИЗ в документах недели нет — не значит, что их не было). Ничего не додумано, статус каждого пункта — из документа, а не из желаемой картины.">
+<b>Вариант B.</b> «Инструктажей проведено: 1 (первичный, бетонщик). Нарядов-допусков в работе: 1 (№12) — доработан по мере освещённости, но не открыт: действует предписание № 57 по той же захватке, подтверждения о снятии в документах нет. Данных о нарушениях СИЗ за неделю в приложенных документах нет — требует уточнения по ОЖР.»
+              <small>Разделяет подтверждённые факты и то, что «требует проверки», без додумывания</small>
+</button>
+<button class="opt" data-fb="Пропуск неудобного факта («наряд не открыт») ничем не лучше прямой выдумки: руководитель получит искажённую картину недели и примет решения на её основе.">
+<b>Вариант C.</b> «Инструктаж проведён, работа по наряду-допуску идёт штатно» — про статус предписания № 57 в сводке лучше не упоминать, чтобы не создавать лишних вопросов.
+              <small>Замалчивает факт, который прямо влияет на решение руководителя</small>
+</button>
+</div>
+    <div class="qfb" data-choice-fb=""></div>
+  </section>
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-choice]').forEach(function(group){
+    var fb=group.parentNode.querySelector('[data-choice-fb]');
+    group.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        group.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        if(fb)fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не то.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Среда — найди расхождение (АОСР № 142) — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:13.5px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:var(--green);background:#eef8f1}
+  .opt.err{border-color:var(--brand);background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.9}
+  .opt small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+  .qfb{margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <h3>Найди расхождение</h3>
+    <p class="muted">Три показателя. Один из них — не расхождение между документами, а именно та причина, по которой акт нельзя закрывать сегодня. Что мешает разрешить бетонирование?</p>
+    <div class="opts" data-choice>
+      <button class="opt" data-fb="Совпадает. Масса арматуры в акте — 11,8 т, и в спецификации поз. 5 — тоже 11,8 т. Это как раз пример корректной сверки: документы бьются между собой.">
+        <b>Масса арматуры: 11,8 т в акте vs 11,8 т в спецификации</b>
+        <small>Сверьте поз. 5 спецификации с актом</small>
+      </button>
+      <button class="opt" data-fb="Совпадает. Площадь армирования 482 м² в акте = площадь плиты 482 м² (поз. 2). Расхождения нет.">
+        <b>Площадь: 482 м² в акте vs 482 м² в спецификации</b>
+        <small>Поз. 2 спецификации</small>
+      </button>
+      <button class="opt" data-correct data-fb="Верно. Формально в акте записан защитный слой 25 мм — «по проекту». Но по открытому предписанию № 57 фактический защитный слой на этой же захватке 2-Б составляет 12–15 мм. Значит, акт противоречит предписанию: подписывать его и разрешать бетонирование нельзя, пока нарушение по п. 1 не устранено и работы не предъявлены повторно (до 28.06).">
+        <b>Защитный слой: в акте 25 мм, а по предписанию № 57 фактически 12–15 мм на той же захватке 2-Б</b>
+        <small>Сверьте акт с предписанием, не только со спецификацией</small>
+      </button>
+    </div>
+    <div class="qfb" data-choice-fb></div>
+  </section>
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-choice]').forEach(function(group){
+    var fb=group.parentNode.querySelector('[data-choice-fb]');
+    group.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        group.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        if(fb)fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не то.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

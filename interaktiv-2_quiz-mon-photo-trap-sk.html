@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>День 1 — ловушка «чего нет на фото» — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--card2:#f3efe9;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--purple:#9b5de5;--rs:10px;--r:16px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:13.5px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:var(--green);background:#eef8f1}
+  .opt.err{border-color:var(--brand);background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.9}
+  .opt small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+  .qfb{margin-top:6px}
+  .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14.5px;font-weight:700;margin:0 0 6px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <h3>🔍 Отделите наблюдение от предположения</h3>
+    <p class="muted">Фото — это наблюдение. Точную величину защитного слоя в миллиметрах или заключение о браке всей партии по фото не определить — для этого нужен обмер и документ. Прежде чем отдать формулировку в предписание, проверьте: не приписываете ли вы фото то, чего оно не подтверждает?</p>
+    <div data-quiz="">
+<p class="qq">Выберите формулировку для фотоотчёта по Ф-01 и Ф-02, которая не приписывает фото того, чего оно не подтверждает.</p>
+<div class="opts">
+<button class="opt" data-fb="Фото не даёт точных миллиметров и не показывает трещин усадки — этого просто нет в описании. Вывод «вся партия подлежит списанию» тоже перебор: на фото видна часть площадки, а не результат входного контроля всей партии.">
+<b>Вариант A.</b> «На фото Ф-01 видно армирование с недостаточным защитным слоем — фактически 12 мм, а также трещины усадки в опалубке. Ф-02 подтверждает, что вся партия арматуры Ø16 пришла ржавой и подлежит списанию».
+                <small>Точное число «12 мм», трещины и вывод про всю партию — из описания фото этого не следует</small>
+</button>
+<button class="opt" data-correct="" data-fb="Верно. Формулировка держится в рамках того, что реально видно на фото: наблюдение, а не готовое число или диагноз. Точный миллиметраж защитного слоя и решение о браке партии — предмет отдельной проверки (обмер, входной контроль).">
+<b>Вариант B.</b> «Ф-01: армирование плиты, в одном месте арматура лежит почти на опалубке — визуально недостаточный защитный слой, точное значение требует обмера. Ф-02: арматура на складе лежит на грунте без подкладок, видны следы ржавчины — нарушение условий хранения».
+                <small>Только то, что видно, точные цифры — отдельно</small>
+</button>
+<button class="opt" data-fb="Два фото одного дня — не статистика о «систематическом» нарушении, а вывод об отстранении бригады фотография тем более не подтверждает и не может обосновать в одиночку.">
+<b>Вариант C.</b> «Ф-01 и Ф-02 подтверждают, что бригада систематически нарушает технологию армирования и должна быть отстранена от работ».
+                <small>Вывод о «системе» и кадровое решение — фото этого не показывает</small>
+</button>
+</div>
+<div class="qfb"></div>
+</div>
+  </section>
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-quiz]').forEach(function(q){
+    var fb=q.querySelector('.qfb');
+    q.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        q.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        if(fb)fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

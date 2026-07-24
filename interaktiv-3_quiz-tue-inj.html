@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Вторник — мини-квиз: письмо поставщику — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:13.5px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:var(--green);background:#eef8f1}
+  .opt.err{border-color:var(--brand);background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.9}
+  .qfb{margin-top:6px}
+  .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14.5px;font-weight:700;margin:0 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <h3>Мини-квиз: что обязательно в таком письме?</h3>
+    <div data-quiz>
+      <p class="qq">Без какого элемента письмо поставщику превратится в «просто напоминалку» и не сработает как документ входного контроля?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Вежливость важна, но не она делает письмо документом. Без точной идентификации партии и срока поставщик может отписаться общими словами.">Вежливая формулировка и извинения за беспокойство</button>
+        <button class="opt" data-correct data-fb="Верно. Нужны точные реквизиты партии (ТН № 540 от 18.06, Ø16), ссылка на требуемый документ (сертификат по ГОСТ 34028-2016) и конкретный срок. Без этого письмо не привязано к нарушению и его нельзя приложить к ответу на предписание.">Точные реквизиты партии (ТН № 540, дата), требуемый документ (сертификат по ГОСТ 34028-2016) и срок</button>
+        <button class="opt" data-fb="Цена и объём партии тут второстепенны — вопрос не коммерческий, а о допуске материала. Ключевое — идентификация партии, требуемый документ и срок.">Стоимость партии и объём поставки в тоннах</button>
+      </div>
+      <div class="qfb"></div>
+    </div>
+  </section>
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-quiz]').forEach(function(q){
+    var fb=q.querySelector('.qfb');
+    q.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        q.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        if(fb)fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

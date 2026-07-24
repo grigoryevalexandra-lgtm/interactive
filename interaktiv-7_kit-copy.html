@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Мой ИИ-набор сметчика — интерактив</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--card2:#f3efe9;--green:#1f9d57;--brand:#e2231a;--blue:#237cf9;--purple:#9b5de5;--rs:10px;--r:16px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .tw{overflow-x:auto;margin-top:6px}
+  table.doctbl{border-collapse:collapse;width:100%;font-size:12px;min-width:420px}
+  table.doctbl th,table.doctbl td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  table.doctbl th{background:var(--card);font-weight:800;font-size:11px}
+  td.hl{background:#fde4e2;color:#8f1410;font-weight:700}
+  td.gap{background:#fdf6e3;color:#7a5b16;font-weight:700}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .btn.dark{background:var(--ink)}
+  .kit{display:flex;flex-direction:column;gap:12px}
+  .kititem{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px}
+  .kititem .kh{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px;margin-bottom:8px;flex-wrap:wrap}
+  .kititem .kcode{font-size:10.5px;font-weight:800;color:#fff;background:var(--ink);border-radius:5px;padding:2px 7px}
+  .kititem .kday{font-size:11.5px;color:var(--muted);margin-left:auto}
+  .kititem .kprompt{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px;font-size:12px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word}
+  .kititem .kbtn{margin-top:9px}
+  .promptlink{font-size:12.5px;color:var(--muted);margin:9px 0 0}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <p class="stp">7 · Финал · Мой ИИ-набор сметчика</p>
+    <h2>Пять промптов недели — ваш рабочий инструмент</h2>
+    <p class="muted">Это итог пилотного среза: пять промптов из промпт-пака сметчика, по одному на каждый эпизод недели. Копируйте и используйте на своих задачах. Не забывайте прикладывать документ и грунтовку против выдумок: «используй только данные из документа; чего нет — не выдумывай, помечай <i>[уточнить]</i>».</p>
+    <div class="kit">
+<div class="kititem">
+<div class="kh"><span class="kcode">C2</span> Сведение 5 КП к единой базе сравнения <span class="kday">День 1</span></div>
+<div class="kprompt" id="p1">Ты — сметчик. Задача: приведи приложенные 5 КП на монолитные работы к единой базе сравнения — ₽ за 1 м³ бетона в деле, с учётом позиций, вынесенных отдельной строкой (опалубка у КП-3, армирование у КП-5). Не пересчитывай итоговые суммы сам — только пересчитай базу для сравнения по данным, которые есть в КП, и обязательно укажи это в примечании. Формат: таблица «КП → цена в исходном виде → скорректированная база → срок → аванс → гарантия → риск». Итоговое решение и точный расчёт — в профильном ПО.
+КП: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p1">📋 Скопировать C2</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">A1</span> Обоснование выбора подрядчика для руководителя <span class="kday">День 2</span></div>
+<div class="kprompt" id="p2">Ты — сметчик генподрядчика на жилом доме. Контекст: приложены 5 КП на монолитные работы эт. 4–9 (2 010 м³ бетона). КП-3 «МонолитСервис» формально самое дешёвое (12 300 ₽/м³), но опалубка вынесена отдельной строкой, аванс 50%, гарантия 2 года, опыт — 1 аналогичный объект. Задача: подготовь короткую записку руководителю с рекомендацией и обоснованием, почему самая низкая цена не значит лучшее предложение. Формат: официальная записка на полстраницы — вывод в первом абзаце, обоснование ниже.
+КП для сравнения: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p2">📋 Скопировать A1</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">D1</span> Сверка ЛСР ↔ ВОР по количествам <span class="kday">День 3</span></div>
+<div class="kprompt" id="p3">Ты — сметчик. Задача: сверь, откуда взяты количества в ЛСР — соответствуют ли они позициям приложенной ведомости объёмов работ (ВОР № 02-01-01). Обязательно укажи, по каким позициям сверка невозможна, потому что разделы ЛСР и ВОР относятся к разным шифрам (01-01-01 «Подготовительные» vs 02-01-01 «Общестроительные»). Формат: таблица «позиция ЛСР → есть аналог в ВОР? → комментарий».
+Документы: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p3">📋 Скопировать D1</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">B2</span> Проверка комплектности разделов ТЗ по приложенным сметам <span class="kday">День 4</span></div>
+<div class="kprompt" id="p4">Ты — сметчик. Контекст: приложены перечень разделов работ из ТЗ и локальный сметный расчёт (ЛСР № 01-01-01, раздел «Подготовительные работы»). Задача: сверь ТОЛЬКО эти два документа — какие разделы ТЗ подтверждены приложенным ЛСР, а по каким смета не приложена. Не утверждай, что раздел отсутствует вообще в проекте — пиши «смета не приложена к запросу, требует проверки». Формат: таблица «раздел ТЗ (шифр) → ЛСР приложен? → комментарий».
+Документы: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p4">📋 Скопировать B2</button>
+</div>
+<div class="kititem">
+<div class="kh"><span class="kcode">D2</span> Сверка КС-2 с ВОР и актом АОСР <span class="kday">День 5</span></div>
+<div class="kprompt" id="p5">Ты — сметчик. Контекст: акт КС-2 № 4 (поз. 1–3: колонны 18 м³, плита 96,4 м³, армирование 11,8 т), ВОР № 02-01-01 (поз. 2–5) и АОСР № 142 (масса арматуры 11,8 т). Задача: сверь объёмы между тремя документами построчно и укажи для каждой пары «совпадает» или «расхождение», ничего не выдумывая сверх того, что явно написано в документах. Отдельно отметь: объём плиты в КС-2 (96,4 м³) должен соответствовать одному этажу из ВОР — проверь логику, а не просто цифры. Формат: таблица «показатель → КС-2 → ВОР/АОСР → совпадает? → комментарий».
+Документы: [вставьте]</div>
+<button class="btn sm dark kbtn" data-copy="p5">📋 Скопировать D2</button>
+</div>
+</div>
+    <p class="promptlink" id="kitMsg" style="min-height:16px"></p>
+  </section>
+</div>
+<script>
+(function(){
+  var msg=document.getElementById('kitMsg');
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var el=document.getElementById(btn.getAttribute('data-copy'));if(!el)return;
+      navigator.clipboard.writeText(el.textContent).then(function(){
+        if(msg){msg.textContent='Промпт скопирован ✓';setTimeout(function(){msg.textContent='';},2500);}
+      }).catch(function(){if(msg)msg.textContent='Выделите и скопируйте вручную';});
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

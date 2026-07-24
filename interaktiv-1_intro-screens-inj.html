@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Как устроен мини-финал — интерактив</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--purple:#9b5de5;--r:16px;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .sec{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  p{margin:0 0 12px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}.btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{border-color:var(--ink)}
+  .progress{display:flex;gap:6px;margin:4px 0 18px}
+  .progress .dot{flex:1;height:5px;border-radius:4px;background:var(--card2)}
+  .progress .dot.on{background:var(--blue)}
+  .screen{display:none}.screen.on{display:block}
+  .snav{display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap}
+  .weekmap{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0 4px}
+  .weekmap .day{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 8px;text-align:center;font-size:11.5px}
+  .weekmap .day b{display:block;font-size:13px;margin-bottom:2px}
+  .weekmap .day small{color:var(--muted);font-size:10.5px;display:block;line-height:1.35}
+  @media(max-width:560px){.weekmap{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec" id="intro">
+    <p class="stp">0 · Как устроен мини-финал</p>
+    <h2>Одна неделя — пять документов — один пакет</h2>
+    <div class="progress" id="scrProgress"></div>
+    <div class="screen on">
+      <h3>Это не новая теория, а сборка навыков</h3>
+      <p>За неделю на объекте инженеру ПТО прилетает всё сразу: предписание, вопрос по входному контролю, акт на сверку, планёрка, отчёт руководителю. Вы уже прошли эти приёмы по отдельности — теперь пройдёте их <b>подряд, на одном кейсе</b>.</p>
+    </div>
+    <div class="screen">
+      <h3>Каждый день — документ, промпт и мини-действие</h3>
+      <p>Пять эпизодов, понедельник–пятница. В каждом: реальный документ кейса (раскрывается прямо здесь), готовый промпт из вашего <b>промпт-пака ПТО</b> и короткое действие — выбрать, ответить, найти расхождение.</p>
+    </div>
+    <div class="screen">
+      <h3>Главное правило недели: технология устранения и сроки — черновик, пока их не подтвердил ИТР</h3>
+      <p>Демо-ответы ИИ помечены «смоделировано» — это ориентир, а не спойлер. Смотрите, где в ответе <b>наблюдение</b> (что буквально написано в документе), где <b>черновик-гипотеза</b> (способ устранения, ответственный, срок или ссылка на норматив — первая версия от ИИ, до проверки), а где <b>подтверждённый факт</b> (сверено с документом кейса). Вывод о том, что акт нельзя подписывать, ИИ вправе дать прямо и категорично — это верная реакция на найденную ловушку; а вот технологию устранения, точные сроки и ответственных исполнителей ИИ только предлагает — подтверждает их ИТР по проектной документации.</p>
+      <div class="note green">✅ Цель недели: пять промптов, которые останутся у вас как рабочий инструмент ПТО, и привычка отделять черновик-гипотезу (что предлагает ИИ) от подтверждённого факта (что решает ИТР).</div>
+    </div>
+    <div class="snav">
+      <button class="btn ghost" id="scrPrev">← Назад</button>
+      <button class="btn" id="scrNext">Дальше →</button>
+    </div>
+    <div class="weekmap">
+      <div class="day"><b>Пн</b><small>Предписание № 57</small></div>
+      <div class="day"><b>Вт</b><small>Письмо поставщику</small></div>
+      <div class="day"><b>Ср</b><small>Сверка АОСР</small></div>
+      <div class="day"><b>Чт</b><small>Протокол планёрки</small></div>
+      <div class="day"><b>Пт</b><small>Сводка недели</small></div>
+    </div>
+  </section>
+</div>
+<script>
+(function(){
+  var scr=document.querySelectorAll('#intro .screen');if(!scr.length)return;
+  var prog=document.getElementById('scrProgress'),prev=document.getElementById('scrPrev'),next=document.getElementById('scrNext'),cur=0;
+  for(var i=0;i<scr.length;i++){var d=document.createElement('div');d.className='dot';prog.appendChild(d);}
+  function paint(){
+    scr.forEach(function(s,i){s.classList.toggle('on',i===cur);});
+    [].forEach.call(prog.children,function(d,i){d.classList.toggle('on',i<=cur);});
+    prev.disabled=(cur===0);
+    next.textContent=(cur===scr.length-1)?'✓ Понятно':'Дальше →';
+  }
+  prev.addEventListener('click',function(){if(cur>0){cur--;paint();}});
+  next.addEventListener('click',function(){if(cur<scr.length-1){cur++;paint();}else{next.disabled=true;}});
+  paint();
+})();
+</script>
+</body>
+</html>

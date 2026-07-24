@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Соберите свою неделю</title>
+<style>
+  :root{--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--card:#faf8f5;--blue:#237cf9;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:#fff;color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .tw{overflow-x:auto;margin-top:6px}
+  table.cmp{border-collapse:collapse;width:100%;font-size:12.5px;min-width:480px}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  table.cmp th{background:var(--card);font-weight:800;font-size:11.5px;text-transform:uppercase;color:var(--muted)}
+  .weekbuilder{border:1px solid var(--line);border-radius:12px;margin:10px 0;background:#fff}
+  .wbrow{display:grid;grid-template-columns:90px 1fr 1fr;gap:10px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .wbrow:last-child{border-bottom:none}
+  .wbrow .wbday{font-weight:800;font-size:13.5px}
+  .wbrow .wbday small{display:block;font-weight:600;color:var(--muted);font-size:11px;text-transform:none}
+  .wbrow select{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 10px;font-size:13px;font-family:inherit}
+  .wbrow select:focus{outline:none;border-color:var(--blue)}
+  @media(max-width:640px){.wbrow{grid-template-columns:1fr}.wbrow .wbday{padding-bottom:2px}}
+  .wbresult{margin-top:14px}
+  .wbresult .tw{margin-top:8px}
+  .dl{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+  .promptbadge{display:inline-block;font-size:11px;font-weight:800;color:#9b5de5;background:#faf6ff;border:1px solid #e6d5fa;border-radius:999px;padding:3px 10px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">4 · Интерактив</p>
+  <h2>Соберите свою неделю</h2>
+  <p class="muted">По каждому дню выберите одну свою задачу и один промпт из пака, которым будете её закрывать. Ниже соберётся итоговая табличка — ваш личный план на неделю.</p>
+
+  <div class="weekbuilder">
+    <div class="wbrow" data-day="Пн">
+      <div class="wbday">Понедельник<small>якорь: планёрка</small></div>
+      <select data-field="task">
+        <option value="">— выберите задачу —</option>
+        <option value="Протокол планёрки и поручения">Протокол планёрки и поручения</option>
+        <option value="Свод факта за неделю по графику">Свод факта за неделю по графику</option>
+        <option value="Другое из своей рутины">Другое из своей рутины</option>
+      </select>
+      <select data-field="prompt">
+        <option value="">— выберите промпт —</option>
+        <option value="E1 · Протокол планёрки из транскрипта">E1 · Протокол планёрки из транскрипта</option>
+        <option value="E2 · Недельный отчёт из записей ОЖР">E2 · Недельный отчёт из записей ОЖР</option>
+        <option value="Свой промпт">Свой промпт</option>
+      </select>
+    </div>
+    <div class="wbrow" data-day="Вт">
+      <div class="wbday">Вторник<small>якорь: переписка</small></div>
+      <select data-field="task">
+        <option value="">— выберите задачу —</option>
+        <option value="Ответ на предписание стройконтроля">Ответ на предписание стройконтроля</option>
+        <option value="Письмо поставщику о сертификате">Письмо поставщику о сертификате</option>
+        <option value="Ответ техзаказчику на замечания">Ответ техзаказчику на замечания</option>
+      </select>
+      <select data-field="prompt">
+        <option value="">— выберите промпт —</option>
+        <option value="A1 · Ответ на предписание стройконтроля">A1 · Ответ на предписание стройконтроля</option>
+        <option value="A2 · Письмо поставщику о сертификате">A2 · Письмо поставщику о сертификате</option>
+        <option value="A3 · Ответ техзаказчику на замечания">A3 · Ответ техзаказчику на замечания</option>
+      </select>
+    </div>
+    <div class="wbrow" data-day="Ср">
+      <div class="wbday">Среда<small>якорь: сверки</small></div>
+      <select data-field="task">
+        <option value="">— выберите задачу —</option>
+        <option value="Сверка АОСР со спецификацией">Сверка АОСР со спецификацией</option>
+        <option value="Реестр исполнительной документации">Реестр исполнительной документации</option>
+      </select>
+      <select data-field="prompt">
+        <option value="">— выберите промпт —</option>
+        <option value="D1 · Сверка АОСР со спецификацией и предписанием">D1 · Сверка АОСР со спецификацией и предписанием</option>
+        <option value="E3 · Реестр исполнительной документации за месяц">E3 · Реестр исполнительной документации за месяц</option>
+      </select>
+    </div>
+    <div class="wbrow" data-day="Чт">
+      <div class="wbday">Четверг<small>якорь: заявки/объёмы</small></div>
+      <select data-field="task">
+        <option value="">— выберите задачу —</option>
+        <option value="Извлечение объёмов из акта/ВОР">Извлечение объёмов из акта/ВОР</option>
+        <option value="Сверка КС-2 с ВОР и актом">Сверка КС-2 с ВОР и актом</option>
+        <option value="Сводка объёмов за период">Сводка объёмов за период</option>
+      </select>
+      <select data-field="prompt">
+        <option value="">— выберите промпт —</option>
+        <option value="C1 · Извлечение объёмов из акта/ВОР в таблицу">C1 · Извлечение объёмов из акта/ВОР в таблицу</option>
+        <option value="C2 · Сверка КС-2 с ВОР и актом">C2 · Сверка КС-2 с ВОР и актом</option>
+        <option value="C3 · Сводка объёмов за период">C3 · Сводка объёмов за период</option>
+      </select>
+    </div>
+    <div class="wbrow" data-day="Пт">
+      <div class="wbday">Пятница<small>якорь: отчёт</small></div>
+      <select data-field="task">
+        <option value="">— выберите задачу —</option>
+        <option value="Недельный отчёт руководителю">Недельный отчёт руководителю</option>
+        <option value="Суммаризация писем/нормативов за неделю">Суммаризация писем/нормативов за неделю</option>
+      </select>
+      <select data-field="prompt">
+        <option value="">— выберите промпт —</option>
+        <option value="E2 · Недельный отчёт из записей ОЖР">E2 · Недельный отчёт из записей ОЖР</option>
+        <option value="B3 · Суммаризация длинного норматива/письма">B3 · Суммаризация длинного норматива/письма</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="note" id="wbSummary">Заполните задачу и промпт хотя бы по одному дню — ниже появится ваш план на неделю.</div>
+
+  <div class="wbresult" id="wbResultWrap" style="display:none">
+    <h3>Мой план недели с ИИ</h3>
+    <div class="tw">
+      <table class="cmp" id="wbTable">
+        <tr><th>День</th><th>Задача</th><th>Промпт</th></tr>
+      </table>
+    </div>
+    <div class="dl">
+      <button class="prevbtn" id="wbCopyBtn">📋 Скопировать мой план</button>
+      <span class="muted" id="wbMsg" style="font-size:12px;align-self:center"></span>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var rows=document.querySelectorAll('.weekbuilder .wbrow');if(!rows.length)return;
+  var summary=document.getElementById('wbSummary');
+  var resultWrap=document.getElementById('wbResultWrap');
+  var table=document.getElementById('wbTable');
+  var copyBtn=document.getElementById('wbCopyBtn');
+  var msg=document.getElementById('wbMsg');
+  var lastPlanText='';
+
+  function render(){
+    var filled=[];
+    rows.forEach(function(r){
+      var day=r.getAttribute('data-day');
+      var task=r.querySelector('[data-field="task"]').value;
+      var prompt=r.querySelector('[data-field="prompt"]').value;
+      if(task && prompt){filled.push({day:day,task:task,prompt:prompt});}
+    });
+    if(!filled.length){
+      summary.className='note';
+      summary.textContent='Заполните задачу и промпт хотя бы по одному дню — ниже появится ваш план на неделю.';
+      resultWrap.style.display='none';
+      return;
+    }
+    summary.className='note green';
+    summary.textContent='✅ '+filled.length+' из 5 дней недели закрыты планом. Чем больше дней — тем крепче привычка (но начните хотя бы с одного).';
+    while(table.rows.length>1){table.deleteRow(1);}
+    var lines=['Мой план недели с ИИ',''];
+    filled.forEach(function(f){
+      var tr=table.insertRow(-1);
+      tr.insertCell(0).textContent=f.day;
+      tr.insertCell(1).textContent=f.task;
+      tr.insertCell(2).textContent=f.prompt;
+      lines.push(f.day+' — '+f.task+' → '+f.prompt);
+    });
+    lastPlanText=lines.join('\n');
+    resultWrap.style.display='block';
+  }
+
+  rows.forEach(function(r){
+    r.querySelectorAll('select').forEach(function(s){
+      s.addEventListener('change',render);
+    });
+  });
+
+  if(copyBtn){
+    copyBtn.addEventListener('click',function(){
+      if(!lastPlanText){msg.textContent='Сначала заполните план';return;}
+      navigator.clipboard.writeText(lastPlanText).then(function(){msg.textContent='Скопировано ✓';setTimeout(function(){msg.textContent='';},2500);})
+        .catch(function(){msg.textContent='Выделите и скопируйте вручную';});
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Когда переходить на платный тариф</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--purple:#9b5de5;--r:16px;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  p{margin:0 0 12px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .scenario{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px}
+  .scbtn{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:13.5px;font-family:inherit;color:var(--ink);transition:.15s}
+  .scbtn:hover{border-color:var(--ink)}
+  .scbtn.sel{border-color:var(--blue);background:#eef4ff}
+  .scresult{margin-top:12px}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h2>Когда бесплатной версии становится мало</h2>
+  <p>Выберите сценарий, похожий на вашу текущую ситуацию, чтобы увидеть подсказку.</p>
+  <div class="scenario" id="scenarioGrid">
+    <button class="scbtn" data-sc="a">Пользуюсь ИИ пару раз в неделю, документы небольшие</button>
+    <button class="scbtn" data-sc="b">Каждый день упираюсь в лимит запросов бесплатной версии</button>
+    <button class="scbtn" data-sc="c">Нужно подключить ИИ всей команде ПТО, а не только себе</button>
+  </div>
+  <div class="scresult" id="scenarioResult"></div>
+
+  <div class="note green" style="margin-top:16px">✅ <b>Правило простое:</b> сначала упритесь в лимит бесплатной версии на практике, потом принимайте решение о переходе на платную. Платить «на всякий случай», не столкнувшись с лимитом, обычно не нужно.</div>
+
+</div>
+<script>
+(function(){
+  var grid=document.getElementById('scenarioGrid');if(!grid)return;
+  var result=document.getElementById('scenarioResult');
+  var texts={
+    a:{cls:'green',icon:'✅',text:'Пока бесплатной версии достаточно. Продолжайте пользоваться как есть — переход на платный тариф без реального упора в лимит обычно не окупается.'},
+    b:{cls:'red',icon:'⚠️',text:'Это и есть сигнал «пора считать платный тариф»: регулярная работа + упор в дневной лимит — типичный случай для перехода. Проверьте актуальную цену на сайте инструмента.'},
+    c:{cls:'red',icon:'⚠️',text:'Командное использование обычно быстро упирается в лимиты одного бесплатного аккаунта. Стоит смотреть корпоративный/командный тариф — и заодно свериться с политикой данных для командной работы.'}
+  };
+  grid.querySelectorAll('.scbtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      grid.querySelectorAll('.scbtn').forEach(function(b){b.classList.remove('sel');});
+      btn.classList.add('sel');
+      var t=texts[btn.getAttribute('data-sc')];
+      result.innerHTML='<div class="note '+t.cls+'">'+t.icon+' '+t.text+'</div>';
+    });
+  });
+})();
+</script>
+</body>
+</html>

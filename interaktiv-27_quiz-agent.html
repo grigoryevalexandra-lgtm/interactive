@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Мини-тренажёр: ассистент vs агент</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--purple:#9b5de5;--r:16px;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .quiz .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:15px;font-weight:700;margin:0 0 12px}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:var(--green);background:#eef8f1}
+  .opt.err{border-color:var(--brand);background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.85}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h2>Мини-тренажёр</h2>
+  <p class="muted">Кликните вариант — получите мгновенную обратную связь.</p>
+  <div class="quiz" data-quiz>
+    <p class="qq">Инженер просит: «Сравни 5 КП, посчитай суммы по позициям и собери таблицу расхождений» — и ИИ сам открывает все пять файлов, считает и готовит таблицу без дополнительных команд на каждый шаг. Это пример чего?</p>
+    <div class="opts">
+      <button class="opt" data-fb="Ассистент ждёт, что вы вставите текст документов и дадите отдельную команду на каждый шаг. Здесь же ИИ сам решает, какие шаги нужны, и проходит их подряд.">Обычного ассистента — просто более длинный ответ</button>
+      <button class="opt" data-correct data-fb="Именно так: несколько шагов (открыть файлы → посчитать → собрать таблицу) ИИ выполняет сам, под присмотром человека, который проверяет итог.">Агентного поведения — ИИ сам прошёл несколько шагов</button>
+      <button class="opt" data-fb="Function calling — это про вызов инструментов вроде калькулятора внутри одного ответа. Здесь же речь про цепочку из нескольких шагов подряд — это агентный сценарий.">Просто более мощной модели, ничего нового</button>
+    </div>
+    <div class="qfb"></div>
+  </div>
+
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-quiz]').forEach(function(q){
+    var fb=q.querySelector('.qfb');
+    q.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        q.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

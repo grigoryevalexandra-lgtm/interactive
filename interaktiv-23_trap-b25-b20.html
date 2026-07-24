@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Практикум на ловушке: замечание ГГЭ №4 — B25 или B20?</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .tw{overflow-x:auto;margin-top:6px}
+  table.cmp{border-collapse:collapse;width:100%;font-size:12.5px;min-width:480px}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  table.cmp th{background:var(--card);font-weight:800;font-size:11.5px;text-transform:uppercase;color:var(--muted)}
+  td.bad{background:#fde4e2;color:#8f1410;font-weight:700}
+  details.doc{border:1px solid var(--line);border-radius:12px;margin:12px 0;background:var(--card);overflow:hidden}
+  details.doc summary{cursor:pointer;list-style:none;padding:13px 16px;font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:10px}
+  details.doc summary::-webkit-details-marker{display:none}
+  details.doc summary:before{content:"▸";color:var(--blue);font-size:13px;transition:.15s;flex:0 0 auto}
+  details.doc[open] summary:before{content:"▾"}
+  details.doc summary .dtag{margin-left:auto;font-size:11px;font-weight:800;color:var(--muted);background:var(--card2);border-radius:999px;padding:3px 10px;white-space:nowrap}
+  details.doc .docbody{padding:0 16px 16px;font-size:13.5px;background:#fff;border-top:1px solid var(--line)}
+  .mcap{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .chat{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .chat .ch{display:flex;align-items:center;gap:9px;background:var(--card);border-bottom:1px solid var(--line);padding:9px 13px;font-size:13px;font-weight:700}
+  .chat .ch .gi{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#1f9d57,#2bb56a);color:#fff;display:grid;place-items:center;font-size:12px}
+  .chat .body{padding:13px;background:#fff}
+  .sys{font-size:11.5px;color:var(--muted);background:var(--card2);border-radius:7px;padding:5px 9px;margin-bottom:9px;display:inline-block}
+  .bub{font-size:13.5px;border-radius:11px;padding:9px 12px;margin:7px 0;max-width:94%;white-space:pre-wrap}
+  .bub.u{background:var(--blue);color:#fff;margin-left:auto}.bub.a{background:var(--card);border:1px solid var(--line)}
+  .chat .ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:11px 13px;border-top:1px solid var(--line);background:var(--card)}
+  .trapcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fff}
+  .trapcard .th{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px;margin-bottom:4px}
+  .trapcard .tnum{width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:12px;flex:0 0 auto}
+  .trapcard .ttext{font-size:13.5px;color:var(--muted);margin-bottom:10px}
+  .trapcard label.tlabel{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.03em}
+  .trapcard select{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit}
+  .trapcard select:focus{outline:none;border-color:var(--blue)}
+  .tfb{margin-top:9px;font-size:13px;border-radius:9px;padding:9px 12px;display:none}
+  .tfb.show{display:block}
+  .tfb.ok{background:#eef8f1;color:#157a41;border:1px solid #cdebd8}
+  .tfb.err{background:#fdf0ef;color:#a3201a;border:1px solid #f3c7c3}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">3 · Практикум на ловушке</p>
+  <h2>Замечание ГГЭ № 4: B25 или B20?</h2>
+  <p class="muted">Госэкспертиза (ГГЭ) прислала замечания по проекту ЖК «Уютный дом на Матвеева». Раскройте таблицу замечаний — обратите внимание на замечание № 4.</p>
+
+  <details class="doc">
+    <summary>📋 Замечания экспертизы (ГГЭ) — таблица <span class="dtag">документ 18 · открыть</span></summary>
+    <div class="docbody">
+      <div class="tw" style="margin-top:12px">
+        <table class="cmp">
+          <tr><th>№</th><th>Раздел</th><th>Замечание</th><th>Норматив-основание</th></tr>
+          <tr><td>1</td><td>КР</td><td>В расчёте монолитной плиты перекрытия не представлена проверка по прогибам (предельные состояния 2-й группы).</td><td>СП 63.13330</td></tr>
+          <tr><td>2</td><td>АР</td><td>Не подтверждена нормативная инсоляция для квартир секции 1, ориентированных на север.</td><td>СанПиН 1.2.3685-21, СП 54.13330</td></tr>
+          <tr><td>3</td><td>ПБ</td><td>Не указан предел огнестойкости несущих конструкций лестнично-лифтового узла.</td><td>СП 2.13130</td></tr>
+          <tr><td>4</td><td class="bad">КР</td><td class="bad">Несоответствие класса бетона на чертеже КЖ-05 (B25) и в спецификации (B20).</td><td>внутренняя несогласованность РД</td></tr>
+        </table>
+      </div>
+      <p class="mcap" style="margin-top:10px">Замечание № 4 — не вопрос «какой пункт СП назвать», а расхождение внутри самого комплекта РД: чертёж КЖ-05 говорит B25, спецификация — B20. Это и есть ловушка урока.</p>
+    </div>
+  </details>
+
+  <p>По замечанию № 4 инженер ПТО решает разобраться, какие нормативы вообще регулируют класс бетона монолитных конструкций, — и задаёт ИИ навигационный вопрос.</p>
+
+  <div class="chat">
+    <div class="ch"><span class="gi">G</span> GigaChat · веб-чат <span style="flex:1"></span><span class="muted" style="font-size:11px;font-weight:600">черновик-навигатор</span></div>
+    <div class="body">
+      <span class="sys">⚙️ Роль: инженер ПТО</span>
+      <div class="bub u">Помоги разобраться, какие нормативы регулируют класс бетона монолитных ж/б конструкций и требования к его подтверждению в проектной документации.</div>
+      <div class="bub a">Класс бетона по прочности на сжатие для монолитных конструкций назначается расчётом и указывается в разделе КР проектной документации. Основные ориентиры:
+— ГОСТ 26633 — бетоны тяжёлые и мелкозернистые, технические условия, в т.ч. классы по прочности;
+— СП 63.13330 «Бетонные и железобетонные конструкции» — правила проектирования, требования к классу бетона по прочности/морозостойкости/водонепроницаемости;
+— класс бетона должен быть одинаковым и на расчётных чертежах, и в спецификации, и в проекте производства бетонных работ — расхождение между документами РД является основанием для замечания экспертизы.
+Это общий ориентир по теме. Точный пункт и действующую редакцию СП уточните по первоисточнику — я не подставляю сюда актуальный текст норматива.</div>
+    </div>
+    <div class="ctrls"><span class="muted" style="font-size:12px">Ответ смоделирован для урока</span></div>
+  </div>
+
+  <div class="note">🧭 <b>Что дал этот ответ:</b> навигацию («смотри СП 63.13330 и ГОСТ 26633») и общее правило («класс бетона должен совпадать во всех документах РД»). Он НЕ дал ответ на главный вопрос практикума: чему верить — B25 или B20?</div>
+
+  <p style="margin-top:14px">Расхождение B25/B20 нормативка не решает — это вопрос сверки внутри комплекта РД: чертёж, спецификация, расчёт. Разберитесь сами, прежде чем читать дальше.</p>
+
+  <div class="trapcard" data-t="1">
+    <div class="th"><span class="tnum">4</span> Какому источнику верить — B25 (чертёж КЖ-05) или B20 (спецификация)?</div>
+    <div class="ttext">Оба документа — часть одного комплекта РД. Прежде чем отвечать экспертизе, нужно понять, какой источник исправлять.</div>
+    <label class="tlabel">Ваш вывод</label>
+    <select data-field="verdict">
+      <option value="">— выберите —</option>
+      <option value="correct">Поднять исходный расчёт конструкции — он определяет, какой класс верный (B25 или B20), и привести к нему оба документа</option>
+      <option value="ai">Довериться формулировке ИИ выше — она уже назвала классы и нормативы, этого достаточно для ответа экспертизе</option>
+      <option value="guess">Взять класс бетона B25 просто потому, что он указан на чертеже — чертёж «главнее» спецификации</option>
+    </select>
+    <div class="tfb"></div>
+  </div>
+
+  <div id="trapReveal" style="display:none">
+    <div class="note green">✅ <b>Верный путь:</b> ИИ выше не решил, чему верить — он и не должен был. Решение — только в исходном расчёте конструкции (тот, что упомянут в замечании № 1 таблицы). По кейсу правильный класс — <b>B25 W6 F150</b> (см. ответ проектировщика ниже), поэтому исправлять нужно спецификацию, а не чертёж. Вывод «чертёж главнее спецификации» — это тоже угадывание, а не проверка.</div>
+    <details class="doc">
+      <summary>📝 Форма ответа проектировщика на замечание № 4 <span class="dtag">документ 18 · эталон</span></summary>
+      <div class="docbody">
+        <p style="margin-top:12px">«Замечание принято. В рабочую документацию внесено изменение: в спецификации листа КЖ-05 класс бетона приведён в соответствие с расчётом и чертежом — <b>B25 W6 F150</b>. Изменение оформлено листом изменений № 2 от __. Просим снять замечание.»</p>
+        <p class="mcap">ГИП ___________ /Кузнецов А.В. (вымышл.)/</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="note red" style="margin-top:14px">⚠️ <b>Обязательная сверка:</b> даже когда ИИ верно называет нормативы (СП 63.13330, ГОСТ 26633), он не может и не должен решать, какой из двух конфликтующих документов РД правильный. Это фактическая проверка по первоисточнику — расчёту, а не по общим знаниям о нормативке.</div>
+
+</div>
+<script>
+(function(){
+  var blocks=document.querySelectorAll('.trapcard');if(!blocks.length)return;
+  var reveal=document.getElementById('trapReveal');
+
+  var fbText={
+    correct:{cls:'ok', msg:'✅ Верно. Исходный расчёт — единственный источник, который определяет фактически верный класс бетона. Дальше исправляется тот документ, который ему не соответствует.'},
+    ai:{cls:'err', msg:'❌ Не совсем. Ответ ИИ выше — навигатор по нормативам («смотри СП 63.13330, ГОСТ 26633»), а не решение расхождения B25/B20. Он честно и не заявлял обратного — но принять его как основание для ответа экспертизе было бы ошибкой.'},
+    guess:{cls:'err', msg:'❌ Не совсем. «Чертёж главнее спецификации» — это правило-гипотеза без проверки, то же самое угадывание, только не через ИИ, а через интуицию. Решает только расчёт.'}
+  };
+
+  blocks.forEach(function(v){
+    v.querySelectorAll('select').forEach(function(s){
+      s.addEventListener('change',function(){
+        var val=s.value;
+        var fb=v.querySelector('.tfb');
+        fb.className='tfb';
+        if(!val){fb.classList.remove('show');reveal.style.display='none';return;}
+        var f=fbText[val];
+        fb.classList.add('show', f.cls);
+        fb.innerHTML=f.msg;
+        reveal.style.display='block';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

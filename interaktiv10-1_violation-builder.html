@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Конструктор ответа на предписание № 57</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  /* ── Демо-диалог (чат) ── */
+  .chat{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .chat .ch{display:flex;align-items:center;gap:9px;background:var(--card);border-bottom:1px solid var(--line);padding:9px 13px;font-size:13px;font-weight:700}
+  .chat .ch .gi{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#1f9d57,#2bb56a);color:#fff;display:grid;place-items:center;font-size:12px}
+  .chat .body{padding:13px;background:#fff}
+  .sys{font-size:11.5px;color:var(--muted);background:var(--card2);border-radius:7px;padding:5px 9px;margin-bottom:9px;display:inline-block}
+  .bub{font-size:13.5px;border-radius:11px;padding:9px 12px;margin:7px 0;max-width:94%;white-space:pre-wrap}
+  .bub.u{background:var(--blue);color:#fff;margin-left:auto}.bub.a{background:var(--card);border:1px solid var(--line)}
+  .chat .ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:11px 13px;border-top:1px solid var(--line);background:var(--card)}
+  /* ── Конструктор ответа: мероприятие + срок по нарушению ── */
+  .violation{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fff}
+  .violation .vh{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px;margin-bottom:4px}
+  .violation .vnum{width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:12px;flex:0 0 auto}
+  .violation .vtext{font-size:13.5px;color:var(--muted);margin-bottom:10px}
+  .violation label.vlabel{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.03em}
+  .violation select{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit}
+  .violation select:focus{outline:none;border-color:var(--blue)}
+  .vfb{margin-top:9px;font-size:13px;border-radius:9px;padding:9px 12px;display:none}
+  .vfb.show{display:block}
+  .vfb.ok{background:#eef8f1;color:#157a41;border:1px solid #cdebd8}
+  .vfb.err{background:#fdf0ef;color:#a3201a;border:1px solid #f3c7c3}
+  .vfb.warn{background:#fdf6e3;color:#7a5b16;border:1px solid #f3e3b3}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">4 · Интерактив</p>
+  <h2>Конструктор ответа на предписание № 57</h2>
+  <p class="muted">По каждому из трёх нарушений выберите мероприятие и срок устранения. Учитывайте сроки из самого предписания — они не двигаются.</p>
+
+  <div class="violation" data-v="1">
+    <div class="vh"><span class="vnum">1</span> Защитный слой 12–15 мм вместо 25 мм (захватка 2-Б)</div>
+    <div class="vtext">Требование предписания: устранить и предъявить к освидетельствованию <b>до 28.06.2026</b>. До устранения — бетонирование захватки запрещено.</div>
+    <label class="vlabel">Мероприятие</label>
+    <select data-field="measure">
+      <option value="">— выберите —</option>
+      <option value="correct">Установить дополнительные фиксаторы (стулья), выверить защитный слой по проекту КЖ-05, предъявить к повторному освидетельствованию</option>
+      <option value="ignore">Указать, что 12–15 мм в пределах допуска — переделку не проводить</option>
+      <option value="dispute">Оспорить нарушение целиком: ссылку на СП считать некорректной</option>
+    </select>
+    <label class="vlabel">Срок устранения</label>
+    <select data-field="deadline">
+      <option value="">— выберите —</option>
+      <option value="ontime">До 28.06.2026 (в срок предписания)</option>
+      <option value="late">До 05.07.2026 (на неделю позже)</option>
+    </select>
+    <div class="vfb"></div>
+  </div>
+
+  <div class="violation" data-v="2">
+    <div class="vh"><span class="vnum">2</span> Нет акта входного контроля арматуры Ø16 (поступление 18.06.2026)</div>
+    <div class="vtext">Требование предписания: представить документы входного контроля <b>до 26.06.2026</b>. По журналу (запись № 3) партия к применению не допущена.</div>
+    <label class="vlabel">Мероприятие</label>
+    <select data-field="measure">
+      <option value="">— выберите —</option>
+      <option value="correct">Запросить у поставщика («МеталлТорг») сертификат соответствия ГОСТ 34028-2016 на партию по ТН № 540, до получения — партию к монтажу не допускать</option>
+      <option value="ignore">Оформить акт входного контроля задним числом без сертификата от поставщика</option>
+      <option value="dispute">Оспорить нарушение целиком: считать его несущественным</option>
+    </select>
+    <label class="vlabel">Срок устранения</label>
+    <select data-field="deadline">
+      <option value="">— выберите —</option>
+      <option value="ontime">До 26.06.2026 (в срок предписания)</option>
+      <option value="late">До 01.07.2026 (на несколько дней позже)</option>
+    </select>
+    <div class="vfb"></div>
+  </div>
+
+  <div class="violation" data-v="3">
+    <div class="vh"><span class="vnum">3</span> Арматура хранится на открытой площадке без подкладок, с коррозией</div>
+    <div class="vtext">Требование предписания: обеспечить надлежащее хранение <b>немедленно</b>.</div>
+    <label class="vlabel">Мероприятие</label>
+    <select data-field="measure">
+      <option value="">— выберите —</option>
+      <option value="correct">Организовать хранение на подкладках с навесом, участки с коррозией — на выборочную зачистку и повторный контроль перед монтажом</option>
+      <option value="ignore">Оставить как есть — коррозия поверхностная, не критично</option>
+      <option value="dispute">Оспорить нарушение целиком: условия хранения соответствуют факту поставки</option>
+    </select>
+    <label class="vlabel">Срок устранения</label>
+    <select data-field="deadline">
+      <option value="">— выберите —</option>
+      <option value="ontime">Немедленно (в срок предписания)</option>
+      <option value="late">В течение месяца</option>
+    </select>
+    <div class="vfb"></div>
+  </div>
+
+  <div class="note" id="builderSummary">Заполните мероприятие и срок по всем трём пунктам — ниже появится демо-ответ ИИ по промпту A1.</div>
+
+  <div id="aiAnswerWrap" style="display:none;margin-top:16px">
+    <h3>Демо-ответ ИИ по промпту A1</h3>
+    <div class="chat">
+      <div class="ch"><span class="gi">G</span> GigaChat · веб-чат</div>
+      <div class="body">
+        <span class="sys">⚙️ Роль: инженер ПТО · документ: предписание № 57</span>
+        <div class="bub a" id="aiAnswerText"></div>
+      </div>
+      <div class="ctrls"><span class="muted" style="font-size:12px">Ответ смоделирован для урока — черновик требует проверки и подписи ответственного лица</span></div>
+    </div>
+  </div>
+
+</div>
+<script>
+/* ── BLOCK: VIOLATION BUILDER — конструктор ответа по 3 нарушениям + демо-ответ ИИ ── */
+(function(){
+  var blocks=document.querySelectorAll('.violation');if(!blocks.length)return;
+  var summary=document.getElementById('builderSummary');
+  var answerWrap=document.getElementById('aiAnswerWrap');
+  var answerText=document.getElementById('aiAnswerText');
+
+  var meta={
+    1:{title:'Защитный слой бетона', ontime:'28.06.2026'},
+    2:{title:'Акт входного контроля арматуры Ø16', ontime:'26.06.2026'},
+    3:{title:'Хранение арматуры', ontime:'немедленно'}
+  };
+  var measureText={
+    correct:{ 1:'Установить дополнительные фиксаторы (стулья), выверить фактический защитный слой по проекту КЖ-05 на всех трёх участках захватки 2-Б, предъявить конструкцию к повторному освидетельствованию.',
+              2:'Направить запрос поставщику ООО «МеталлТорг» на предоставление сертификата соответствия ГОСТ 34028-2016 на партию арматуры Ø16 по ТН № 540 от 18.06.2026; до получения сертификата партия к монтажу не допускается.',
+              3:'Организовать хранение арматуры на подкладках с навесом от осадков; участки с признаками коррозии — на выборочную зачистку и повторный визуальный контроль перед монтажом.' },
+    ignore:{ 1:'[риск] Формулировка «в пределах допуска» — предписание останется неустранённым, повторное освидетельствование не пройдёт.',
+             2:'[риск] Акт задним числом без сертификата поставщика не закрывает нарушение и создаёт дополнительный юридический риск.',
+             3:'[риск] «Коррозия не критична» — формальный ответ без мероприятия, стройконтроль вправе не принять ответ.' },
+    dispute:{1:'[риск] Оспаривание нарушения целиком без встречных данных освидетельствования выглядит как уклонение от ответа.',
+             2:'[риск] Отсутствие сертификата — факт по журналу (запись № 3), оспаривать нечего.',
+             3:'[риск] Условия хранения зафиксированы актом стройконтроля — формального основания для спора нет.'}
+  };
+
+  function paint(v){
+    var measure=v.querySelector('[data-field="measure"]').value;
+    var deadline=v.querySelector('[data-field="deadline"]').value;
+    var fb=v.querySelector('.vfb');
+    var n=v.getAttribute('data-v');
+    fb.className='vfb';
+    if(!measure && !deadline){fb.classList.remove('show');return;}
+    var msgs=[];
+    var cls='ok';
+    if(measure==='ignore'){msgs.push('Мероприятие не устраняет нарушение по сути.');cls='err';}
+    else if(measure==='dispute'){msgs.push('«Оспорить всё» без доказательной базы — риск: стройконтроль вправе не принять ответ, а бетонирование останется под запретом.');cls='warn';}
+    else if(measure==='correct'){msgs.push('Мероприятие устраняет нарушение по существу.');}
+    if(deadline==='late'){msgs.push('Срок позже, чем в предписании, — формально ответ не закрывает пункт, до устранения по п.1 бетонирование остаётся под запретом.');cls=(cls==='ok')?'err':cls;}
+    else if(deadline==='ontime'){msgs.push('Срок соответствует предписанию.');}
+    if(msgs.length){
+      fb.classList.add('show');
+      fb.innerHTML=(cls==='ok'?'✅ ':cls==='warn'?'⚠️ ':'❌ ')+msgs.join(' ');
+    }
+    checkAll();
+  }
+
+  function checkAll(){
+    var allFilled=true, allGood=true, data=[];
+    blocks.forEach(function(v){
+      var n=v.getAttribute('data-v');
+      var measure=v.querySelector('[data-field="measure"]').value;
+      var deadline=v.querySelector('[data-field="deadline"]').value;
+      if(!measure||!deadline){allFilled=false;}
+      else{
+        if(measure!=='correct'||deadline!=='ontime')allGood=false;
+        data.push({n:n,measure:measure,deadline:deadline});
+      }
+    });
+    if(!allFilled){
+      summary.className='note';
+      summary.textContent='Заполните мероприятие и срок по всем трём пунктам — ниже появится демо-ответ ИИ по промпту A1.';
+      answerWrap.style.display='none';
+      return;
+    }
+    summary.className='note '+(allGood?'green':'red');
+    summary.innerHTML=allGood
+      ? '✅ Все три пункта закрыты по существу и в срок — так выглядит рабочий ответ на предписание.'
+      : '⚠️ Есть пункты с риском: срок позже предписанного или формальная отписка вместо мероприятия. Стройконтроль вправе не принять такой ответ.';
+    var lines=['Уважаемый Петров П.П.!','','В ответ на предписание № 57 от 25.06.2026 сообщаем о принятых мерах по устранению выявленных нарушений на объекте ЖК «Уютный дом на Матвеева», секция 2.',''];
+    data.forEach(function(d){
+      var m=meta[d.n];
+      var txt=measureText[d.measure][d.n];
+      var dl=d.deadline==='ontime'?m.ontime:(d.n==='3'?'в течение месяца':'с отставанием от срока предписания');
+      lines.push(d.n+'. '+m.title+'.');
+      lines.push('   Мероприятие: '+txt);
+      lines.push('   Ответственный: инженер ПТО. Срок: '+dl+'.');
+      lines.push('');
+    });
+    lines.push('Готовы предоставить дополнительные документы по запросу.');
+    lines.push('');
+    lines.push('Инженер ПТО ООО «СтройМонолит» ___________ (подпись)');
+    answerText.textContent=lines.join('\n');
+    answerWrap.style.display='block';
+  }
+
+  blocks.forEach(function(v){
+    v.querySelectorAll('select').forEach(function(s){
+      s.addEventListener('change',function(){paint(v);});
+    });
+  });
+})();
+</script>
+</body>
+</html>

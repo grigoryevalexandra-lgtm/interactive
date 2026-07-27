@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 3. Практика: заберите промпт и сделайте в живом чате</title>
+<style>
+  :root{
+    --bg:#ffffff; --card:#faf8f5; --card2:#f3efe9; --ink:#1a1814; --muted:#6f7280;
+    --line:#e9e4dc; --brand:#e2231a; --blue:#237cf9; --green:#1f9d57; --yellow:#f5b500; --purple:#9b5de5;
+    --r:16px; --rs:10px; --font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:12px 18px;font-size:14.5px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .btn.dark{background:var(--ink)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:16px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .out{background:#eef8f1;border:1px solid #cdebd8;border-radius:12px;padding:16px 18px;margin-top:18px}
+  .out .ot{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--green);font-weight:800;margin-bottom:6px}
+  .checks{list-style:none;padding:0;margin:8px 0 0}
+  .checks li{padding:7px 0 7px 26px;position:relative;font-size:14px;border-bottom:1px solid var(--line)}
+  .checks li:last-child{border-bottom:none}.checks li:before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:800}
+  .copy{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:15px;font-size:13.5px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word}
+  .promptnote{font-size:12px;color:var(--muted);margin:8px 0 0}
+  .review label.rl{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
+  .review textarea,.review input{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;resize:vertical}
+  .review textarea:focus,.review input:focus{outline:none;border-color:var(--blue)}
+  .chatlinks{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .chatlinks a{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:var(--rs);padding:10px 15px;font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:none}
+  .chatlinks a:hover{border-color:var(--ink)}
+  .gatecheck{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  .gatecheck input{width:18px;height:18px;flex:0 0 auto;margin-top:2px;accent-color:var(--green)}
+  .gateresult{display:none;margin-top:14px}
+  .gateresult.on{display:block}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h2>Заберите промпт и сделайте свою запись</h2>
+  <p class="muted">Принцип важнее кнопки: вот готовый запрос. Надиктуйте свою смену любым способом из инструкции выше, вставьте текст вместо «…» и отправьте в ИИ-чат (GigaChat / YandexGPT).</p>
+  <div class="copy" id="prompt">Ты — помощник прораба. Ниже расшифровка моей устной записи за смену.
+Приведи её к форме записи в общий журнал работ (ОЖР):
+— дата;
+— выполненные работы: вид, захватка/оси, объём, состав бригады (без фамилий);
+— погода и условия;
+— примечания (простои, замечания, поставки).
+Не добавляй того, чего нет в тексте. Сомнительные цифры помечай знаком «?».
+
+Текст: «…»</div>
+  <p class="promptnote">Это промпт E2 из твоего промпт-пака ПТО («Недельный отчёт из записей ОЖР») — там же вариант для сборки отчёта за неделю целиком.</p>
+  <div style="margin-top:12px"><button class="btn dark" id="copyBtn">📋 Скопировать промпт</button>
+  <span class="muted" id="copyMsg" style="margin-left:12px;font-size:13px"></span></div>
+
+  <div class="out">
+    <div class="ot">Что забрать с собой</div>
+    <ul class="checks">
+      <li>Голос → текст экономит самую нелюбимую рутину прораба — записи в журнал</li>
+      <li>Связка простая: распознаватель речи (РФ) + ИИ-чат для формы</li>
+      <li>Фамилии — это ПДн; цифры из распознавания всегда проверяем</li>
+    </ul>
+  </div>
+
+  <h2 style="margin-top:24px">Настоящий результат, не демо</h2>
+  <p class="muted">Надиктуйте свою смену (или используйте текст выше) и приведите к форме ОЖР в реальном чате — без спойлеров, без подсказок. Или: расшифруйте свою планёрку (с согласия!) и сделайте протокол по E1.</p>
+  <div class="chatlinks">
+    <a href="https://giga.chat" target="_blank" rel="noopener">💬 Открыть GigaChat</a>
+    <a href="https://alice.yandex.ru" target="_blank" rel="noopener">🗣️ Открыть Алису</a>
+  </div>
+  <div class="review">
+    <label class="rl">Вставьте, что получилось у настоящего ИИ</label>
+    <textarea id="liveResult" rows="5" placeholder="Вставьте сюда запись ОЖР, которую собрал ИИ-чат из вашей диктовки…"></textarea>
+  </div>
+  <div class="gatecheck"><input type="checkbox" id="liveCheck"><label for="liveCheck">Я сверил(а) цифры и объёмы с тем, что реально надиктовал(а) — ИИ мог ослышаться</label></div>
+  <div class="gateresult" id="gateResult">
+    <div class="note green">✅ <b>Готово.</b> Сравните свою запись с эталоном тренажёра выше — совпадает структура (дата → работы → условия → примечания)? Если да, навык освоен.</div>
+  </div>
+
+</div>
+<script>
+document.getElementById('copyBtn').addEventListener('click',()=>{
+  navigator.clipboard.writeText(document.getElementById('prompt').textContent).then(()=>{
+    document.getElementById('copyMsg').textContent='Скопировано ✓';
+    setTimeout(()=>document.getElementById('copyMsg').textContent='',2500);
+  }).catch(()=>{document.getElementById('copyMsg').textContent='Выделите и скопируйте вручную';});
+});
+(function(){
+  const box=document.getElementById('liveCheck'), field=document.getElementById('liveResult'), out=document.getElementById('gateResult');
+  function upd(){
+    const ready = box.checked && field.value.trim().length>0;
+    out.classList.toggle('on', ready);
+  }
+  box.addEventListener('change',upd);
+  field.addEventListener('input',upd);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Мини-интерактив: найди артефакты</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--brand:#e2231a;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .artzones{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+  .artzone{border:1.5px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+  .artzone summary{cursor:pointer;list-style:none;padding:12px 15px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px}
+  .artzone summary::-webkit-details-marker{display:none}
+  .artzone summary .zn{width:24px;height:24px;border-radius:50%;background:var(--card2);color:var(--ink);display:grid;place-items:center;font-size:12px;font-weight:800;flex:0 0 auto}
+  .artzone summary:before{content:"▸";color:var(--blue);font-size:12px;margin-left:auto;order:9}
+  .artzone[open] summary:before{content:"▾"}
+  .artzone .zbody{padding:0 15px 15px;font-size:13.5px}
+  .artzone .zopts{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
+  .zbtn{cursor:pointer;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:9px 13px;font-size:13px;font-family:inherit;color:var(--ink);transition:.15s}
+  .zbtn:hover{border-color:var(--ink)}
+  .zbtn.ok{border-color:var(--green);background:#eef8f1}
+  .zbtn.err{border-color:var(--brand);background:#fdf0ef}
+  .zbtn:disabled{cursor:default;opacity:.9}
+  .zfb{margin-top:9px;font-size:13px;border-radius:9px;padding:9px 12px;display:none}
+  .zfb.show{display:block}
+  .artzone.done summary{color:var(--green)}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">5 · Мини-интерактив</p>
+  <h2>Найди артефакты</h2>
+  <p class="muted">Разбор гипотетического рендера двора по трём подозрительным зонам. Раскройте каждую зону, выберите, что нужно проверить именно там, — получите обратную связь.</p>
+
+  <div class="artzones" id="artZones">
+    <details class="artzone" data-zone="1">
+      <summary><span class="zn">1</span> Зона: силуэт здания на заднем плане</summary>
+      <div class="zbody">
+        <p>На рендере вдалеке виден силуэт корпуса в 25 этажей — столько же, сколько по ТЭП проекта.</p>
+        <div class="zopts">
+          <button class="zbtn" data-fb="Свет и тени — не главный риск этой зоны. Главный вопрос здесь другой: соответствует ли этажность проекту." data-correct="false">Проверить направление теней</button>
+          <button class="zbtn" data-correct="true" data-fb="Верно. Именно здесь чаще всего «плывёт» геометрия: ИИ может пририсовать лишний этаж или изменить пропорции здания. Всегда сверяйте этажность и абрис фасада с проектом.">Этажность соответствует проекту?</button>
+          <button class="zbtn" data-fb="Цвет неба — не диагностический признак брака рендера. Смотрите на геометрию самого здания." data-correct="false">Проверить цвет неба</button>
+        </div>
+        <div class="zfb"></div>
+      </div>
+    </details>
+
+    <details class="artzone" data-zone="2">
+      <summary><span class="zn">2</span> Зона: фасад и остекление</summary>
+      <div class="zbody">
+        <p>Панорамное остекление и ряды окон по всей высоте здания.</p>
+        <div class="zopts">
+          <button class="zbtn" data-correct="true" data-fb="Верно. Кривые, «съезжающие» или неровно расставленные окна — один из самых частых артефактов на сложных ракурсах. Проверяйте, что линии окон параллельны и ритм остекления не «плывёт» по высоте.">Окна ровные, без искажений?</button>
+          <button class="zbtn" data-fb="Материал остекления — вопрос дизайна, а не брака генерации. Здесь важнее геометрическая правильность окон." data-correct="false">Проверить тип стеклопакета</button>
+          <button class="zbtn" data-fb="Отражения в стекле красивы, но не главный диагностический признак. Сначала проверяют геометрию окон." data-correct="false">Проверить отражения в стёклах</button>
+        </div>
+        <div class="zfb"></div>
+      </div>
+    </details>
+
+    <details class="artzone" data-zone="3">
+      <summary><span class="zn">3</span> Зона: люди на детской площадке</summary>
+      <div class="zbody">
+        <p>На переднем плане — семья с ребёнком у качелей, ещё несколько фигур на площадке.</p>
+        <div class="zopts">
+          <button class="zbtn" data-fb="Одежда — не то, на что стоит смотреть в первую очередь. Главная проверка людей — естественность поз и конечностей." data-correct="false">Проверить цвет одежды</button>
+          <button class="zbtn" data-correct="true" data-fb="Верно. Люди — самая частая зона артефактов: лишние пальцы («восьмипалые» руки), неестественные позы, странные пропорции. Всегда приближайте и проверяйте фигуры людей отдельно.">Люди естественные — без лишних пальцев и неестественных поз?</button>
+          <button class="zbtn" data-fb="Количество людей — вопрос композиции, не брака генерации. Проверяйте не «сколько», а «как» они выглядят." data-correct="false">Проверить количество людей на кадре</button>
+        </div>
+        <div class="zfb"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="note" id="artSummary">Раскройте все три зоны и выберите по одному варианту в каждой — ниже появится итог.</div>
+
+</div>
+<script>
+(function(){
+  var zones=document.querySelectorAll('#artZones .artzone');if(!zones.length)return;
+  var summary=document.getElementById('artSummary');
+  var doneCount=0;
+  zones.forEach(function(z){
+    var buttons=z.querySelectorAll('.zbtn');
+    var fb=z.querySelector('.zfb');
+    var answered=false;
+    buttons.forEach(function(btn){
+      btn.addEventListener('click',function(){
+        if(answered)return;
+        answered=true;
+        var ok=btn.getAttribute('data-correct')==='true';
+        buttons.forEach(function(b){
+          b.disabled=true;
+          if(b.getAttribute('data-correct')==='true')b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        fb.className='zfb show';
+        fb.innerHTML=(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'');
+        z.classList.add('done');
+        doneCount++;
+        checkAll();
+      });
+    });
+  });
+  function checkAll(){
+    if(doneCount>=zones.length){
+      summary.className='note green';
+      summary.innerHTML='✅ Все три зоны разобраны. Такой разбор — по сути и есть чек-лист проверки рендера: этажность, геометрия фасада, естественность людей.';
+    }
+  }
+})();
+</script>
+</body>
+</html>

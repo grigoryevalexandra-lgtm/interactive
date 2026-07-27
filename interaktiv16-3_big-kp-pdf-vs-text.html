@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 3. Большое: ВОР × 3 подрядчика — PDF против текста, ловушки</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--r:16px;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  h3:first-child{margin-top:0}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{border-color:var(--ink)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .err{background:#fde4e2;color:#8f1410;border-radius:4px;padding:0 3px;font-weight:700}
+  .illu{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0;text-align:center}
+  .illu .cap{font-size:12.5px;color:var(--muted);margin-top:8px}
+  .chat{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .chat .ch{display:flex;align-items:center;gap:9px;background:var(--card);border-bottom:1px solid var(--line);padding:9px 13px;font-size:13px;font-weight:700}
+  .chat .ch .gi{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#1f9d57,#2bb56a);color:#fff;display:grid;place-items:center;font-size:12px}
+  .chat .body{padding:13px;background:#fff;min-height:70px}
+  .sys{font-size:11.5px;color:var(--muted);background:var(--card2);border-radius:7px;padding:5px 9px;margin-bottom:9px;display:inline-block}
+  .bub{font-size:13.5px;border-radius:11px;padding:9px 12px;margin:7px 0;max-width:94%;white-space:pre-wrap}
+  .bub.u{background:var(--blue);color:#fff;margin-left:auto}.bub.a{background:var(--card);border:1px solid var(--line)}
+  .att{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);border-radius:7px;padding:3px 9px;font-size:12px;margin-top:6px;cursor:pointer;color:#fff}
+  .att:hover{background:rgba(255,255,255,.32)}
+  .ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:11px 13px;border-top:1px solid var(--line);background:var(--card)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{border:none;background:#fff;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--muted)}
+  .seg button.on{background:var(--ink);color:#fff}
+  .typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin:0 1px;animation:bl 1s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes bl{0%,80%,100%{opacity:.2}40%{opacity:1}}
+  .dl{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+  .docinline{display:none;margin-top:12px;background:#eef0f3;border:1px solid var(--line);border-radius:14px;max-width:100%;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .docinline.open{display:block}
+  .docinline .dih{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:14px;background:#fff;flex-wrap:wrap}
+  .docinline .dih .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .docinline .dih button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-weight:700;font-size:12.5px}
+  .docinline .dih button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .docinline .dibody{padding:18px;overflow-x:auto;max-width:100%}
+  .docinline .dibody pre{margin:0;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;font-size:12.5px;color:#2a2722;line-height:1.55;background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px}
+  .docinline .dibody .doc{overflow-x:auto}
+  .doc{font-family:'Times New Roman',Georgia,serif;color:#111;background:#fff;font-size:13px;line-height:1.45;padding:30px 32px;box-shadow:0 2px 10px rgba(0,0,0,.12);margin:0 auto;width:100%}
+  .doc .dhead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+  .doc .dco{font-weight:700;font-size:16px}
+  .doc .dreq{font-size:10.5px;color:#333;text-align:right;max-width:55%;line-height:1.35}
+  .doc hr{border:none;border-top:2px solid #111;margin:8px 0 14px}
+  .doc .dtitle{text-align:center;font-weight:700;font-size:15px;margin:6px 0}
+  .doc .dsub{text-align:center;font-size:11px;color:#444;margin-bottom:10px}
+  .doc .dto{font-size:12px;margin:6px 0 12px}
+  .doc table.dt{border-collapse:collapse;width:100%;font-size:11px;margin:8px 0}
+  .doc table.dt th,.doc table.dt td{border:1px solid #111;padding:4px 6px;vertical-align:top}
+  .doc table.dt th{background:#e9e9e9;text-align:center;font-weight:700}
+  .doc table.dt td.r{text-align:right;white-space:nowrap}.doc table.dt td.c{text-align:center}
+  .doc .dterms{font-size:12px;margin:10px 0}
+  .doc .dsign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:30px;position:relative;min-height:90px}
+  .doc .sig{font-size:11.5px}.doc .sig .ln{display:inline-block;border-bottom:1px solid #111;width:150px;margin:0 6px}
+  .doc .stamp{width:104px;height:104px;border:2px solid #2b59b5;color:#2b59b5;border-radius:50%;display:grid;place-items:center;font-size:7.5px;text-align:center;transform:rotate(-11deg);opacity:.55;position:absolute;right:60px;bottom:-12px;padding:8px;line-height:1.25}
+  .doc .dnote{font-size:10.5px;color:#a30000;margin-top:8px}
+  #renderHolder{position:fixed;left:-10000px;top:0;width:760px;background:#fff}
+  svg{max-width:100%;height:auto}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h3>Ведомость объёмов × 3 подрядчика — где PDF начинает врать</h3>
+  <p>Реальная закупка — ведомость объёмов работ (ВОР) на десятки позиций. Способ передачи данных резко влияет на результат. Сначала — что ломается в PDF.</p>
+  <div class="note" style="color:var(--ink);background:var(--card)"><b>На входе:</b> ВОР № 02-01-01 (позиции работ, без цен) и <b>три отдельных КП</b> от подрядчиков со своими ценами (берём КП-1, КП-3, КП-5). <b>На выходе:</b> одна сравнительная таблица «позиции × 3 подрядчика» с подсветкой вынесенных за смету позиций и разных единиц. <b>Зачем:</b> свести три многостраничных КП вручную — полдня и риск пропустить ловушку; ИИ делает это за минуту, но на PDF — с ошибками.</div>
+
+  <h3>Как ИИ «видит» таблицу из PDF</h3>
+  <div class="illu">
+    <svg width="360" height="208" viewBox="0 0 360 208" xmlns="http://www.w3.org/2000/svg" aria-label="PDF теряет границы строк">
+      <text x="180" y="13" text-anchor="middle" font-size="11" fill="#6f7280">В файле напечатана таблица:</text>
+      <g font-size="9.5" fill="#1a1814">
+        <rect x="67" y="18" width="130" height="16" fill="#f3efe9" stroke="#1a1814"/><text x="72" y="29">Наименование</text>
+        <rect x="197" y="18" width="44" height="16" fill="#f3efe9" stroke="#1a1814"/><text x="201" y="29">Кол-во</text>
+        <rect x="241" y="18" width="52" height="16" fill="#f3efe9" stroke="#1a1814"/><text x="245" y="29">Цена, ₽</text>
+        <rect x="67" y="34" width="130" height="15" fill="#fff" stroke="#e9e4dc"/><text x="72" y="45">Плита фунд.</text>
+        <rect x="197" y="34" width="44" height="15" fill="#fff" stroke="#e9e4dc"/><text x="201" y="45">980</text>
+        <rect x="241" y="34" width="52" height="15" fill="#fff" stroke="#e9e4dc"/><text x="245" y="45">18900</text>
+        <rect x="67" y="49" width="130" height="15" fill="#fff" stroke="#e9e4dc"/><text x="72" y="60">Колонны</text>
+        <rect x="197" y="49" width="44" height="15" fill="#fff" stroke="#e9e4dc"/><text x="201" y="60">168</text>
+        <rect x="241" y="49" width="52" height="15" fill="#fff" stroke="#e9e4dc"/><text x="245" y="60">12300</text>
+        <rect x="67" y="64" width="130" height="15" fill="#fff" stroke="#e9e4dc"/><text x="72" y="75">Армир., т</text>
+        <rect x="197" y="64" width="44" height="15" fill="#fff" stroke="#e9e4dc"/><text x="201" y="75">84,2</text>
+        <rect x="241" y="64" width="52" height="15" fill="#fff" stroke="#e9e4dc"/><text x="245" y="75">—</text>
+      </g>
+      <text x="180" y="98" text-anchor="middle" font-size="11" fill="#6f7280">↓ ИИ распознаёт из PDF — границы строк теряются</text>
+      <text x="180" y="116" text-anchor="middle" font-size="10" fill="#a3201a" font-weight="700">как ИИ собрал: цена «съехала» на строку</text>
+      <g font-size="9.5" fill="#1a1814">
+        <rect x="67" y="124" width="130" height="16" fill="#f3efe9" stroke="#1a1814"/><text x="72" y="135">Наименование</text>
+        <rect x="197" y="124" width="44" height="16" fill="#f3efe9" stroke="#1a1814"/><text x="201" y="135">Кол-во</text>
+        <rect x="241" y="124" width="52" height="16" fill="#f3efe9" stroke="#1a1814"/><text x="245" y="135">Цена, ₽</text>
+        <rect x="67" y="140" width="130" height="15" fill="#fff" stroke="#e9e4dc"/><text x="72" y="151">Плита фунд.</text>
+        <rect x="197" y="140" width="44" height="15" fill="#fff" stroke="#e9e4dc"/><text x="201" y="151">980</text>
+        <rect x="241" y="140" width="52" height="15" fill="#fde4e2" stroke="#e2231a"/><text x="245" y="151" fill="#8f1410" font-weight="700">12300</text>
+        <rect x="67" y="155" width="130" height="15" fill="#fff" stroke="#e9e4dc"/><text x="72" y="166">Колонны</text>
+        <rect x="197" y="155" width="44" height="15" fill="#fff" stroke="#e9e4dc"/><text x="201" y="166">168</text>
+        <rect x="241" y="155" width="52" height="15" fill="#fde4e2" stroke="#e2231a"/><text x="245" y="166" fill="#8f1410" font-weight="700">—</text>
+        <rect x="67" y="170" width="130" height="15" fill="#fff" stroke="#e9e4dc"/><text x="72" y="181">Армир., т</text>
+        <rect x="197" y="170" width="44" height="15" fill="#fff" stroke="#e9e4dc"/><text x="201" y="181">84,2</text>
+        <rect x="241" y="170" width="52" height="15" fill="#fde4e2" stroke="#e2231a"/><text x="245" y="181" fill="#8f1410" font-weight="700">—</text>
+      </g>
+    </svg>
+    <div class="cap">PDF — это «снимок» страницы: при распознавании теряются границы строк и столбцов, и цена прилипает не к своему наименованию. Поэтому таблицу лучше давать ИИ текстом или Markdown, где структура задана явно. Цифры в примере условные.</div>
+  </div>
+
+  <h3>Чат-симулятор: PDF против текста</h3>
+  <p class="muted">Один набор позиций ВОР. Выберите способ передачи и сравните результат. 👁 — посмотреть ведомость.</p>
+  <div class="chat">
+    <div class="ch"><span class="gi">G</span> GigaChat · веб-чат</div>
+    <div class="body" id="chatBig">
+      <span class="sys">⚙️ Роль: инженер-сметчик · ВОР № 02-01-01 · 3 подрядчика</span>
+      <div class="bub u">Сведи ВОР и 3 КП в сравнительную таблицу, подсвети вынесенные за смету позиции и разные единицы. Итоги я проверю сам.
+        <span class="att" onclick="previewDoc('spectz','docinline-2')">📎 ВОР № 02-01-01 · 👁</span> <span class="att" onclick="previewDoc('kpA','docinline-2')">📎 КП-1</span> <span class="att" onclick="previewDoc('kpB','docinline-2')">📎 КП-3</span> <span class="att" onclick="previewDoc('kpV','docinline-2')">📎 КП-5</span></div>
+    </div>
+    <div class="ctrls"><div class="seg" id="modeSeg">
+      <button data-m="text" class="on">📋 Текст / CSV</button>
+      <button data-m="pdf">📄 Скан PDF</button></div>
+      <button class="btn sm" id="runBig">▶ Отправить</button>
+      <button class="btn ghost sm" id="showTraps" style="display:none">⚠ Показать ловушки</button></div>
+  </div>
+  <p class="muted" style="font-size:13px;margin:10px 0 4px"><b>Входные документы</b> (то, что отправляем ИИ):</p>
+  <div class="dl">
+    <button class="prevbtn" onclick="previewDoc('spectz','docinline-2')">👁 ВОР № 02-01-01</button>
+    <button class="prevbtn" onclick="previewDoc('kpA','docinline-2')">👁 КП-1</button>
+    <button class="prevbtn" onclick="previewDoc('kpB','docinline-2')">👁 КП-3</button>
+    <button class="prevbtn" onclick="previewDoc('kpV','docinline-2')">👁 КП-5</button>
+  </div>
+  <div class="docinline" id="docinline-2"></div>
+  <p class="muted" style="font-size:13px;margin:12px 0 4px"><b>Результат</b>, который должен собрать ИИ (эталон):</p>
+  <div class="dl">
+    <button class="prevbtn" onclick="previewDoc('spec','docinline-3')">👁 Эталон — сравнительная таблица (XLSX)</button>
+  </div>
+  <div class="docinline" id="docinline-3"></div>
+  <div class="note red" id="trapsBox" style="display:none"></div>
+
+</div>
+<div id="renderHolder"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ===== ТЕКСТОВЫЕ ДАННЫЕ (CSV ВОР) ===== */
+const DATA={
+  bigCsv:`№;Наименование (по ВОР);Ед.;Кол-во;КП-1 с НДС;КП-3 с НДС (опалубка вне сметы);КП-5 с НДС;Флаг
+1;Устройство фундаментной плиты из бетона B25 W6;м³;980,0;18900,00;12300,00;18200,00;
+2;Устройство монолитных колонн 400×400, бетон B25;м³;168,0;18900,00;12300,00;18200,00;
+3;Устройство монолитных плит перекрытия t=200, бетон B25;м³;578,4;18900,00;12300,00;18200,00;
+4;Устройство монолитных стен лестнично-лифтового узла;м³;96,0;18900,00;12300,00;18200,00;
+5;Устройство/демонтаж опалубки монолитных конструкций;м²;9860,0;в цене;нет позиции;в цене;КП-3: опалубка вынесена за смету — позиция отсутствует
+6;Армирование, арматура А500С (работа);т;84,2;92000,00;92000,00;отдельно (₽/т, вне цены за м³);КП-5: армирование отдельной строкой, ед. т — с ценой за м³ не сравнивать
+7;Армирование конструктивное А240 (работа);т;16,4;92000,00;92000,00;отдельно (₽/т, вне цены за м³);КП-5: армирование отдельной строкой, ед. т`
+};
+
+/* ===== ДОКУМЕНТЫ-БЛАНКИ (генерируемые) ===== */
+function stamp(t){return `<div class="stamp">${t}</div>`;}
+const DOCS={
+  spectz:{title:'ВОР № 02-01-01 — позиции работ (без цен)', file:'ВОР_02-01-01', kind:'xlsx', html:null},
+  kpA:{title:'КП-1 (СтройМонолит) — по ВОР', file:'КП-1_по_ВОР', kind:'pdf', html:null},
+  kpB:{title:'КП-3 (МонолитСервис) — по ВОР, опалубка вне сметы', file:'КП-3_по_ВОР', kind:'pdf', html:null},
+  kpV:{title:'КП-5 (ГорСтрой) — по ВОР, армирование отдельно', file:'КП-5_по_ВОР', kind:'pdf', html:null},
+  spec:{title:'Эталон: сравнительная таблица (что должен собрать ИИ)', file:'Эталон_сравнение', kind:'xlsx', html:null}
+};
+function buildSpecHtml(){
+  const rows=DATA.bigCsv.split('\n').map(r=>r.split(';'));
+  let body=rows.slice(1).map(c=>{
+    const fl=(c[7]||'').trim();
+    const tdf=fl?`<td style="color:#a30000;font-size:8.5px">${fl}</td>`:'<td></td>';
+    const hl=fl?' style="background:#fdecea"':'';
+    return `<tr${hl}><td class="c">${c[0]}</td><td>${c[1]}</td><td class="c">${c[2]}</td><td class="r">${c[3]}</td><td class="r">${c[4]}</td><td class="r">${c[5]}</td><td class="r">${c[6]}</td>${tdf}</tr>`;
+  }).join('');
+  return `<div class="doc"><div class="dhead"><div class="dco">🤖 Сравнительная таблица — собрал ИИ-ассистент</div>
+    <div class="dreq">по ВОР № 02-01-01 и 3 КП<br>НДС 22% · отклонения подсвечены</div></div><hr>
+    <div class="dtitle">СРАВНИТЕЛЬНАЯ ТАБЛИЦА КП — ЧТО ДОЛЖЕН СОБРАТЬ ИИ</div>
+    <div class="dsub">позиции ВОР × 3 подрядчика · цена за единицу, ₽ с НДС · красным — вынесенные позиции и разные единицы</div>
+    <table class="dt"><tr><th>№</th><th>Наименование (по ВОР)</th><th>Ед.</th><th>Кол-во</th><th>КП-1 (СтройМонолит)</th><th>КП-3 (МонолитСервис)</th><th>КП-5 (ГорСтрой)</th><th>Отклонение</th></tr>${body}</table>
+    <div class="dnote">КП-3 — опалубка вынесена за смету (нет позиции 5); КП-5 — армирование отдельной строкой в ₽/т. Итоги обязательно перепроверяются вручную.</div></div>`;
+}
+function bigRows(){return DATA.bigCsv.split('\n').slice(1).map(r=>r.split(';'));}
+function buildSpecTzHtml(){
+  const body=bigRows().map(c=>`<tr><td class="c">${c[0]}</td><td>${c[1]}</td><td class="c">${c[2]}</td><td class="r">${c[3]}</td></tr>`).join('');
+  return `<div class="doc"><div class="dhead"><div class="dco">ООО СЗ «Уютный дом» · Отдел закупок</div><div class="dreq">ВОР № 02-01-01 · раздел 02-01-01<br>монолитные работы, секция 2 · НДС 22%</div></div><hr>
+  <div class="dtitle">ВЕДОМОСТЬ ОБЪЁМОВ РАБОТ (ВОР № 02-01-01)</div>
+  <div class="dsub">Монолитные работы, каркас эт. 4–9 · цены подрядчики указывают в своих КП</div>
+  <table class="dt"><tr><th>№</th><th>Наименование (по ВОР)</th><th>Ед.</th><th>Кол-во</th></tr>${body}</table>
+  <div class="dsign"><div class="sig">Начальник отдела закупок <span class="ln"></span> / Кузнецова Т.А. /</div></div></div>`;
+}
+const KPMETA={
+  A:{ci:4,co:'ООО «СтройМонолит»',req:'ИНН 5024039824 · КПП 502401001 · ОСН (НДС 22%)<br>г. Красногорск, ул. Заводская, 12 · тел. (495) 720-18-34',num:'№ 47 от 12.06.2026 (КП-1)',unit:'цена за ед., ₽ с НДС',flag:'КП-1',terms:'Опалубка и армирование в цене. Аванс 30%. Гарантия 5 лет.',total:'≈ 38,0 млн ₽ с НДС',dir:'Генеральный директор',name:'Иванов А.В.'},
+  B:{ci:5,co:'ООО «МонолитСервис»',req:'ИНН 5036123456 · КПП 503601001 · ОСН (НДС 22%)<br>г. Подольск, ул. Рабочая, 14 · тел. +7 906 700-10-20',num:'№ 204 от 10.06.2026 (КП-3)',unit:'цена за ед., ₽ с НДС',flag:'КП-3',terms:'Опалубка вынесена за смету (нет поз. 5). Аванс 50%. Гарантия 2 года.',total:'по бетону ≈ 24,7 млн ₽ (без опалубки)',dir:'Директор',name:'Орлов В.Н.'},
+  V:{ci:6,co:'ООО «ГорСтрой»',req:'ИНН 7709876543 · КПП 770901001 · ОСН (НДС 22%)<br>г. Москва, Варшавское ш., 42 · тел. (495) 988-77-66',num:'№ 512 от 11.06.2026 (КП-5)',unit:'цена за ед., ₽ с НДС',flag:'КП-5',terms:'Армирование (поз. 6–7) — отдельной строкой в ₽/т, вне цены за м³. Аванс 30%.',total:'по бетону ≈ 36,6 млн ₽ + армирование отдельно',dir:'Менеджер по продажам',name:'Зайцева О.И.'}
+};
+function buildKpHtml(sup){
+  const m=KPMETA[sup]; const rows=bigRows();
+  const body=rows.map(c=>{
+    let price=c[m.ci]; if(!price||price==='нет позиции') price='— не поставляется';
+    const fl=(c[7]&&c[7].indexOf(m.flag+':')===0)?' <span style="color:#a30000">⚠</span>':'';
+    return `<tr><td class="c">${c[0]}</td><td>${c[1]}${fl}</td><td class="c">${c[2]}</td><td class="r">${c[3]}</td><td class="r">${price}</td></tr>`;
+  }).join('');
+  return `<div class="doc"><div class="dhead"><div class="dco">${m.co}</div><div class="dreq">${m.req}</div></div><hr>
+  <div class="dtitle">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ ${m.num}</div>
+  <div class="dsub">Кому: ООО СЗ «Уютный дом». По ВОР № 02-01-01 · ${m.unit}</div>
+  <table class="dt"><tr><th>№</th><th>Наименование</th><th>Ед.</th><th>Кол-во</th><th>Цена за ед.</th></tr>${body}</table>
+  <div class="dterms"><b>ИТОГО по предложению:</b> ${m.total}. ${m.terms}</div>
+  <div class="dsign"><div class="sig">${m.dir} <span class="ln"></span> / ${m.name} /</div>${stamp(m.co+' • '+m.req.split('·')[0])}</div></div>`;
+}
+function getDocHtml(key){
+  if(key==='spec') return buildSpecHtml();
+  if(key==='spectz') return buildSpecTzHtml();
+  if(key==='kpA') return buildKpHtml('A');
+  if(key==='kpB') return buildKpHtml('B');
+  if(key==='kpV') return buildKpHtml('V');
+  return DOCS[key].html;
+}
+
+/* ===== СКАЧИВАНИЕ ===== */
+function dl(name,text,mime){mime=mime||'text/plain';const bom=mime.indexOf('csv')>=0?'﻿':'';
+  const b=new Blob([bom+text],{type:mime+';charset=utf-8'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},100);}
+
+/* ===== ПРЕДПРОСМОТР ВСТРОЕННЫЙ ===== */
+let inlineOpenKey={};
+function renderInline(containerId,titleHtml,bodyHtml,actsHtml,toggleKey){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  if(inlineOpenKey[containerId]===toggleKey){
+    box.classList.remove('open');
+    box.innerHTML='';
+    inlineOpenKey[containerId]=null;
+    return;
+  }
+  box.innerHTML='<div class="dih"><span>'+titleHtml+'</span><span class="acts">'+actsHtml+'<button onclick="collapseInline(\''+containerId+'\')">Свернуть ▲</button></span></div><div class="dibody">'+bodyHtml+'</div>';
+  box.classList.add('open');
+  inlineOpenKey[containerId]=toggleKey;
+  box.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function collapseInline(containerId){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  box.classList.remove('open');
+  box.innerHTML='';
+  inlineOpenKey[containerId]=null;
+}
+function previewDoc(key,containerId){
+  containerId=containerId||'docinline-2';
+  const d=DOCS[key]; const html = getDocHtml(key);
+  const act = d.kind==='xlsx'
+    ? '<button class="pri" onclick="' + (key==='spectz'?'xlsxSpecTz()':'xlsxSpec()') + '">📊 Скачать XLSX</button>'
+    : '<button class="pri" onclick="pdfDoc(\''+key+'\')">📄 Скачать PDF</button>';
+  renderInline(containerId, d.title, html, act, 'doc:'+key);
+}
+
+/* ===== PDF из бланка ===== */
+async function pdfDoc(key){
+  const d=DOCS[key]; const html=getDocHtml(key);
+  if(!window.jspdf || !window.html2canvas){
+    const full='<!doctype html><meta charset="utf-8"><style>'+docCss()+'</style>'+html;
+    dl(d.file+'.html', full, 'text/html'); return;
+  }
+  const holder=document.getElementById('renderHolder');
+  holder.innerHTML='<div style="width:760px;background:#fff">'+html+'</div>';
+  const node=holder.firstChild;
+  try{
+    const canvas=await html2canvas(node,{scale:2,backgroundColor:'#ffffff',windowWidth:760});
+    const {jsPDF}=window.jspdf; const pdf=new jsPDF('p','mm','a4');
+    const pw=210, ph=297, m=8, iw=pw-2*m;
+    const ratio=iw/canvas.width; const ihFull=canvas.height*ratio;
+    if(ihFull<=ph-2*m){
+      pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',m,m,iw,ihFull);
+    } else {
+      const pagePxH=Math.floor((ph-2*m)/ratio); let y=0;
+      while(y<canvas.height){
+        const slice=document.createElement('canvas'); slice.width=canvas.width;
+        slice.height=Math.min(pagePxH,canvas.height-y);
+        slice.getContext('2d').drawImage(canvas,0,y,canvas.width,slice.height,0,0,canvas.width,slice.height);
+        const ih=slice.height*ratio;
+        pdf.addImage(slice.toDataURL('image/jpeg',0.95),'JPEG',m,m,iw,ih);
+        y+=slice.height; if(y<canvas.height) pdf.addPage();
+      }
+    }
+    pdf.save(d.file+'.pdf');
+  }catch(e){ const full='<!doctype html><meta charset="utf-8"><style>'+docCss()+'</style>'+html; dl(d.file+'.html', full,'text/html'); }
+  finally{ holder.innerHTML=''; }
+}
+function docCss(){return ".doc{font-family:'Times New Roman',Georgia,serif;color:#111;background:#fff;font-size:13px;line-height:1.45;padding:30px 32px;width:760px;margin:0 auto}.doc .dhead{display:flex;justify-content:space-between;gap:16px}.doc .dco{font-weight:700;font-size:16px}.doc .dreq{font-size:10.5px;color:#333;text-align:right;max-width:55%}.doc hr{border:none;border-top:2px solid #111;margin:8px 0 14px}.doc .dtitle{text-align:center;font-weight:700;font-size:15px;margin:6px 0}.doc .dsub{text-align:center;font-size:11px;color:#444;margin-bottom:10px}.doc .dto{font-size:12px;margin:6px 0 12px}.doc table.dt{border-collapse:collapse;width:100%;font-size:11px;margin:8px 0}.doc table.dt th,.doc table.dt td{border:1px solid #111;padding:4px 6px}.doc table.dt th{background:#e9e9e9;text-align:center}.doc table.dt td.r{text-align:right}.doc table.dt td.c{text-align:center}.doc .dterms{font-size:12px;margin:10px 0}.doc .dsign{margin-top:30px}.doc .sig .ln{display:inline-block;border-bottom:1px solid #111;width:150px;margin:0 6px}.doc .dnote{font-size:10.5px;color:#a30000}";}
+
+/* ===== XLSX ===== */
+function xlsxSpec(){
+  if(!window.XLSX){ dl('Эталон_сравнение_КП.csv', DATA.bigCsv,'text/csv'); return; }
+  const aoa=DATA.bigCsv.split('\n').map(r=>r.split(';'));
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols']=[{wch:4},{wch:52},{wch:7},{wch:8},{wch:14},{wch:24},{wch:24},{wch:40}];
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Сравнение КП');
+  XLSX.writeFile(wb,'Эталон_сравнение_КП.xlsx');
+}
+function xlsxSpecTz(){
+  if(!window.XLSX){ dl('ВОР_02-01-01.csv', DATA.bigCsv.split('\n').map(r=>r.split(';').slice(0,4).join(';')).join('\n'),'text/csv'); return; }
+  const aoa=[['№','Наименование (по ВОР)','Ед.','Кол-во']].concat(bigRows().map(c=>[c[0],c[1],c[2],c[3]]));
+  const ws=XLSX.utils.aoa_to_sheet(aoa); ws['!cols']=[{wch:4},{wch:52},{wch:8},{wch:9}];
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'ВОР 02-01-01');
+  XLSX.writeFile(wb,'ВОР_02-01-01.xlsx');
+}
+
+/* ===== ЧАТ большой ===== */
+let bigMode='text';
+document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');bigMode=b.dataset.m;}));
+document.getElementById('runBig').addEventListener('click',()=>{
+  const body=document.getElementById('chatBig');body.querySelectorAll('.bub.a,.typing').forEach(e=>e.remove());
+  document.getElementById('showTraps').style.display='none';
+  const t=document.createElement('div');t.className='bub a typing';t.innerHTML='<span></span><span></span><span></span>';body.appendChild(t);
+  setTimeout(()=>{t.remove();const a=document.createElement('div');a.className='bub a';
+    if(bigMode==='pdf'){a.innerHTML=`Свёл данные из PDF, но при распознавании структура «поехала»:
+Фрагмент:
+…3 Плиты перекрытия 578,4 — цена не распозналась —
+4 Стены ЛЛУ 96,0 <span class="err">18 900</span> ← цена прилипла из чужой строки (поз. 1)
+5 Опалубка <span class="err">— строка не распозналась —</span>
+6 Армирование А500С <span class="err">— единица «т» слилась с «м³» —</span> …
+<div class="note red" style="margin-top:8px">Типичный сбой PDF: границы строк потерялись — значения съехали к чужим позициям, строки опалубки и армирования «потерялись», итог не сходится. Такому разбору доверять нельзя — дайте таблицу текстом или Markdown.</div>`;}
+    else{a.innerHTML=`Свёл позиции ВОР по 3 КП. Предварительно:
+• <b>КП-1</b> (всё в цене): ≈ <b>38,0 млн ₽</b> с НДС — полный, соответствует ТЗ
+• <b>КП-3</b> (опалубка вне сметы): по бетону ≈ 24,7 млн ₽ — выглядит дешевле всех
+• <b>КП-5</b> (армирование отдельной строкой): по бетону ≈ <b>36,6 млн ₽</b> — но это «грязный» итог (армирование не учтено, см. ниже)
+<div class="note" style="margin-top:8px">⚠ Проверьте вручную: у <b>КП-3</b> нет позиции 5 (опалубка) — недопоставка; у <b>КП-5</b> позиции 6–7 (армирование) в единице «т» отдельно от цены за м³. Итоги пересчитайте сами.</div>`;
+      document.getElementById('showTraps').style.display='inline-block';}
+    body.appendChild(a);
+  },1000);
+});
+document.getElementById('showTraps').addEventListener('click',()=>{const box=document.getElementById('trapsBox');box.style.display='block';
+  box.innerHTML=`<b>Ловушки (спрятаны в середине списка):</b>
+<ol style="margin:8px 0 0;padding-left:18px">
+<li><b>Поз. 5, опалубка (КП-3):</b> позиции нет — работы вынесены за смету. «Дешёвая» цена 12 300 ₽/м³ неполна, опалубку добавят отдельным договором.</li>
+<li><b>Поз. 6–7, армирование (КП-5):</b> вынесено отдельной строкой в ₽/т — с ценой за м³ бетона напрямую не сравнивается.</li>
+<li><b>Аванс (КП-3):</b> 50% при требовании ТЗ ≤ 30% — не соответствует ТЗ.</li>
+<li><b>Гарантия (КП-3):</b> 2 года при требовании ≥ 5 лет — не соответствует ТЗ.</li></ol>
+<div style="margin-top:8px">Если добавить опалубку к КП-3 и армирование к КП-5, их «дешёвые» итоги сближаются с КП-1, а КП-3 ещё и отпадает по ТЗ (аванс 50%, гарантия 2 года, опыт 1 объект). Полон и соответствует ТЗ <b>КП-1</b>. <b>На объёме проверяй позиции, не итоговую строку.</b></div>`;});
+</script>
+</body>
+</html>

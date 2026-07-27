@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 5. Промпты для передачи данных: Markdown-таблица и эхо-проверка</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  h3:first-child{margin-top:0}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .dl{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+  .docinline{display:none;margin-top:12px;background:#eef0f3;border:1px solid var(--line);border-radius:14px;max-width:100%;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .docinline.open{display:block}
+  .docinline .dih{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:14px;background:#fff;flex-wrap:wrap}
+  .docinline .dih .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .docinline .dih button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-weight:700;font-size:12.5px}
+  .docinline .dih button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .docinline .dibody{padding:18px;overflow-x:auto;max-width:100%}
+  .docinline .dibody pre{margin:0;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;font-size:12.5px;color:#2a2722;line-height:1.55;background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px}
+  .illu{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0;text-align:left}
+  .illu .cap{font-size:12.5px;color:var(--muted);margin-top:8px}
+  .md{background:#0f1115;color:#d7e3fb;border-radius:10px;padding:13px;font-family:'Consolas','Courier New',monospace;font-size:12.5px;white-space:pre;overflow-x:auto}
+  code{background:var(--card);border-radius:4px;padding:1px 5px;font-family:'Consolas','Courier New',monospace}
+  .checks{list-style:none;padding:0;margin:8px 0 0}
+  .checks li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;border-bottom:1px solid var(--line)}
+  .checks li:last-child{border-bottom:none}.checks li:before{content:"✓";position:absolute;left:2px;color:var(--green,#1f9d57);font-weight:800}
+  a{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h3>Дайте данные так, чтобы ИИ не потерял структуру</h3>
+  <p>Из PDF столбцы «рассыпаются». Вывод: <b>давайте таблицу не картинкой, а текстом с явной структурой</b>. Лучший формат — <b>Markdown</b>.</p>
+
+  <h3>Что такое Markdown — за минуту</h3>
+  <p>Markdown (MD) — простой текст с лёгкой разметкой. Таблица в нём — строки, где столбцы разделены чертой <code>|</code>. ИИ читает её <b>идеально</b>: видно, где столбец, где строка, какое число к чему относится.</p>
+  <div class="illu">
+    <div class="md">| Параметр | КП-1 | КП-3 | КП-5 |
+|---|---|---|---|
+| Цена за м³ | 18 900 с НДС | 12 300 с НДС | 18 200 с НДС |
+| Опалубка | в цене | отдельно | в цене |
+| Армирование | в цене | в цене | отдельно (₽/т) |</div>
+    <div class="cap">Так выглядит таблица в Markdown. Каждое число — в своём столбце.</div>
+  </div>
+
+  <h3>Бесплатные конвертеры (работают в браузере)</h3>
+  <ul class="checks">
+    <li><b>Excel/CSV → Markdown:</b> <a href="https://tableconvert.com/excel-to-markdown" target="_blank" rel="noopener">TableConvert</a> или <a href="https://dewiar.com/markdown/table" target="_blank" rel="noopener">Dewiar</a>.</li>
+    <li><b>PDF → Markdown:</b> <a href="https://pdf2md.morethan.io/" target="_blank" rel="noopener">pdf2md.morethan.io</a> или <a href="https://products.groupdocs.app/conversion/pdf-to-md" target="_blank" rel="noopener">GroupDocs</a>. <span class="muted">Для сканов сначала OCR.</span></li>
+  </ul>
+
+  <h3>«Документ внутри промпта»</h3>
+  <p>Если в веб-чате нет загрузки Excel — вставьте Markdown-таблицу <b>прямо в текст запроса</b>. Готовый шаблон:</p>
+  <div class="dl">
+    <button class="prevbtn" onclick="previewText('Промпт с таблицей внутри (Markdown)', DATA.promptWithMd,'docinline-4')">👁 Предпросмотр</button>
+    <button onclick="dl('Промпт_с_таблицей_Markdown.txt', DATA.promptWithMd)">📋 Скачать</button>
+  </div>
+  <div class="docinline" id="docinline-4"></div>
+
+  <h3>Ещё три приёма для точного результата</h3>
+  <ul class="checks">
+    <li><b>Эхо-проверка.</b> Сначала: «перечисли, что увидел, ничего не считай». Сверьте с оригиналом.</li>
+    <li><b>Итоги считайте сами.</b> ИИ хорош в структуре, но не калькулятор — суммы перепроверяйте в Excel.</li>
+    <li><b>Большой документ — частями.</b> Разбейте на 2–3 запроса: к короткому тексту модель внимательнее.</li>
+  </ul>
+  <div class="dl"><button class="prevbtn" onclick="previewText('Эхо-промпт', DATA.promptEcho,'docinline-5')">👁 Эхо-промпт</button>
+    <button onclick="dl('Промпт_эхо_проверка.txt', DATA.promptEcho)">📋 Скачать</button></div>
+  <div class="docinline" id="docinline-5"></div>
+  <p class="muted" style="font-size:12.5px;margin-top:8px">💡 Эхо-приём — это шаг из промпта <b>C1 «Извлечение объёмов из акта/ВОР в таблицу»</b> из твоего промпт-пака ПТО.</p>
+
+</div>
+<script>
+/* ===== ТЕКСТОВЫЕ ДАННЫЕ ===== */
+const DATA={
+  promptWithMd:`Ты — инженер-сметчик. Ниже ТЗ и сравнительные данные по 5 КП на монолитные работы в виде Markdown-таблицы (это и есть документ — других файлов нет).
+
+ТЗ: монолит B25 W6, объём 2 010 м³; опалубка и армирование в составе работ; аванс ≤ 30%; гарантия ≥ 5 лет.
+
+| Параметр | КП-1 | КП-2 | КП-3 | КП-4 | КП-5 |
+|---|---|---|---|---|---|
+| Цена за м³ | 18 900 с НДС | 17 500 с НДС | 12 300 с НДС | 19 400 с НДС | 18 200 с НДС |
+| Опалубка | в цене | в цене | отдельно | в цене | в цене |
+| Армирование | в цене | в цене | в цене | в цене | отдельно (₽/т) |
+| Аванс | 30% | 20% | 50% | 25% | 30% |
+| Гарантия | 5 лет | 5 лет | 2 года | 5 лет | 5 лет |
+| Опыт | 6 | 9 | 1 | 7 | 5 |
+
+Задача: приведи КП к единой базе сравнения с учётом вынесенных позиций; подсвети отклонения словами «не соответствует ТЗ».
+Если данных нет — «не указано». В конце — какой подрядчик предпочтительнее и почему. Итоги я проверю сам.`,
+  promptEcho:`Прежде чем что-либо считать или сравнивать — перечисли все позиции из таблицы: номер, наименование работ, единицу измерения и цену, ровно как в документе.
+Если строка не читается, единица непонятна или позиция вынесена за смету — отметь «проверить вручную».
+Ничего не додумывай и пока не делай выводов. Я сверю список с оригиналом, потом попрошу анализ.`
+};
+
+/* ===== СКАЧИВАНИЕ ===== */
+function dl(name,text,mime){mime=mime||'text/plain';const bom=mime.indexOf('csv')>=0?'﻿':'';
+  const b=new Blob([bom+text],{type:mime+';charset=utf-8'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},100);}
+
+/* ===== ПРЕДПРОСМОТР ВСТРОЕННЫЙ ===== */
+let inlineOpenKey={};
+function renderInline(containerId,titleHtml,bodyHtml,actsHtml,toggleKey){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  if(inlineOpenKey[containerId]===toggleKey){
+    box.classList.remove('open');
+    box.innerHTML='';
+    inlineOpenKey[containerId]=null;
+    return;
+  }
+  box.innerHTML='<div class="dih"><span>'+titleHtml+'</span><span class="acts">'+actsHtml+'<button onclick="collapseInline(\''+containerId+'\')">Свернуть ▲</button></span></div><div class="dibody">'+bodyHtml+'</div>';
+  box.classList.add('open');
+  inlineOpenKey[containerId]=toggleKey;
+  box.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function collapseInline(containerId){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  box.classList.remove('open');
+  box.innerHTML='';
+  inlineOpenKey[containerId]=null;
+}
+let textPreviewCur=null;
+function previewText(title,text,containerId){
+  containerId=containerId||'docinline-4';
+  textPreviewCur=text;
+  const bodyHtml='<pre>'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre>';
+  const acts='<button class="pri" onclick="dl(\''+title.replace(/\W+/g,'_')+'.txt\', textPreviewCur)">📥 Скачать .txt</button>';
+  renderInline(containerId, title, bodyHtml, acts, 'text:'+title);
+}
+</script>
+</body>
+</html>

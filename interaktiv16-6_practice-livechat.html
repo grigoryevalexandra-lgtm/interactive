@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 6. Практика: промпт для своей задачи и задание в живом чате</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:10px;padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}.btn.dark{background:var(--ink)}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{border-color:var(--ink)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}
+  .dl{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+  .dl a.btn{text-decoration:none}
+  .docinline{display:none;margin-top:12px;background:#eef0f3;border:1px solid var(--line);border-radius:14px;max-width:100%;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .docinline.open{display:block}
+  .docinline .dih{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:14px;background:#fff;flex-wrap:wrap}
+  .docinline .dih .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .docinline .dih button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-weight:700;font-size:12.5px}
+  .docinline .dih button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .docinline .dibody{padding:18px;overflow-x:auto;max-width:100%}
+  .docinline .dibody pre{margin:0;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;font-size:12.5px;color:#2a2722;line-height:1.55;background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px}
+  .copy{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631}
+  .review label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
+  .review textarea,.review input{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;resize:vertical}
+  .review textarea:focus,.review input:focus{outline:none;border-color:var(--blue)}
+  .transfer-note{border:1.5px dashed #b98a2b;background:#fdf8ec;color:#7a5b16;border-radius:10px;padding:10px 13px;font-size:12.5px;font-weight:600;margin:14px 0;line-height:1.45}
+  .transfer-note b{color:#8a6410}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h2>Сделайте на своей задаче</h2>
+  <p class="muted">Возьмите свои КП (обезличенные — без реальных цен и реквизитов: это коммерческая тайна) или наши 5 КП из материалов урока, сведите в сравнительную таблицу по нашему промпту.</p>
+  <div class="copy" id="promptBox"></div>
+  <div class="dl"><button class="btn sm dark" onclick="copyPrompt()">📋 Скопировать промпт</button>
+    <button class="prevbtn" onclick="previewText('Промпт сравнения', DATA.promptCompare,'docinline-6')">👁 Предпросмотр</button>
+    <button onclick="dl('Промпт_сравнение_КП.txt', DATA.promptCompare)">📥 Скачать</button>
+    <span class="muted" id="copyMsg" style="font-size:12px;align-self:center"></span></div>
+  <div class="docinline" id="docinline-6"></div>
+  <p class="muted" style="font-size:12.5px;margin-top:8px">💡 Это промпт <b>C2 «Сверка КС-2 с ВОР и актом (поиск расхождений)»</b> из твоего промпт-пака ПТО — тот же приём приведения документов к единой базе сравнения.</p>
+
+  <h3 style="margin-top:18px">Сделай в живом чате</h3>
+  <p class="muted">Открой любой из чатов, вставь промпт и свои данные (или наши КП), получи таблицу — и вставь результат ниже.</p>
+  <div class="dl">
+    <a class="btn sm" href="https://giga.chat" target="_blank" rel="noopener">🟢 Открыть GigaChat</a>
+    <a class="btn sm ghost" href="https://alice.yandex.ru" target="_blank" rel="noopener">🔵 Открыть Алису</a>
+  </div>
+  <div class="review" style="margin-top:14px">
+    <label>Что получилось — вставь таблицу от ИИ</label>
+    <textarea id="sRes" rows="4" placeholder="Вставь сюда результат, который выдал ИИ в живом чате"></textarea>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-direction:row">
+      <input type="checkbox" id="sDone" style="width:auto"> Я сверил(а) итоги вручную и нашёл(а) хотя бы одну ловушку (опалубка/армирование вне сметы)
+    </label>
+    <div style="margin-top:12px"><button class="btn" id="sendRev">⬇ Скачать моё задание (.txt)</button>
+      <span class="muted" id="revMsg" style="margin-left:10px;font-size:12.5px"></span></div>
+  </div>
+  <div class="transfer-note">⚙ Для переноса в платформу Актион: здесь подключается отправка куратору — проверка №3.</div>
+  <div class="note green" id="finalNote" style="margin-top:18px;display:none">⬆️ <b>Ассистент закрепил навык «Документы и таблицы».</b> Что забрать: опишите формат результата; давайте данные текстом/Markdown, не картинкой; на объёме проверяйте позиции и итоги сами.</div>
+
+</div>
+<script>
+/* ===== ТЕКСТОВЫЕ ДАННЫЕ ===== */
+const DATA={
+  promptCompare:`Ты — опытный инженер-сметчик. Ниже требование ТЗ и несколько коммерческих предложений на один предмет закупки.
+
+Сведи предложения в СРАВНИТЕЛЬНУЮ таблицу. Столбцы: параметр | требование ТЗ | Подрядчик 1 | Подрядчик 2 | ... .
+Строки: цена за м³ «в деле» (укажи «с НДС» или «без НДС»), опалубка (в цене/отдельно), армирование (в цене/отдельно), реальная цена с учётом вынесенных позиций, итоговая сумма, срок, аванс, гарантия, опыт, соответствие ТЗ.
+
+Правила:
+- подсвети словами «не соответствует ТЗ» все отклонения (класс бетона, объём, аванс > 30%, гарантия < 5 лет);
+- отметь вынесенные за смету позиции (опалубка, армирование) — их нельзя сравнивать «в лоб» по цене за м³;
+- отметь, где цена БЕЗ НДС (УСН) — её нельзя сравнивать напрямую с ценой с НДС;
+- если значения нет — пиши «не указано», ничего не придумывай;
+- итоговые суммы я проверю сам, ты их не «угадывай».
+
+В конце — 2–3 предложения: какой подрядчик предпочтительнее и почему.
+
+[ВСТАВЬТЕ ТЗ]
+[ВСТАВЬТЕ КП-1 … КП-5]`
+};
+
+/* ===== СКАЧИВАНИЕ ===== */
+function dl(name,text,mime){mime=mime||'text/plain';const bom=mime.indexOf('csv')>=0?'﻿':'';
+  const b=new Blob([bom+text],{type:mime+';charset=utf-8'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},100);}
+
+/* ===== ПРЕДПРОСМОТР ВСТРОЕННЫЙ ===== */
+let inlineOpenKey={};
+function renderInline(containerId,titleHtml,bodyHtml,actsHtml,toggleKey){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  if(inlineOpenKey[containerId]===toggleKey){
+    box.classList.remove('open');
+    box.innerHTML='';
+    inlineOpenKey[containerId]=null;
+    return;
+  }
+  box.innerHTML='<div class="dih"><span>'+titleHtml+'</span><span class="acts">'+actsHtml+'<button onclick="collapseInline(\''+containerId+'\')">Свернуть ▲</button></span></div><div class="dibody">'+bodyHtml+'</div>';
+  box.classList.add('open');
+  inlineOpenKey[containerId]=toggleKey;
+  box.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function collapseInline(containerId){
+  const box=document.getElementById(containerId);
+  if(!box) return;
+  box.classList.remove('open');
+  box.innerHTML='';
+  inlineOpenKey[containerId]=null;
+}
+let textPreviewCur=null;
+function previewText(title,text,containerId){
+  containerId=containerId||'docinline-6';
+  textPreviewCur=text;
+  const bodyHtml='<pre>'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre>';
+  const acts='<button class="pri" onclick="dl(\''+title.replace(/\W+/g,'_')+'.txt\', textPreviewCur)">📥 Скачать .txt</button>';
+  renderInline(containerId, title, bodyHtml, acts, 'text:'+title);
+}
+
+/* ===== ПРАКТИКА ===== */
+document.getElementById('promptBox').textContent=DATA.promptCompare;
+function copyPrompt(){navigator.clipboard.writeText(DATA.promptCompare).then(()=>{document.getElementById('copyMsg').textContent='Скопировано ✓';setTimeout(()=>document.getElementById('copyMsg').textContent='',2500);}).catch(()=>{document.getElementById('copyMsg').textContent='Выделите и скопируйте вручную';});}
+document.getElementById('sendRev').addEventListener('click',()=>{
+  const res=document.getElementById('sRes').value.trim();
+  const done=document.getElementById('sDone').checked;
+  const m=document.getElementById('revMsg');
+  if(!res){m.textContent='Вставьте результат из живого чата';return;}
+  if(!done){m.textContent='Отметьте, что сверили итоги и нашли ловушку';return;}
+  const raw=`Шаг 16 (Сравнение смет и КП) — моё задание\nКейс: ЖК «Уютный дом на Матвеева», монолитные работы, 5 КП\n\nРезультат (сравнительная таблица от ИИ):\n${res}\n\nСамопроверка: итоги сверены вручную, ловушка найдена.`;
+  dl('Шаг-16_моё-задание.txt', raw);
+  document.getElementById('finalNote').style.display='block';
+  m.textContent='Файл скачан ✓';
+});
+</script>
+</body>
+</html>

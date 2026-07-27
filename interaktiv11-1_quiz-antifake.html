@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Мини-тренажёр: найди, что ИИ выдумал</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .note.green{color:#157a41;background:#eef8f1;border-color:#cdebd8}.note.red{color:#a3201a;background:#fdf0ef;border-color:#f3c7c3}
+  .quiz .qq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:15px;font-weight:700;margin:0 0 12px}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+  .opt{cursor:pointer;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font-size:14px;font-family:inherit;color:var(--ink);transition:.15s}
+  .opt:hover{border-color:var(--ink)}
+  .opt.ok{border-color:var(--green);background:#eef8f1}
+  .opt.err{border-color:var(--brand);background:#fdf0ef}
+  .opt:disabled{cursor:default;opacity:.85}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">5 · Проверь себя</p>
+  <h2>Мини-тренажёр: найди, что ИИ выдумал</h2>
+  <p class="muted">Ниже — фрагмент ответа ИИ на промпт БЕЗ «грунтовки против выдумок» (плохой промпт слева). Кликните, что в нём выдумано, а не взято из договора файла 14.</p>
+
+  <div class="quiz" data-quiz>
+    <p class="qq">«Цена договора составляет 84 500 000 рублей, включая НДС» — что не так с этим предложением ответа ИИ?</p>
+    <div class="opts">
+      <button class="opt" data-fb="Тип цены назван верно — в п. 2 действительно сказано, что цена твёрдая. Но сама сумма в исходном тексте не указана.">Ошибка в типе цены — договор допускает изменение цены</button>
+      <button class="opt" data-correct data-fb="Именно так. В п. 2 стоит пустой реквизит «__ руб.» — цифры 84 500 000 в документе нет вообще, модель её выдумала, чтобы ответ выглядел «полным».">Сумма выдумана — в п. 2 договора цена не заполнена (пусто)</button>
+      <button class="opt" data-fb="НДС в договоре действительно упомянут («включая НДС») — это не выдумка, ошибка в другом.">Ошибка в упоминании НДС — в договоре про НДС ничего нет</button>
+    </div>
+    <div class="qfb"></div>
+  </div>
+
+  <div class="quiz" data-quiz style="margin-top:18px">
+    <p class="qq">«Договор № 47-СП от 12 марта 2026 г.» — что не так?</p>
+    <div class="opts">
+      <button class="opt" data-fb="Дата в этом варианте действительно неверна по формату, но главная проблема глубже — сам номер тоже не из документа.">Неверный формат даты — правильно «12.03.2026»</button>
+      <button class="opt" data-correct data-fb="Верно. И номер «47-СП», и дата «12 марта 2026» — в шапке договора эти поля пустые («№ __ от „__“ 2026 г.»). Оба значения модель придумала.">Номер и дата выдуманы — в шапке договора эти поля не заполнены</button>
+      <button class="opt" data-fb="Год назван правильно (2026) — по документу событие в этом году, проблема не в годе.">Неверно указан год — в договоре указан не 2026-й</button>
+    </div>
+    <div class="qfb"></div>
+  </div>
+
+  <div class="quiz" data-quiz style="margin-top:18px">
+    <p class="qq">«Гарантийный срок на результат работ — 5 лет с даты ввода в эксплуатацию» — что не так?</p>
+    <div class="opts">
+      <button class="opt" data-correct data-fb="Верно — можно проверить: п. 5 файла 14 дословно говорит «Гарантийный срок на результат работ — 5 лет с даты ввода в эксплуатацию». Это факт из документа, не выдумка.">Ничего не так — это дословно из п. 5 договора, факт подтверждён</button>
+      <button class="opt" data-fb="В договоре указано «5 лет», а не «3 года» — эта цифра не выдумана, она есть в п. 5.">Срок выдуман — в договоре указано 3 года, а не 5 лет</button>
+      <button class="opt" data-fb="Дата ввода в эксплуатацию не названа конкретной датой — в п. 5 она именно «с даты ввода в эксплуатацию», без уточнения. Это не ошибка, а корректная формулировка исходника.">Не хватает конкретной даты ввода — это тоже выдумка</button>
+    </div>
+    <div class="qfb"></div>
+  </div>
+
+</div>
+<script>
+/* ── BLOCK: QUIZ ── */
+(function(){
+  document.querySelectorAll('[data-quiz]').forEach(function(q){
+    var fb=q.querySelector('.qfb');
+    q.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.hasAttribute('data-correct');
+        q.querySelectorAll('.opt').forEach(function(b){
+          b.disabled=true;
+          if(b.hasAttribute('data-correct'))b.classList.add('ok');
+        });
+        if(!ok)btn.classList.add('err');
+        fb.innerHTML='<div class="note '+(ok?'green':'red')+'">'+(ok?'✅ <b>Верно.</b> ':'❌ <b>Не совсем.</b> ')+(btn.dataset.fb||'')+'</div>';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

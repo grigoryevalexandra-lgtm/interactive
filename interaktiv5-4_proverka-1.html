@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 4. Проверка №1 — заберите шаблон для вашей роли</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px;word-break:break-word}
+  .muted{color:var(--muted)}
+  .kv{display:grid;grid-template-columns:130px 1fr;gap:10px 14px;margin:14px 0}
+  .kv .k{color:var(--muted);font-size:13px;padding-top:9px}
+  .kv input,.kv select{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:14px;font-family:inherit}
+  .kv input:focus,.kv select:focus{outline:none;border-color:var(--blue)}
+  .kv input::placeholder{color:#b7b2a8}
+  .example-row{display:flex;justify-content:flex-end;margin-top:-6px}
+  .link-btn{background:none;border:none;padding:0;color:var(--blue);font-size:12.5px;font-weight:700;cursor:pointer;text-decoration:underline}
+  .assembled{background:var(--card);border:1px dashed var(--blue);border-radius:10px;padding:14px;font-size:13.5px;white-space:pre-wrap;margin-top:6px;min-height:58px;word-break:break-word}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:14px 0 6px}
+  .review label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
+  .review input{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit}
+  .review input:focus{outline:none;border-color:var(--blue)}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:var(--rs);padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .transfer-note{border:1.5px dashed var(--purple);background:#faf6ff;border-radius:12px;padding:12px 14px;font-size:13px;color:#5b3a94;margin-top:12px}
+  .transfer-note .tnlabel{display:flex;align-items:center;gap:7px;font-weight:800;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase;color:var(--purple);margin-bottom:5px}
+  @media(max-width:560px){.kv{grid-template-columns:1fr}.kv .k{padding-top:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h3>Заберите шаблон для вашей роли — Проверка № 1</h3>
+  <p class="muted">Соберите промпт по формуле «роль + контекст + задача + формат», при желании возьмите пример для своей роли из кейса ЖК «Уютный дом на Матвеева», затем скачайте задание для проверки куратором.</p>
+
+  <div class="kv">
+    <div class="k">Роль (кейс)</div>
+    <select id="pRoleSelect">
+      <option value="PTO">Инженер ПТО</option>
+      <option value="SK">Стройконтроль / технадзор</option>
+      <option value="GIP">ГИП / проектировщик</option>
+      <option value="SM">Сметчик</option>
+      <option value="PR">Прораб / начальник участка</option>
+      <option value="OT">Инженер ОТ</option>
+    </select>
+  </div>
+  <div class="kv">
+    <div class="k">Роль для ИИ</div><input id="pRole" type="text" placeholder="Например: ты инженер ПТО на объекте...">
+    <div class="k">Контекст / документ</div><input id="pCtx" type="text" placeholder="Например: прикладываю письмо техзаказчика №311...">
+    <div class="k">Задача</div><input id="pTask" type="text" placeholder="Например: выдели все требования и сроки...">
+    <div class="k">Формат ответа</div><input id="pFmt" type="text" placeholder="Например: чек-лист по пунктам со сроками">
+  </div>
+  <div class="example-row"><button class="link-btn" id="showExampleBtn">показать пример для моей роли</button></div>
+  <div class="stp">Ваш промпт</div>
+  <div class="assembled" id="assembled">—</div>
+
+  <div class="review">
+    <label for="lResult">Ответ ИИ (вставьте, если уже проверили промпт в живом чате)</label>
+    <input id="lResult" type="text" placeholder="Кратко: что ответил ИИ-чат">
+    <label for="dEmail">Ваш e-mail для ответа куратора</label>
+    <input id="dEmail" type="email" placeholder="you@example.ru">
+  </div>
+  <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <button class="btn" id="dDownloadBtn">⬇ Скачать моё задание (.txt)</button>
+    <span class="muted" id="dMsg" style="font-size:13px"></span>
+  </div>
+  <div class="transfer-note">
+    <div class="tnlabel">⚙ Для переноса в платформу Актион</div>
+    Здесь платформа подключает отправку куратору — проверка №1 (см. паспорта шагов). В демо-комплекте вместо реальной отправки — локальное скачивание .txt с текстом задания, ничего никуда не отправляется.
+  </div>
+</div>
+<script>
+(function(){
+  var CASE_DATA = {
+    PTO:{name:"Инженер ПТО", p:{role:"Ты инженер ПТО на объекте ЖК «Уютный дом на Матвеева», знаешь состав проектной документации по 87-ПП.",
+        ctx:"Прикладываю письмо техзаказчика АО «ЕкатеринбургТехзаказчик» исх. №311 от 24.06.2026 с замечаниями по секции 2.",
+        task:"Выдели из письма все требования и сроки в виде чек-листа, сгруппируй по пунктам.",
+        fmt:"Таблица: пункт письма · требование · срок · какой документ нужен для ответа."}},
+    SK:{name:"Стройконтроль / технадзор", p:{role:"Ты специалист стройконтроля на объекте ЖК «Уютный дом на Матвеева».",
+        ctx:"Прикладываю письмо техзаказчика №311 от 24.06.2026 с замечаниями по секции 2.",
+        task:"Составь черновик официального ответа с планом мероприятий по каждому пункту и сроками.",
+        fmt:"Официальное письмо: по каждому пункту письма — мероприятие, ответственный, срок."}},
+    GIP:{name:"ГИП / проектировщик", p:{role:"Ты ГИП на объекте ЖК «Уютный дом на Матвеева».",
+        ctx:"Прикладываю письмо техзаказчика №311 от 24.06.2026, п. 2 (замечание по исполнительной документации).",
+        task:"Составь пояснительную записку с планом устранения замечания.",
+        fmt:"Короткая пояснительная записка: суть замечания, причина, план устранения, срок."}},
+    SM:{name:"Сметчик", p:{role:"Ты сметчик, готовишь обоснование цены по договору подряда с ООО «СтройМонолит».",
+        ctx:"Прикладываю проект договора подряда (фрагмент) по объекту ЖК «Уютный дом на Матвеева».",
+        task:"Выдели из договора все обязанности подрядчика и все сроки в виде чек-листа, отдельно отметь риски в статьях о цене и ответственности.",
+        fmt:"Таблица: пункт договора · обязанность/условие · срок · риск (если есть)."}},
+    PR:{name:"Прораб / начальник участка", p:{role:"Ты прораб секции 2 на объекте ЖК «Уютный дом на Матвеева».",
+        ctx:"Прикладываю письмо техзаказчика №311 от 24.06.2026.",
+        task:"Составь для себя короткий план действий по пунктам письма с датами.",
+        fmt:"Список из 3 пунктов: что сделать, к какому сроку, что подготовить."}},
+    OT:{name:"Инженер ОТ", p:{role:"Ты инженер по охране труда на объекте ЖК «Уютный дом на Матвеева».",
+        ctx:"Прикладываю проект договора подряда (фрагмент), п. 7 «Обязанности подрядчика».",
+        task:"Выдели обязанности подрядчика по охране труда и предложи, что включить в раздел ОТ ППР.",
+        fmt:"Список пунктов с кратким пояснением к каждому."}}
+  };
+
+  var ids=['pRole','pCtx','pTask','pFmt'];
+  var assembled=document.getElementById('assembled');
+  var roleSelect=document.getElementById('pRoleSelect');
+
+  function assemble(){
+    var r=document.getElementById('pRole').value.trim(), c=document.getElementById('pCtx').value.trim(),
+        t=document.getElementById('pTask').value.trim(), f=document.getElementById('pFmt').value.trim();
+    assembled.textContent=(r||c||t||f) ? (r+"\n"+c+"\n\nЗадача: "+t+"\nФормат ответа: "+f) : '—';
+  }
+  ids.forEach(function(id){document.getElementById(id).addEventListener('input',assemble);});
+  document.getElementById('showExampleBtn').addEventListener('click',function(){
+    var d=CASE_DATA[roleSelect.value].p;
+    document.getElementById('pRole').value=d.role;
+    document.getElementById('pCtx').value=d.ctx;
+    document.getElementById('pTask').value=d.task;
+    document.getElementById('pFmt').value=d.fmt;
+    assemble();
+  });
+
+  document.getElementById('dDownloadBtn').addEventListener('click',function(){
+    var m=document.getElementById('dMsg');
+    var prompt=assembled.textContent==='—'?'':assembled.textContent;
+    var roleName=CASE_DATA[roleSelect.value].name;
+    var lcResult=document.getElementById('lResult').value.trim();
+    var email=document.getElementById('dEmail').value.trim();
+    if(!prompt){m.textContent='Сначала соберите промпт выше';return;}
+    var raw='Шаг 5 — моё задание (проверка №1)\n\nРоль: '+roleName+'\n\nПромпт:\n'+prompt+'\n\nОтвет ИИ (из живого чата):\n'+lcResult+'\n\nОтвет на e-mail: '+email;
+    var blob=new Blob([raw],{type:'text/plain;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url; a.download='shag-05-zadanie.txt'; document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    m.textContent='Файл скачан ✓';
+  });
+
+  assemble();
+})();
+</script>
+</body>
+</html>

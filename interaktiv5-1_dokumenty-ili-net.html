@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Тренажёр: без документов / с документами</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  img,svg,table{max-width:100%}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  h3{font-size:16px;margin:0 0 8px;font-weight:800}
+  p{margin:0 0 12px;word-break:break-word}
+  .muted{color:var(--muted)}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .trainerbox{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card)}
+  .roles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+  .role{cursor:pointer;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;transition:.15s;display:flex;gap:10px;align-items:flex-start}
+  .role:hover{border-color:var(--ink)}
+  .role.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+  .role .ic{font-size:22px}.role b{display:block;font-size:14px;margin-bottom:2px}.role span{font-size:12px;color:var(--muted)}
+  .q{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+  .q .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+  .q .txt{font-size:15.5px;font-weight:700}
+  .toggle-row{display:flex;align-items:center;gap:14px;margin:6px 0 16px;flex-wrap:wrap}
+  .switch{position:relative;display:inline-block;width:52px;height:28px;flex:0 0 auto}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;cursor:pointer;inset:0;background:var(--line);border-radius:30px;transition:.2s}
+  .slider:before{content:"";position:absolute;height:20px;width:20px;left:4px;bottom:4px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  input:checked + .slider{background:var(--green)}input:checked + .slider:before{transform:translateX(24px)}
+  .toggle-label b{font-size:14.5px}.toggle-label span{display:block;font-size:12px;color:var(--muted)}
+  .docchip{display:inline-flex;align-items:center;gap:7px;background:#e7f6ee;border:1px solid #bfe6cf;color:#157a41;border-radius:8px;padding:5px 10px;font-size:12.5px;font-weight:700;opacity:0;transform:translateY(-4px);transition:.25s;pointer-events:none}
+  .docchip.show{opacity:1;transform:none}
+  .meter{margin:6px 0 16px}
+  .meter .ml{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px}
+  .bar{height:9px;border-radius:6px;background:var(--card2);overflow:hidden}
+  .bar i{display:block;height:100%;width:18%;background:var(--brand);border-radius:6px;transition:.45s}
+  .bar.on i{width:96%;background:var(--green)}
+  .verdict{font-size:13px;font-weight:700;margin-top:5px}
+  .answer{border-radius:14px;padding:16px;border:1px solid var(--line);transition:.3s;min-height:100px;background:#fff}
+  .answer.off{background:#fdf0ef;border-color:#f3c7c3}
+  .answer.on{background:#eef8f1;border-color:#cdebd8}
+  .answer .ahead{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-weight:800;font-size:14px}
+  .answer.off .ahead{color:var(--brand)}.answer.on .ahead{color:#157a41}
+  .answer .abody{font-size:14px}.answer .cite{margin-top:10px;font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+  @media(max-width:560px){.roles{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h3>Тренажёр: один вопрос — два разных ИИ</h3>
+  <p class="muted">Выберите свою роль, затем включите тумблер «Подключить документы компании» и сравните, как меняется ответ на один и тот же рабочий вопрос по объекту ЖК «Уютный дом на Матвеева».</p>
+  <div id="mount"></div>
+</div>
+<script>
+(function(){
+  var CASE_DATA = {
+    PTO:{name:"Инженер ПТО",
+       q:"Какой класс бетона у плиты перекрытия 4 этажа секции 2, и что по гарантии на СМР по нашему договору?",
+       doc:"Договор подряда · ООО «СтройМонолит».md",
+       off:"Для жилых монолитных перекрытий обычно применяют бетон класса B20–B25. Гарантийный срок на СМР в договорах подряда чаще всего 3–5 лет — конкретику смотрите в своём договоре, формулировки сильно различаются.",
+       on:"Плита перекрытия 4 этажа секции 2 — бетон <b>B25</b> (по спецификации КР). Гарантийный срок на результат работ по договору подряда с ООО «СтройМонолит» — <b>5 лет</b> с даты ввода объекта в эксплуатацию (п. 5 договора).",
+       cite:"Источник: спецификация КР по секции 2; Договор подряда № __ , п. 5 «Качество и гарантия»."},
+    SK:{name:"Стройконтроль / технадзор",
+       q:"Что нужно сделать по замечаниям техзаказчика из письма №311, чтобы закрыть отставание по секции 2?",
+       doc:"Письмо техзаказчика №311 от 24.06.2026.md",
+       off:"Обычно при отставании от графика составляют план мероприятий по наверстыванию: усиление бригад, пересмотр очерёдности работ, еженедельная сверка факта с планом. Детали зависят от конкретной ситуации на объекте.",
+       on:"По письму №311 от 24.06.2026 нужно закрыть 3 пункта: 1) скорректированный график по секции 2 (этажи 4–9, отставание ~8%) — <b>до 30.06.2026</b>; 2) реестр актов исполнительной за июнь с документами входного контроля — <b>до 01.07.2026</b>; 3) еженедельный фотоотчёт по установленной форме — <b>с 30.06.2026</b>.",
+       cite:"Источник: письмо технического заказчика АО «ЕкатеринбургТехзаказчик» исх. №311 от 24.06.2026, пп. 1–3."},
+    GIP:{name:"ГИП / проектировщик",
+       q:"Как правильно ответить на замечание техзаказчика по качеству исполнительной документации из письма №311?",
+       doc:"Письмо техзаказчика №311 от 24.06.2026.md",
+       off:"В таких случаях обычно поясняют причину расхождений и прикладывают откорректированные документы. Общих формулировок недостаточно — нужно видеть само замечание и состав исполнительной документации по объекту.",
+       on:"Пункт 2 письма №311 указывает: по ряду актов АОСР отсутствуют документы входного контроля материалов. Нужен реестр актов за июнь с приведением исполнительной документации в соответствие — срок <b>до 01.07.2026</b>. Это перекликается с актом освидетельствования (файл 04) и предписанием стройконтроля (файл 05).",
+       cite:"Источник: письмо техзаказчика №311 от 24.06.2026, п. 2."},
+    SM:{name:"Сметчик",
+       q:"Какая цена и порядок расчётов по договору подряда с ООО «СтройМонолит», и как её обосновать?",
+       doc:"Договор подряда · ООО «СтройМонолит».md",
+       off:"В договорах строительного подряда цена обычно твёрдая и определяется на основании локальной сметы, изменение возможно только в предусмотренных законом случаях. Точные цифры и порядок расчётов смотрите в самом договоре — общих цифр здесь нет.",
+       on:"Цена договора — <b>твёрдая</b>, определяется на основании ЛСР (п. 2). Изменение цены возможно только в случаях, предусмотренных законом. Работы принимаются по актам <b>КС-2</b> и справке <b>КС-3</b> ежемесячно, скрытые работы — по актам АОСР (п. 4). Пеня за просрочку — 1/300 ключевой ставки ЦБ от цены неисполненного за каждый день (п. 6).",
+       cite:"Источник: Проект договора подряда, ЖК «Уютный дом на Матвеева», пп. 2, 4, 6."},
+    PR:{name:"Прораб / начальник участка",
+       q:"Что мне как прорабу секции 2 нужно предоставить по письму техзаказчика №311 и в какие сроки?",
+       doc:"Письмо техзаказчика №311 от 24.06.2026.md",
+       off:"При отставании от графика обычно требуют скорректированный план работ и усиленный контроль исполнительной документации. Без самого письма назвать точные сроки и формы отчётности нельзя.",
+       on:"По письму №311: 1) до <b>30.06.2026</b> — скорректированный график по монолитным работам этажей 4–9 секции 2 (отставание ~8%); 2) до <b>01.07.2026</b> — навести порядок в исполнительной документации, добавить документы входного контроля к актам; 3) с <b>30.06.2026</b> — еженедельный фотоотчёт по форме техзаказчика.",
+       cite:"Источник: письмо техзаказчика №311 от 24.06.2026, пп. 1–3."},
+    OT:{name:"Инженер ОТ",
+       q:"Что говорит договор подряда про охрану труда и пожарную безопасность на объекте?",
+       doc:"Договор подряда · ООО «СтройМонолит».md",
+       off:"Обычно в договорах подряда есть общая формулировка про соблюдение подрядчиком норм охраны труда и пожарной безопасности. Конкретные требования и ответственность зависят от текста самого договора.",
+       on:"По п. 7 договора подрядчик обязан: вести исполнительную документацию (по приказу Минстроя № 344/пр), обеспечить входной контроль материалов, <b>соблюдать охрану труда и пожарную безопасность</b>, устранять замечания строительного контроля в установленные сроки.",
+       cite:"Источник: Проект договора подряда, ЖК «Уютный дом на Матвеева», п. 7 «Обязанности подрядчика»."}
+  };
+
+  var mount=document.getElementById('mount');
+  mount.innerHTML =
+    '<div class="trainerbox">'+
+      '<div class="roles" id="taRoles">'+
+        '<div class="role sel" data-role="PTO"><div class="ic">📋</div><div><b>Инженер ПТО</b><span>комплектность РД, акты</span></div></div>'+
+        '<div class="role" data-role="SK"><div class="ic">🦺</div><div><b>Стройконтроль</b><span>предписания, контроль СМР</span></div></div>'+
+        '<div class="role" data-role="GIP"><div class="ic">📐</div><div><b>ГИП / проектировщик</b><span>ответы на замечания</span></div></div>'+
+        '<div class="role" data-role="SM"><div class="ic">🧮</div><div><b>Сметчик</b><span>сравнение КП, ЛСР/ВОР</span></div></div>'+
+        '<div class="role" data-role="PR"><div class="ic">🏗️</div><div><b>Прораб</b><span>ОЖР, заявки, отчёты</span></div></div>'+
+        '<div class="role" data-role="OT"><div class="ic">⚠️</div><div><b>Инженер ОТ</b><span>инструктажи, ППР</span></div></div>'+
+      '</div>'+
+      '<div class="q"><div class="lbl">Ваш вопрос к ИИ</div><div class="txt" id="taQText">—</div></div>'+
+      '<div class="toggle-row">'+
+        '<label class="switch"><input type="checkbox" id="taToggle"><span class="slider"></span></label>'+
+        '<div class="toggle-label"><b>Подключить документы компании</b><span>загрузить рабочие файлы в контекст ИИ</span></div>'+
+        '<span class="docchip" id="taDocChip">📎 <span id="taDocName">документ</span></span>'+
+      '</div>'+
+      '<div class="meter">'+
+        '<div class="ml"><span>Знание о вашей компании</span><span id="taKnowPct">18%</span></div>'+
+        '<div class="bar" id="taKnowBar"><i></i></div>'+
+        '<div class="verdict" id="taVerdict" style="color:var(--brand)">⚠️ Отвечает «в среднем по рынку» — может ошибиться</div>'+
+      '</div>'+
+      '<div class="answer off" id="taAnswer">'+
+        '<div class="ahead" id="taAnsHead">🤖 ИИ без ваших документов</div>'+
+        '<div class="abody" id="taAnsBody">—</div>'+
+        '<div class="cite" id="taAnsCite" style="display:none"></div>'+
+      '</div>'+
+      '<div class="note">Заметили? ИИ не стал «умнее» — он просто получил <b>контекст</b>. Тот же чат, та же модель. Изменилось одно: ему дали ваши документы.</div>'+
+    '</div>';
+
+  var role='PTO';
+  var toggle=mount.querySelector('#taToggle');
+
+  function loadRole(){
+    var d=CASE_DATA[role];
+    mount.querySelector('#taQText').textContent=d.q;
+    mount.querySelector('#taDocName').textContent=d.doc;
+    toggle.checked=false;
+    render();
+  }
+  function render(){
+    var d=CASE_DATA[role], on=toggle.checked;
+    var ans=mount.querySelector('#taAnswer'), bar=mount.querySelector('#taKnowBar');
+    mount.querySelector('#taDocChip').classList.toggle('show',on);
+    ans.classList.toggle('on',on); ans.classList.toggle('off',!on); bar.classList.toggle('on',on);
+    mount.querySelector('#taKnowPct').textContent=on?'96%':'18%';
+    mount.querySelector('#taAnsHead').innerHTML=on?'✅ ИИ с вашими документами':'🤖 ИИ без ваших документов';
+    mount.querySelector('#taAnsBody').innerHTML=on?d.on:d.off;
+    var v=mount.querySelector('#taVerdict');
+    if(on){v.style.color='var(--green)';v.innerHTML='✓ Отвечает по вашим данным — со ссылкой, можно проверить';}
+    else{v.style.color='var(--brand)';v.innerHTML='⚠️ Отвечает «в среднем по рынку» — может ошибиться';}
+    var cite=mount.querySelector('#taAnsCite');
+    cite.style.display=on?'block':'none'; cite.textContent=on?d.cite:'';
+  }
+  mount.querySelectorAll('.role').forEach(function(el){
+    el.addEventListener('click',function(){
+      mount.querySelectorAll('.role').forEach(function(r){r.classList.remove('sel');});
+      el.classList.add('sel'); role=el.dataset.role; loadRole();
+    });
+  });
+  toggle.addEventListener('change',render);
+  loadRole();
+})();
+</script>
+</body>
+</html>

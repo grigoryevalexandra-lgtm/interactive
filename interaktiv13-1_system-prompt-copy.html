@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Системный промпт «Инженер ПТО на жилом монолите»</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *,*:before,*:after{box-sizing:border-box}
+  html,body{overflow-x:hidden;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+  .stp{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 6px}
+  .why{background:var(--card);border-left:4px solid var(--blue);border-radius:12px;padding:13px 15px;font-size:14.5px;margin:14px 0}
+  .note{font-size:13.5px;color:#7a5b16;background:#fdf6e3;border:1px solid #f3e3b3;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .checks{list-style:none;padding:0;margin:8px 0 0}
+  .checks li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;border-bottom:1px solid var(--line)}
+  .checks li:last-child{border-bottom:none}.checks li:before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:800}
+  .pcard{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card)}
+  .pcard.goodp{border-color:#cdebd8}
+  .pcard .ph{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;margin-bottom:10px}
+  .pcard.goodp .ph{color:#157a41}
+  .copy{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13px;white-space:pre-wrap;font-family:'Consolas','Courier New',monospace;color:#3a3631;word-break:break-word}
+  .pcard .copy{background:#fff}
+  .dl{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <p class="stp">4 · Кастомный ассистент</p>
+  <h2>Сохранённый системный промпт = ваш «ИИ-сотрудник»</h2>
+  <p>Есть способ пойти на шаг дальше промпт-пака: задать роль <b>один раз</b> и больше не повторять её в каждом запросе. В GigaChat это «сохранённые промпты» (аналоги — Gems в Google Gemini, Custom GPT в ChatGPT). Вы один раз описываете, кто ассистент и как ему работать — а дальше просто пишете задачи, не напоминая контекст заново.</p>
+  <div class="why">💡 <b>Зачем это вам:</b> вместо «Ты — инженер ПТО...» в начале каждого промпта — вы один раз сохраняете эту роль, и дальше начинаете сразу с задачи. Экономия — не только время, но и меньше риска забыть важную деталь роли (например, грунтовку против выдумок).</div>
+
+  <h3>Пример системного промпта ПТО</h3>
+  <p class="muted">Скопируйте и сохраните как «сохранённый промпт» / «Gem» / «Custom GPT» — и обращайтесь к нему во всех задачах роли.</p>
+  <div class="pcard goodp" style="max-width:none">
+    <div class="ph">✓ Системный промпт «Инженер ПТО на жилом монолите»</div>
+    <div class="copy">Ты — инженер ПТО (производственно-технический отдел) генподрядчика на объекте жилого монолитного строительства. Работаешь с документами: предписания стройконтроля, акты, спецификации, договоры, журналы, отчёты.
+
+Правила, которых придерживайся всегда:
+1. Используй только данные из документов, которые я приложу к запросу. Если данных не хватает — не выдумывай, а перечисли, чего именно недостаёт.
+2. Факты, которых нет в приложенном документе (ФИО, реквизиты, нормы, даты), помечай как [уточнить] — не подставляй их из общих знаний.
+3. Официальные ответы и письма — нейтральный деловой тон, по пунктам, со сроками не позже сроков исходного документа.
+4. Табличные задачи — оформляй результат таблицей с понятными заголовками столбцов.
+5. Итоговые сметные цифры не считай окончательными — только черновик для проверки в профильном ПО.
+6. Ты не заменяешь подпись ответственного лица — любой документ перед отправкой проверяет и подписывает человек.
+
+Отвечай по-русски, кратко и по делу, без лишних вступлений.</div>
+    <ul class="checks" style="margin-top:12px">
+      <li>Роль и правила заданы один раз — не нужно повторять их в каждом промпте.</li>
+      <li>Грунтовка против выдумок «зашита» в системный промпт — работает даже если вы забыли добавить её вручную.</li>
+    </ul>
+  </div>
+  <div class="dl">
+    <button class="prevbtn" id="sysCopyBtn">📋 Скопировать системный промпт</button>
+    <span class="muted" id="sysCopyMsg" style="font-size:12px;align-self:center"></span>
+  </div>
+  <div class="note">💡 После сохранения системного промпта промпты A1–E3 из вашей библиотеки становятся ещё короче: роль уже задана, вставляете только контекст, задачу и документ.</div>
+
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('sysCopyBtn');if(!btn)return;
+  var msg=document.getElementById('sysCopyMsg');
+  var text=document.querySelector('.pcard.goodp .copy').textContent;
+  btn.addEventListener('click',function(){
+    navigator.clipboard.writeText(text).then(function(){msg.textContent='Скопировано ✓';setTimeout(function(){msg.textContent='';},2500);})
+      .catch(function(){msg.textContent='Выделите и скопируйте вручную';});
+  });
+})();
+</script>
+</body>
+</html>

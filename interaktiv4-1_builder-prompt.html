@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Интерактив 1. Конструктор запроса по письму №311</title>
+<style>
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h2{font-size:21px;margin:2px 0 12px;font-weight:800;letter-spacing:-.01em}
+  p{margin:0 0 12px}.muted{color:var(--muted)}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;border-radius:10px;padding:11px 17px;font-size:14px;background:var(--blue);color:#fff;transition:.15s}
+  .btn:hover{filter:brightness(.95)}
+  .dl,.brow{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+  .dl button,.prevbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .dl button:hover,.prevbtn:hover{border-color:var(--ink)}
+  .builder{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+  .bfield label{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin-bottom:5px}
+  .bfield input{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit}
+  .bfield input:focus{outline:none;border-color:var(--blue)}
+  .bfield input::placeholder{color:#b7b2a8}
+  .assembled{background:var(--card);border:1px dashed var(--blue);border-radius:10px;padding:14px;font-size:13.5px;white-space:pre-wrap;margin-top:12px;min-height:70px;font-family:'Consolas','Courier New',monospace;color:#3a3631}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto;padding:16px">
+
+  <h2>Конструктор запроса по письму №311</h2>
+  <p class="muted">Заполните четыре поля своими словами — или нажмите «показать пример», чтобы увидеть разбор письма №311 (по мотивам промпта A3 из промпт-пака ПТО). Мир примера — ЖК «Уютный дом на Матвеева».</p>
+  <div class="builder">
+    <div class="bfield"><label>Роль</label><input id="bRole" type="text" placeholder="Например: ты инженер ПТО генподрядчика на ЖК «Уютный дом на Матвеева»…"></div>
+    <div class="bfield"><label>Контекст</label><input id="bCtx" type="text" placeholder="Например: прикладываю письмо техзаказчика №311 от 24.06.2026…"></div>
+    <div class="bfield"><label>Задача</label><input id="bTask" type="text" placeholder="Например: подготовь ответ с мероприятиями и сроками по каждому пункту…"></div>
+    <div class="bfield"><label>Формат</label><input id="bFmt" type="text" placeholder="Например: официальный ответ + таблица «требование → действие → срок»…"></div>
+  </div>
+  <div class="brow">
+    <button class="prevbtn" id="exampleBtn">💡 Показать пример (разбор письма №311)</button>
+    <button class="btn" id="assembleBtn">🧩 Собрать промпт</button>
+    <button class="prevbtn" id="copyBtn">📋 Скопировать</button>
+    <span class="muted" id="buildMsg" style="font-size:12px;align-self:center"></span>
+  </div>
+  <div class="assembled" id="assembled">Заполните поля выше и нажмите «Собрать промпт» — здесь появится готовый текст запроса.</div>
+
+</div>
+<script>
+/* ── BLOCK: BUILDER — конструктор промпта: сборка, пример, копирование ── */
+(function(){
+  var ab=document.getElementById('assembleBtn');if(!ab)return;
+  var exBtn=document.getElementById('exampleBtn'),cpBtn=document.getElementById('copyBtn'),
+      rRole=document.getElementById('bRole'),rCtx=document.getElementById('bCtx'),
+      rTask=document.getElementById('bTask'),rFmt=document.getElementById('bFmt'),
+      out=document.getElementById('assembled'),msg=document.getElementById('buildMsg');
+  var EXAMPLE={
+    role:'Ты — инженер ПТО генподрядчика на объекте ЖК «Уютный дом на Матвеева».',
+    ctx:'Прикладываю письмо технического заказчика АО «ЕкатеринбургТехзаказчик» исх. №311 от 24.06.2026 с тремя замечаниями по секции 2.',
+    task:'Подготовь ответ с конкретными мероприятиями и датами по каждому пункту письма.',
+    fmt:'Официальный ответ + таблица «требование → действие → срок».'
+  };
+  function assemble(){
+    var r=rRole.value.trim(),c=rCtx.value.trim(),t=rTask.value.trim(),f=rFmt.value.trim();
+    if(!r&&!c&&!t&&!f){out.textContent='Заполните поля выше и нажмите «Собрать промпт» — здесь появится готовый текст запроса.';return;}
+    out.textContent=(r||'[роль не указана]')+'\n'+(c||'[контекст не указан]')+'\n\nЗадача: '+(t||'[задача не указана]')+'\nФормат ответа: '+(f||'[формат не указан]');
+    msg.textContent='';
+  }
+  ab.addEventListener('click',assemble);
+  exBtn.addEventListener('click',function(){
+    rRole.value=EXAMPLE.role;rCtx.value=EXAMPLE.ctx;rTask.value=EXAMPLE.task;rFmt.value=EXAMPLE.fmt;
+    assemble();
+  });
+  cpBtn.addEventListener('click',function(){
+    var v=out.textContent.trim();
+    if(!v||v.indexOf('Заполните поля')===0){msg.textContent='Сначала соберите промпт';return;}
+    navigator.clipboard.writeText(v).then(function(){msg.textContent='Скопировано ✓';setTimeout(function(){msg.textContent='';},2500);})
+      .catch(function(){msg.textContent='Выделите и скопируйте вручную';});
+  });
+})();
+</script>
+</body>
+</html>

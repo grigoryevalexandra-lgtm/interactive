@@ -5,8 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>Интерактив 1. Сделай в живом чате: первый запрос за 10 минут</title>
+<!-- Подключение шрифта Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+
 <style>
-  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--blue:#237cf9;--green:#1f9d57;--purple:#9b5de5;--rs:10px;--font:'Proxima Nova','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  :root{--bg:#ffffff;--card:#faf8f5;--card2:#f3efe9;--ink:#1a1814;--muted:#6f7280;--line:#e9e4dc;--brand:#e2231a;--blue:#237cf9;--green:#1f9d57;--yellow:#f5b500;--purple:#9b5de5;--r:16px;--rs:10px;--font:'Inter','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif}
+  /* остальной CSS-код без изменений... */
   *,*:before,*:after{box-sizing:border-box}
   html,body{overflow-x:hidden;margin:0}
   body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -99,34 +105,10 @@
       <label>Вставь сюда свой результат</label>
       <textarea id="lcResult" rows="5" placeholder="Вставьте сюда ответ, который вернул чат-бот на запрос «Составь план дня инженера ПТО на стройке жилого дома»…"></textarea>
     </div>
-    <div class="lcgate">
-      <input type="checkbox" id="lcConfirm">
-      <label for="lcConfirm">Я получил ответ на свой запрос</label>
-    </div>
-    <p class="lcstatus" id="lcStatus">Итоги урока откроются после того, как вы вставите результат и отметите чекбокс.</p>
-    <div class="transfer-note">
-      <div class="tnlabel">⚙ Для переноса в платформу Актион</div>
-      Демо-гейт реализован локальным JS (без сохранения данных). На платформе эта блокировка должна опираться на реальное событие взаимодействия участника с чатом (или просто на заполненное поле + чекбокс, как здесь) — ничего никуда не отправляется и в демо-версии.
-    </div>
+    
   </div>
 
 </div>
-<script>
-(function(){
-  var result=document.getElementById('lcResult'),confirmEl=document.getElementById('lcConfirm');
-  if(!result||!confirmEl)return;
-  var status=document.getElementById('lcStatus');
-  function upd(){
-    var ready=result.value.trim().length>0 && confirmEl.checked;
-    if(status){
-      status.textContent=ready?'✅ Итоги урока открыты.':'Итоги урока откроются после того, как вы вставите результат и отметите чекбокс.';
-      status.classList.toggle('ready',ready);
-    }
-  }
-  result.addEventListener('input',upd);
-  confirmEl.addEventListener('change',upd);
-  upd();
-})();
-</script>
+
 </body>
 </html>

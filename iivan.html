@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Интерактивные карточки навыков</title>
+  <style>
+    /* Базовые настройки шрифта и контейнера */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #faefe6; /* Светло-оранжевый (бежевый) фон в стиле интерфейса чата */
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .learning-section {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Сетка для карточек: 3 в верхнем ряду, 2 по центру в нижнем */
+    .cards-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    /* Настройки 3D-переворота */
+    .flip-card {
+      background-color: transparent;
+      width: 280px;
+      height: 200px;
+      perspective: 1000px;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    /* Анимация при наведении */
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Общие стили для обеих сторон карточки */
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 16px; /* Скругление как у бабблов в чате */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Мягкая тень */
+    }
+
+    /* Лицевая сторона (белая, как сообщения ИИ) */
+    .flip-card-front {
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      background-color: #f0f4f8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3b82f6; /* Фирменный синий цвет кнопок ИИваныча */
+    }
+
+    .card-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* Обратная сторона (синяя, как исходящие сообщения пользователя) */
+    .flip-card-back {
+      background-color: #3b82f6; /* Синий акцент */
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    .card-description {
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    /* Адаптивность для мобильных телефонов */
+    @media (max-width: 640px) {
+      .flip-card {
+        width: 100%;
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="learning-section">
+    <div class="cards-grid">
+      <!-- Карточка 1: ИИ-экспертиза -->
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-icon">
+              <!-- Иконка документа/щита -->
+              <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-2 16c-2.05 0-3.81-1.24-4.58-3h1.71c.63 1.09 1.76 1.8 3.1 1.8 1.93 0 3.5-1.57 3.5-3.5S14.16 9.8 12.23 9.8c-1.34 0-2.47.71-3.1 1.8H7.42c.77-1.76 2.53-3 4.58-3 2.76 0 5 2.24 5 5s-2.24 5-5 5z"/></svg>
+            </div>
+            <h3 class="card-title">ИИ-экспертиза договоров</h3>
+          </div>
+          <div class="flip-card-back">
+            <p class="card-description">Находить скрытые финансовые и юридические риски в контрактах за пару минут.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка 2: Дешифровка аудио -->
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-icon">
+              <!-- Иконка микрофона/волны -->
+              <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+            </div>
+            <h3 class="card-title">Дешифровка аудио</h3>
+          </div>
+          <div class="flip-card-back">
+            <p class="card-description">Моментально превращать сбивчивые голосовые сообщения с объекта в четкие текстовые поручения.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка 3: Аудит смет -->
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-icon">
+              <!-- Иконка калькулятора/графика -->
+              <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+            </div>
+            <h3 class="card-title">Аудит смет</h3>
+          </div>
+          <div class="flip-card-back">
+            <p class="card-description">Выявлять завышенные коэффициенты и скрытые переплаты при проверке расчетов.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка 4: Сравнение решений -->
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-icon">
+              <!-- Иконка весов/сравнения -->
+              <svg viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4zm0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z"/></svg>
+            </div>
+            <h3 class="card-title">Сравнение решений</h3>
+          </div>
+          <div class="flip-card-back">
+            <p class="card-description">Проводить экспресс-анализ альтернативных материалов с выводом в сводную таблицу.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка 5: AI-визуализация -->
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-icon">
+              <!-- Иконка визуализации/глаза -->
+              <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </div>
+            <h3 class="card-title">AI-визуализация</h3>
+          </div>
+          <div class="flip-card-back">
+            <p class="card-description">Генерировать фотореалистичные эскизы проектных решений для согласования с заказчиком.</p>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</body>
+</html>

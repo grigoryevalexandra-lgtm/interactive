@@ -1,10 +1,26 @@
+<style>
+  /* Анимация пульсирующего блюра */
+  @keyframes breatheBlur {
+    0% { filter: blur(4px); background-color: #f2e3d5; }
+    100% { filter: blur(7px); background-color: #eaddcf; }
+  }
+  
+  .spoiler-animated {
+    animation: breatheBlur 1.5s infinite alternate ease-in-out;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 0 4px;
+    transition: all 0.3s ease;
+  }
+</style>
+
 <div style="background: #faefe6; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6; line-height: 1.5; color: #333; font-family: 'Inter', sans-serif;">
   <strong>Спойлер:</strong> 
   <span 
-    style="filter: blur(5px); cursor: pointer; transition: filter 0.3s ease; background-color: #f2e3d5; border-radius: 4px; padding: 0 4px;" 
-    onclick="this.style.filter='none'; this.style.backgroundColor='transparent'; this.style.cursor='text';"
+    class="spoiler-animated"
+    onclick="this.style.animation='none'; this.style.filter='none'; this.style.backgroundColor='transparent'; this.style.cursor='text';"
     title="Нажмите, чтобы прочитать"
   >
-    В следующих уроках, после выполнения каждого задания, ИИваныч будет рассчитывать для вас конкретную метрику — сколько процентов задач вы делегировали и на сколько часов освободили свое время!
+    В следующих уроках, после выполнения каждого задания, ИИваныч будет рассчитывать для вас конкретную метрику — сколько процентов административных задач вы делегировали алгоритмам и на сколько часов освободили свое время для принятия стратегических решений!
   </span>
 </div>

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр nanoCAD: точное построение с привязкой</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+  }
+  html, body {
+    width: 100%;
+    height: 470px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #FDFBF7;
+    color: #1f242b;
+  }
+  .sim-wrap {
+    width: 100%;
+    height: 470px;
+    border: 1px solid #e2d8c3;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #FDFBF7;
+  }
+  /* Верхняя панель в стиле ленты nanoCAD */
+  .sim-ribbon {
+    height: 54px;
+    background: #f5efe4;
+    border-bottom: 1px solid #e2d8c3;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .sim-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sim-logo {
+    font-weight: 800;
+    font-size: 13px;
+    color: #8f6b1e;
+    background: #ede3cf;
+    padding: 5px 9px;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+  }
+  .tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid #d8ccb4;
+    background: #ffffff;
+    color: #1f242b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tool-btn:hover {
+    border-color: #D4AF37;
+    background: #fffdf8;
+  }
+  .tool-btn.is-active {
+    background: #f9a85a;
+    border-color: #e58e3c;
+    color: #1a1d21;
+  }
+  .tool-btn.is-pulse {
+    animation: pulseBtn 1.5s infinite;
+    border-color: #f9a85a;
+  }
+  @keyframes pulseBtn {
+    0% { box-shadow: 0 0 0 0 rgba(249, 168, 90, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(249, 168, 90, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(249, 168, 90, 0); }
+  }
+  .snap-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2e7d32;
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+  .snap-dot {
+    width: 8px;
+    height: 8px;
+    background: #2e7d32;
+    display: inline-block;
+  }
+  .reset-btn {
+    padding: 6px 11px;
+    border-radius: 7px;
+    border: 1px solid #d8ccb4;
+    background: transparent;
+    color: #5a626e;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .reset-btn:hover {
+    background: #ece3d2;
+    color: #1f242b;
+  }
+
+  /* Рабочее поле чертежа */
+  .sim-viewport {
+    position: relative;
+    flex: 1;
+    background-color: #1e232a;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+    background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+    overflow: hidden;
+  }
+  .sim-viewport.crosshair {
+    cursor: crosshair;
+  }
+  svg#cadCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Плашка текущего шага сверху холста */
+  .step-banner {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    right: 14px;
+    background: rgba(253, 251, 247, 0.96);
+    border-left: 4px solid #f9a85a;
+    border-radius: 8px;
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+    pointer-events: none;
+  }
+  .step-banner__text {
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: #1f242b;
+  }
+  .step-banner__tag {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #9e7622;
+    background: #f3ead8;
+    padding: 3px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+
+  /* Поле динамического ввода (как в nanoCAD) */
+  .dyn-input-box {
+    position: absolute;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    background: #FDFBF7;
+    border: 2px solid #D4AF37;
+    border-radius: 8px;
+    padding: 5px 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    z-index: 10;
+  }
+  .dyn-input-box.is-visible {
+    display: flex;
+  }
+  .dyn-input-box label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a626e;
+  }
+  .dyn-input-box input {
+    width: 74px;
+    padding: 4px 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1d21;
+    border: 1px solid #cfc3ab;
+    border-radius: 5px;
+    outline: none;
+    text-align: center;
+  }
+  .dyn-input-box input:focus {
+    border-color: #f9a85a;
+  }
+  .dyn-ok-btn {
+    padding: 5px 10px;
+    background: #f9a85a;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1a1d21;
+    cursor: pointer;
+  }
+  .dyn-ok-btn:hover {
+    background: #f4973e;
+  }
+  .dyn-error {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 5px;
+    background: #d32f2f;
+    color: #fff;
+    font-size: 11.5px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    display: none;
+  }
+
+  /* Итоговая карточка внутри холста */
+  .success-overlay {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    right: 14px;
+    background: #FDFBF7;
+    border: 2px solid #D4AF37;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+  .success-overlay.is-visible {
+    display: flex;
+  }
+  .success-overlay__title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1a1d21;
+    margin-bottom: 3px;
+  }
+  .success-overlay__desc {
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: #3a4048;
+  }
+
+  /* Командная строка внизу */
+  .sim-cmdline {
+    height: 34px;
+    background: #f5efe4;
+    border-top: 1px solid #e2d8c3;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+    color: #3a4048;
+    flex-shrink: 0;
+  }
+  .sim-coords {
+    color: #7d6328;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="sim-wrap">
+  <!-- Верхняя панель -->
+  <div class="sim-ribbon">
+    <div class="sim-tools">
+      <span class="sim-logo">nanoCAD</span>
+      <button id="btnLine" class="tool-btn is-pulse" type="button">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <line x1="2" y1="14" x2="14" y2="2" stroke="#1f242b" stroke-width="2"/>
+          <circle cx="2" cy="14" r="2" fill="#f9a85a" stroke="#1f242b" stroke-width="1"/>
+          <circle cx="14" cy="2" r="2" fill="#f9a85a" stroke="#1f242b" stroke-width="1"/>
+        </svg>
+        Отрезок
+      </button>
+      <div class="snap-badge" title="Объектная привязка включена">
+        <span class="snap-dot"></span> Привязка (F3): Конточка
+      </div>
+    </div>
+    <button id="btnReset" class="reset-btn" type="button">Начать заново</button>
+  </div>
+
+  <!-- Поле чертежа -->
+  <div id="viewport" class="sim-viewport">
+    <div id="stepBanner" class="step-banner">
+      <div id="stepText" class="step-banner__text">
+        <strong>Шаг 1 из 3.</strong> Нажмите кнопку <strong>«Отрезок»</strong> на верхней панели, чтобы запустить команду черчения.
+      </div>
+      <span id="stepBadge" class="step-banner__tag">Шаг 1 / 3</span>
+    </div>
+
+    <svg id="cadCanvas" viewBox="0 0 800 380" preserveAspectRatio="xMidYMid meet">
+      <!-- Оси координат в левом нижнем углу -->
+      <g stroke="#5c6675" stroke-width="1.5">
+        <line x1="36" y1="344" x2="36" y2="304"/>
+        <line x1="36" y1="344" x2="76" y2="344"/>
+        <polygon points="36,300 33,307 39,307" fill="#5c6675"/>
+        <polygon points="80,344 73,341 73,347" fill="#5c6675"/>
+      </g>
+      <text x="24" y="308" fill="#7c8798" font-size="11" font-family="sans-serif">Y</text>
+      <text x="74" y="358" fill="#7c8798" font-size="11" font-family="sans-serif">X</text>
+
+      <!-- Существующая базовая стена (вертикальная, 4000 мм) -->
+      <line x1="230" y1="120" x2="230" y2="270" stroke="#e2e8f0" stroke-width="4" stroke-linecap="square"/>
+      <!-- Размер базовой стены -->
+      <g stroke="#7c8798" stroke-width="1">
+        <line x1="205" y1="120" x2="225" y2="120"/>
+        <line x1="205" y1="270" x2="225" y2="270"/>
+        <line x1="212" y1="120" x2="212" y2="270"/>
+      </g>
+      <text x="198" y="200" fill="#94a3b8" font-size="12" font-family="sans-serif" text-anchor="end">4000</text>
+
+      <!-- Подсказка-пульсация на целевой точке (230, 270) -->
+      <circle id="targetPulse" cx="230" cy="270" r="14" fill="none" stroke="#4ade80" stroke-width="2" opacity="0">
+        <animate attributeName="r" values="8;18;8" dur="1.4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.9;0.15;0.9" dur="1.4s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Ортогональная направляющая (появляется после клика в точку) -->
+      <line id="orthoGuide" x1="230" y1="270" x2="680" y2="270" stroke="#4ade80" stroke-width="1" stroke-dasharray="6,5" opacity="0"/>
+
+      <!-- Предпросмотр строящейся линии -->
+      <line id="previewLine" x1="230" y1="270" x2="230" y2="270" stroke="#f9a85a" stroke-width="3" opacity="0"/>
+
+      <!-- Готовая построенная стена (3000 мм) -->
+      <line id="finalWall" x1="230" y1="270" x2="455" y2="270" stroke="#f9a85a" stroke-width="4" stroke-linecap="square" opacity="0"/>
+
+      <!-- Размер построенной стены (появляется в финале) -->
+      <g id="finalDim" opacity="0">
+        <line x1="230" y1="275" x2="230" y2="298" stroke="#D4AF37" stroke-width="1"/>
+        <line x1="455" y1="275" x2="455" y2="298" stroke="#D4AF37" stroke-width="1"/>
+        <line x1="230" y1="291" x2="455" y2="291" stroke="#D4AF37" stroke-width="1.2"/>
+        <text x="342" y="309" fill="#D4AF37" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">3000 мм</text>
+      </g>
+
+      <!-- Маркер магнитной привязки "Конточка" -->
+      <g id="snapMarker" opacity="0">
+        <rect x="223" y="263" width="14" height="14" fill="none" stroke="#4ade80" stroke-width="2.5"/>
+        <rect x="242" y="246" width="74" height="20" rx="4" fill="#14532d" stroke="#4ade80" stroke-width="1"/>
+        <text x="279" y="260" fill="#bbf7d0" font-size="11" font-family="sans-serif" text-anchor="middle">Конточка</text>
+      </g>
+    </svg>
+
+    <!-- Поле динамического ввода длины -->
+    <div id="dynBox" class="dyn-input-box" style="left: 330px; top: 205px;">
+      <label for="lenInput">Длина, мм:</label>
+      <input id="lenInput" type="number" placeholder="3000" autocomplete="off">
+      <button id="btnApplyLen" class="dyn-ok-btn" type="button">Enter ↵</button>
+      <div id="dynError" class="dyn-error">Введите 3000 и нажмите Enter</div>
+    </div>
+
+    <!-- Финальная карточка -->
+    <div id="successCard" class="success-overlay">
+      <div>
+        <div class="success-overlay__title">Готово! Вы построили отрезок длиной ровно 3000 мм</div>
+        <div class="success-overlay__desc">
+          Именно так инженеры работают в nanoCAD: привязка исключает зазоры в углах, а ввод с клавиатуры гарантирует точность до миллиметра.
+        </div>
+      </div>
+      <button id="btnReplay" class="tool-btn is-active" type="button">Повторить</button>
+    </div>
+  </div>
+
+  <!-- Командная строка -->
+  <div class="sim-cmdline">
+    <span id="cmdText">Команда: _Ожидание выбора инструмента...</span>
+    <span id="coordText" class="sim-coords">X: 0.00  Y: 0.00</span>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const btnLine = document.getElementById('btnLine');
+    const btnReset = document.getElementById('btnReset');
+    const btnReplay = document.getElementById('btnReplay');
+    const viewport = document.getElementById('viewport');
+    const svg = document.getElementById('cadCanvas');
+    const stepText = document.getElementById('stepText');
+    const stepBadge = document.getElementById('stepBadge');
+    const cmdText = document.getElementById('cmdText');
+    const coordText = document.getElementById('coordText');
+
+    const targetPulse = document.getElementById('targetPulse');
+    const snapMarker = document.getElementById('snapMarker');
+    const orthoGuide = document.getElementById('orthoGuide');
+    const previewLine = document.getElementById('previewLine');
+    const finalWall = document.getElementById('finalWall');
+    const finalDim = document.getElementById('finalDim');
+
+    const dynBox = document.getElementById('dynBox');
+    const lenInput = document.getElementById('lenInput');
+    const btnApplyLen = document.getElementById('btnApplyLen');
+    const dynError = document.getElementById('dynError');
+    const successCard = document.getElementById('successCard');
+
+    // Состояния: 0 = старт, 1 = выбран отрезок, 2 = выбрана первая точка, 3 = завершено
+    let step = 0;
+    let isSnapped = false;
+
+    const START_X = 230;
+    const START_Y = 270;
+
+    function getSvgCoords(evt) {
+      const pt = svg.createSVGPoint();
+      pt.x = evt.clientX;
+      pt.y = evt.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function setStep(newStep) {
+      step = newStep;
+      dynError.style.display = 'none';
+
+      if (step === 0) {
+        btnLine.classList.remove('is-active');
+        btnLine.classList.add('is-pulse');
+        viewport.classList.remove('crosshair');
+        targetPulse.setAttribute('opacity', '0');
+        snapMarker.setAttribute('opacity', '0');
+        orthoGuide.setAttribute('opacity', '0');
+        previewLine.setAttribute('opacity', '0');
+        finalWall.setAttribute('opacity', '0');
+        finalDim.setAttribute('opacity', '0');
+        dynBox.classList.remove('is-visible');
+        successCard.classList.remove('is-visible');
+        lenInput.value = '';
+        stepBadge.textContent = 'Шаг 1 / 3';
+        stepText.innerHTML = '<strong>Шаг 1 из 3.</strong> Нажмите кнопку <strong>«Отрезок»</strong> на верхней панели, чтобы запустить команду черчения.';
+        cmdText.textContent = 'Команда: _Ожидание выбора инструмента...';
+      }
+
+      if (step === 1) {
+        btnLine.classList.remove('is-pulse');
+        btnLine.classList.add('is-active');
+        viewport.classList.add('crosshair');
+        targetPulse.setAttribute('opacity', '1');
+        stepBadge.textContent = 'Шаг 2 / 3';
+        stepText.innerHTML = '<strong>Шаг 2 из 3.</strong> Наведите курсор на нижний конец стены (сработает зелёная привязка <strong>«Конточка»</strong>) и кликните.';
+        cmdText.textContent = 'Команда: _ОТРЕЗОК  Укажите первую точку:';
+      }
+
+      if (step === 2) {
+        targetPulse.setAttribute('opacity', '0');
+        snapMarker.setAttribute('opacity', '0');
+        orthoGuide.setAttribute('opacity', '1');
+        previewLine.setAttribute('x2', '420');
+        previewLine.setAttribute('y2', String(START_Y));
+        previewLine.setAttribute('opacity', '1');
+        dynBox.classList.add('is-visible');
+        stepBadge.textContent = 'Шаг 3 / 3';
+        stepText.innerHTML = '<strong>Шаг 3 из 3.</strong> Задайте точную длину новой стены: введите <strong>3000</strong> и нажмите <strong>Enter</strong>.';
+        cmdText.textContent = 'Команда: _ОТРЕЗОК  Укажите следующую точку или введите длину:';
+        setTimeout(() => lenInput.focus(), 50);
+      }
+
+      if (step === 3) {
+        btnLine.classList.remove('is-active');
+        viewport.classList.remove('crosshair');
+        orthoGuide.setAttribute('opacity', '0');
+        previewLine.setAttribute('opacity', '0');
+        dynBox.classList.remove('is-visible');
+        finalWall.setAttribute('opacity', '1');
+        finalDim.setAttribute('opacity', '1');
+        successCard.classList.add('is-visible');
+        stepBadge.textContent = 'Выполнено';
+        stepText.innerHTML = '<strong>Отлично!</strong> Навык привязки и точного ввода длины освоен.';
+        cmdText.textContent = 'Команда: Построен отрезок длиной 3000.00 мм.';
+      }
+    }
+
+    btnLine.addEventListener('click', () => {
+      if (step === 0) setStep(1);
+    });
+
+    svg.addEventListener('mousemove', (evt) => {
+      const p = getSvgCoords(evt);
+      // Пересчитываем условные координаты относительно угла стены (0, 0)
+      const relX = Math.round((p.x - START_X) * (3000 / 225));
+      const relY = Math.round((START_Y - p.y) * (3000 / 225));
+      coordText.textContent = `X: ${relX}  Y: ${relY}`;
+
+      if (step === 1) {
+        const dist = Math.hypot(p.x - START_X, p.y - START_Y);
+        if (dist < 28) {
+          isSnapped = true;
+          snapMarker.setAttribute('opacity', '1');
+        } else {
+          isSnapped = false;
+          snapMarker.setAttribute('opacity', '0');
+        }
+      }
+
+      if (step === 2) {
+        const clampedX = Math.max(START_X + 40, Math.min(660, p.x));
+        previewLine.setAttribute('x2', String(clampedX));
+      }
+    });
+
+    svg.addEventListener('click', (evt) => {
+      if (step !== 1) return;
+      const p = getSvgCoords(evt);
+      const dist = Math.hypot(p.x - START_X, p.y - START_Y);
+      if (isSnapped || dist < 32) {
+        setStep(2);
+      } else {
+        cmdText.textContent = 'Подсказка: наведите курсор ближе к нижнему концу стены, чтобы сработала привязка.';
+      }
+    });
+
+    function validateLength() {
+      if (step !== 2) return;
+      const val = Number(lenInput.value.trim());
+      if (val === 3000) {
+        setStep(3);
+      } else {
+        dynError.style.display = 'block';
+        lenInput.focus();
+        lenInput.select();
+      }
+    }
+
+    btnApplyLen.addEventListener('click', validateLength);
+    lenInput.addEventListener('keydown', (evt) => {
+      if (evt.key === 'Enter') {
+        evt.preventDefault();
+        validateLength();
+      } else {
+        dynError.style.display = 'none';
+      }
+    });
+
+    btnReset.addEventListener('click', () => setStep(0));
+    btnReplay.addEventListener('click', () => setStep(0));
+
+    setStep(0);
+  })();
+</script>
+</body>
+</html>
